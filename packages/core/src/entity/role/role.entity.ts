@@ -1,0 +1,23 @@
+import { Column, DeepPartial, Entity } from 'typeorm';
+import { Permission } from '../../common/shared-types';
+import { FirelancerEntity } from '../base/base.entity';
+
+/**
+ * @description
+ * A Role represents a collection of permissions which determine the authorization level of a User.
+ */
+@Entity()
+export class Role extends FirelancerEntity {
+  constructor(input?: DeepPartial<Role>) {
+    super(input);
+  }
+
+  @Column()
+  code: string;
+
+  @Column()
+  description: string;
+
+  @Column('simple-array')
+  permissions: Permission[];
+}
