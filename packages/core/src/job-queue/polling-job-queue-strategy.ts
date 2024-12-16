@@ -1,8 +1,8 @@
-import { Logger } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { from, interval, race, Subject, Subscription } from 'rxjs';
 import { filter, switchMap, take, throttleTime } from 'rxjs/operators';
 import { ID, JobState } from '../common';
+import { Logger } from '../config';
 import { InjectableJobQueueStrategy } from './injectable-job-queue-strategy';
 import { Job } from './job';
 import { QueueNameProcessStorage } from './queue-name-process-storage';
@@ -158,7 +158,7 @@ class ActiveQueue<Data extends JobData<Data> = object> {
     this.running = false;
     clearTimeout(this.timer);
     await this.awaitRunningJobsOrTimeout(stopActiveQueueTimeout);
-    Logger.log(`Stopped queue: ${this.queueName}`);
+    Logger.info(`Stopped queue: ${this.queueName}`);
     this.subscription.unsubscribe();
     // Allow any job status changes to be persisted
     // before we permit the application shutdown to continue.
@@ -194,7 +194,7 @@ class ActiveQueue<Data extends JobData<Data> = object> {
 
         if (this.activeJobs.length > 0) {
           if (now - lastStatusUpdate > 2000) {
-            Logger.log(`Stopping queue: ${this.queueName} - waiting for ${this.activeJobs.length} active jobs to complete...`);
+            Logger.info(`Stopping queue: ${this.queueName} - waiting for ${this.activeJobs.length} active jobs to complete...`);
             lastStatusUpdate = now;
           }
         }

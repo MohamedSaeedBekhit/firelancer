@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Logger } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { ID, isClassInstance, JobState } from '../common';
 import { JobConfig, JobData } from './types';
+import { Logger } from '../config';
 
 /**
  * @description

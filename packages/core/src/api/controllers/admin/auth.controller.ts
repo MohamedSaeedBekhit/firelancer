@@ -1,18 +1,19 @@
-import { Body, Controller, Get, Logger, Post, Request, Response } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
+import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
 import { MutationAuthenticateArgs, MutationLoginArgs } from '../../../api/schema';
 import { NativeAuthStrategyError } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
+import { Permission } from '../../../common/shared-types';
+import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
 import { BaseAuthController } from '../base/base-auth.controller';
-import { Allow } from '../../../api/decorators/allow.decorator';
-import { Permission } from '../../../common/shared-types';
 
 @Controller('/auth')
 export class AdminAuthController extends BaseAuthController {

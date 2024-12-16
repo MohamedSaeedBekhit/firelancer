@@ -1,4 +1,4 @@
-import { Injectable, Logger, Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { imageSize } from 'image-size';
 import mime from 'mime-types';
 import path from 'path';
@@ -6,8 +6,8 @@ import { Readable, Stream } from 'stream';
 import { In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
 import { CreateAssetInput, UpdateAssetInput } from '../../api/schema';
-import { AssetType, getAssetType, ID, idsAreEqual, InternalServerError, notNullOrUndefined, RequestContext } from '../../common';
-import { ConfigService } from '../../config';
+import { AssetType, getAssetType, ID, idsAreEqual, InternalServerError, notNullOrUndefined, RequestContext, Type } from '../../common';
+import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Asset, FirelancerEntity, JobPost, OrderableAsset } from '../../entity';
 import { EventBus } from '../../event-bus';

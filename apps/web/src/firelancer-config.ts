@@ -15,14 +15,14 @@ export const config: FirelancerConfig = {
       {
         route: 'admin-api',
         handler: (_req: Request, _res: Response, next: NextFunction) => {
-          Logger.log(`admin-api middleware`);
+          Logger.info(`admin-api middleware`);
           next();
         },
       },
       {
         route: 'shop-api',
         handler: (_req: Request, _res: Response, next: NextFunction) => {
-          Logger.log(`shop-api middleware`);
+          Logger.info(`shop-api middleware`);
           next();
         },
       },

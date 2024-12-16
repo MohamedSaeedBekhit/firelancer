@@ -1,5 +1,5 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { ConfigService } from '../config';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService, Logger } from '../config';
 import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
 import { loggerCtx } from './constants';
 import { Job } from './job';
@@ -83,7 +83,7 @@ export class JobQueueService implements OnModuleDestroy {
     this.hasStarted = true;
     for (const queue of this.queues) {
       if (!queue.started && this.shouldStartQueue(queue.name)) {
-        Logger.log(`Starting queue: ${queue.name}`, loggerCtx);
+        Logger.info(`Starting queue: ${queue.name}`, loggerCtx);
         await queue.start();
       }
     }

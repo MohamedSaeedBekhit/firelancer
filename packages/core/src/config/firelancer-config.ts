@@ -14,6 +14,7 @@ import { CollectionFilter } from './strategies/catalog/collection-filter';
 import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
+import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 
 /**
  * @description
@@ -462,6 +463,15 @@ export interface FirelancerConfig {
    * Configures system options
    */
   systemOptions?: SystemOptions;
+  /**
+   * @description
+   * Provide a logging service which implements the FirelancerLogger interface.
+   * Note that the logging of SQL queries is controlled separately by the
+   * `dbConnectionOptions.logging` property.
+   *
+   * @default DefaultLogger
+   */
+  logger?: FirelancerLogger;
 }
 
 /**

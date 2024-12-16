@@ -1,6 +1,5 @@
 import { Logger } from '@firelancer/core';
 import sharp, { FormatEnum, Region, ResizeOptions } from 'sharp';
-
 import { getValidFormat } from './common';
 import { loggerCtx } from './constants';
 import { ImageTransformFormat, ImageTransformPreset } from './types';

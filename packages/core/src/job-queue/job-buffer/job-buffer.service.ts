@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InternalServerError } from '../../common/error/errors';
+import { Logger } from '../../config';
 import { ConfigService } from '../../config/config.service';
 import { Job } from '../job';
 import { JobBuffer } from './job-buffer';

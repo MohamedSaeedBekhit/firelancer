@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Post, Request, Response } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -19,6 +19,7 @@ import { EmailAddressConflictError, ForbiddenError, NativeAuthStrategyError } fr
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';
 import { HistoryEntryType, Permission } from '../../../common/shared-types';
+import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
 import { AdministratorService } from '../../../service/services/administrator.service';

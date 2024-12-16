@@ -1,4 +1,3 @@
-export { Logger } from '@nestjs/common';
 export { bootstrap } from './bootstrap';
 export { FIRELANCER_VERSION } from './version';
 export * from './api/index';

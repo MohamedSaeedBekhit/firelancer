@@ -20,7 +20,7 @@ export async function populate<T extends INestApplicationContext>(
     typeof initialDataPathOrObject === 'string' ? require(initialDataPathOrObject) : initialDataPathOrObject;
 
   await populateInitialData(app, initialData);
-  Logger.log('Done!', loggerCtx);
+  Logger.info('Done!', loggerCtx);
   return app;
 }
 
@@ -29,7 +29,7 @@ export async function populateInitialData(app: INestApplicationContext, initialD
   const populator = app.get(Populator);
   try {
     await populator.populateInitialData(initialData);
-    Logger.log('Populated initial data', loggerCtx);
+    Logger.info('Populated initial data', loggerCtx);
   } catch (err: any) {
     Logger.error(err.message, loggerCtx);
   }

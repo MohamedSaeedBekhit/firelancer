@@ -1,4 +1,4 @@
-import { INestApplication, Logger, NestApplicationOptions, Type } from '@nestjs/common';
+import { INestApplication, NestApplicationOptions, Type } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { satisfies } from 'semver';
@@ -6,6 +6,8 @@ import { DEFAULT_COOKIE_NAME } from './common/constants';
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
+import { DefaultLogger } from './config/strategies/logger/default-logger';
+import { Logger } from './config/strategies/logger/firelancer-logger';
 import { coreEntitiesMap } from './entity/core-entities';
 import { getCompatibility, getConfigurationFunction, getEntitiesFromPlugins } from './plugin/plugin-metadata';
 import { FIRELANCER_VERSION } from './version';
@@ -28,13 +30,18 @@ export interface BootstrapOptions {
 
 export async function bootstrap(userConfig?: Partial<FirelancerConfig>, options?: BootstrapOptions) {
   const config = await preBootstrapConfig(userConfig);
-  Logger.log(`Bootstrapping Firelancer Server (pid: ${process.pid})...`);
+  Logger.useLogger(config.logger);
+  Logger.info(`Bootstrapping Firelancer Server (pid: ${process.pid})...`);
   checkPluginCompatibility(config);
 
-  const { hostname, port, cors } = config.apiOptions;
   const { AppModule } = await import('./app.module.js');
+  const { hostname, port, cors } = config.apiOptions;
 
-  const app = await NestFactory.create(AppModule, { cors, ...options?.nestApplicationOptions });
+  DefaultLogger.hideNestBoostrapLogs();
+  const app = await NestFactory.create(AppModule, { logger: new Logger(), cors, ...options?.nestApplicationOptions });
+  DefaultLogger.restoreOriginalLogLevel();
+  app.useLogger(new Logger());
+
   const { tokenMethod } = config.authOptions;
   const usingCookie = tokenMethod === 'cookie' || (Array.isArray(tokenMethod) && tokenMethod.includes('cookie'));
   if (usingCookie) {
@@ -68,6 +75,7 @@ async function preBootstrapConfig(userConfig: Partial<FirelancerConfig> = {}): P
   let config = getConfig();
   // The logger is set here so that we are able to log any messages prior to the final
   // logger (which may depend on config coming from a plugin) being set.
+  Logger.useLogger(config.logger);
   config = await runPluginConfigurations(config);
   setExposedHeaders(config);
   return config;
@@ -152,7 +160,7 @@ function checkPluginCompatibility(config: RuntimeFirelancerConfig): void {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const pluginName = (plugin as any).name as string;
     if (!compatibility) {
-      Logger.log(
+      Logger.info(
         `The plugin "${pluginName}" does not specify a compatibility range, so it is not guaranteed to be compatible with this version of Firelancer.`,
       );
     } else {

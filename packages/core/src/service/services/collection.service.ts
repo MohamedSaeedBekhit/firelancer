@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
 import { In } from 'typeorm';
 import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, UpdateCollectionInput } from '../../api';
@@ -13,7 +13,7 @@ import {
   SerializedRequestContext,
 } from '../../common';
 import { pick } from '../../common/utils/pick';
-import { ConfigService } from '../../config';
+import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { JobPost } from '../../entity';
 import { Collection } from '../../entity/collection/collection.entity';
@@ -432,7 +432,9 @@ export class CollectionService implements OnModuleInit {
         ]);
       });
     } catch (e) {
-      Logger.error(e);
+      if (e instanceof Error) {
+        Logger.error(e.message);
+      }
     }
 
     if (applyToChangedJobPostsOnly) {

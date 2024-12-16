@@ -11,12 +11,14 @@ import { DefaultPasswordValidationStrategy } from './strategies/authentication/d
 import { NativeAuthenticationStrategy } from './strategies/authentication/default/native-authentication-strategy';
 import { defaultCollectionFilters } from './strategies/catalog/default/default-collection-filters';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
+import { DefaultLogger } from './strategies/logger/default-logger';
 
 /**
  * @description
  * The default configuration settings which are used if not explicitly overridden in the bootstrap() call.
  */
 export const defaultConfig: RuntimeFirelancerConfig = {
+  logger: new DefaultLogger(),
   apiOptions: {
     port: 3042,
     hostname: 'localhost',

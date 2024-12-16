@@ -11,6 +11,10 @@ export * from './strategies/authentication/default/default-password-validation-s
 export * from './strategies/authentication/default/native-authentication-strategy';
 export * from './strategies/catalog/collection-filter';
 export * from './strategies/catalog/default/default-collection-filters';
+export * from './strategies/logger/default-logger';
+export * from './strategies/logger/firelancer-logger';
+export * from './strategies/logger/noop-logger';
+export * from './strategies/logger/typeorm-logger';
 export * from './strategies/session-cache/session-cache-strategy';
 export * from './strategies/session-cache/default/in-memory-session-cache-strategy';
 export * from './strategies/asset/asset-naming-strategy';

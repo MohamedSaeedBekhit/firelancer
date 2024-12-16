@@ -1,4 +1,4 @@
-import { DynamicModule, Injectable, Logger, Type } from '@nestjs/common';
+import { DynamicModule, Injectable, Type } from '@nestjs/common';
 import { DataSourceOptions } from 'typeorm';
 import { getConfig } from './config-helpers';
 import {
@@ -11,6 +11,7 @@ import {
   RuntimeFirelancerConfig,
   SystemOptions,
 } from './firelancer-config';
+import { Logger } from './strategies/logger/firelancer-logger';
 
 @Injectable()
 export class ConfigService implements FirelancerConfig {

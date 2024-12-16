@@ -202,7 +202,7 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
   }
 
   configure(consumer: MiddlewareConsumer) {
-    Logger.log('Creating asset server middleware', loggerCtx);
+    Logger.info('Creating asset server middleware', loggerCtx);
     consumer.apply(this.createAssetServer()).forRoutes(AssetServerPlugin.options.route);
     registerPluginStartupMessage('Asset server', AssetServerPlugin.options.route);
   }
