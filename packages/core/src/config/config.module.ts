@@ -58,6 +58,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
       passwordHashingStrategy,
       passwordValidationStrategy,
     } = this.configService.authOptions;
+    const { errorHandlers } = this.configService.systemOptions;
 
     return [
       assetNamingStrategy,
@@ -70,6 +71,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
       passwordValidationStrategy,
       jobQueueStrategy,
       jobBufferStorageStrategy,
+      ...errorHandlers,
     ];
   }
 }
