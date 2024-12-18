@@ -1,5 +1,7 @@
 import { ID, Injector, JobState, notNullOrUndefined } from '../common';
+import { Logger } from '../config';
 import { InspectableJobQueueStrategy } from '../config/strategies/job-queue/inspectable-job-queue-strategy';
+import { ProcessContext } from '../process-context';
 import { Job } from './job';
 import { PollingJobQueueStrategy } from './polling-job-queue-strategy';
 import { JobData } from './types';
@@ -25,13 +27,14 @@ import { JobData } from './types';
 export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements InspectableJobQueueStrategy {
   protected jobs = new Map<ID, Job>();
   protected unsettledJobs: { [queueName: string]: Array<{ job: Job; updatedAt: Date }> } = {};
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private processContext: ProcessContext;
   private timer: any;
   private evictJobsAfterMs = 1000 * 60 * 60 * 2; // 2 hours
   private processContextChecked = false;
 
   init(injector: Injector) {
     super.init(injector);
+    this.processContext = injector.get(ProcessContext);
     this.timer = setTimeout(this.evictSettledJobs, this.evictJobsAfterMs);
   }
 
@@ -72,8 +75,7 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
   }
 
   async next(queueName: string, waitingJobs: Job[] = []): Promise<Job | undefined> {
-    // fix
-    // this.checkProcessContext();
+    this.checkProcessContext();
     const nextIndex = this.unsettledJobs[queueName]?.findIndex((item) => !waitingJobs.includes(item.job));
     if (nextIndex === -1) {
       return;
@@ -135,4 +137,14 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
     void this.removeSettledJobs([], new Date(olderThanMs));
     this.timer = setTimeout(this.evictSettledJobs, this.evictJobsAfterMs);
   };
+
+  private checkProcessContext() {
+    if (!this.processContextChecked) {
+      if (this.processContext.isWorker) {
+        Logger.error('The InMemoryJobQueueStrategy will not work when running job queues outside the main server process!');
+        process.kill(process.pid, 'SIGINT');
+      }
+      this.processContextChecked = true;
+    }
+  }
 }

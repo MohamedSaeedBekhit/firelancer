@@ -1,4 +1,4 @@
-export { bootstrap } from './bootstrap';
+export { bootstrap, bootstrapWorker } from './bootstrap';
 export { FIRELANCER_VERSION } from './version';
 export * from './api/index';
 export * from './cache/index';
@@ -11,3 +11,5 @@ export * from './entity/index';
 export * from './service/index';
 export * from './data-import/index';
 export * from './job-queue/index';
+export * from './worker/index';
+export * from './process-context/index';

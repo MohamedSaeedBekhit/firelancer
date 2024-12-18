@@ -1,7 +1,7 @@
 import { AttemptedLoginEvent, EventBus, FirelancerPlugin, Logger, PluginCommonModule } from '@firelancer/core';
 import { OnApplicationBootstrap } from '@nestjs/common';
-import { HelloWorldController } from './api/hello-world.controller.js';
-import { loggerCtx } from './constants.js';
+import { HelloWorldController } from './api/hello-world.controller';
+import { loggerCtx } from './constants';
 
 @FirelancerPlugin({
   imports: [PluginCommonModule],

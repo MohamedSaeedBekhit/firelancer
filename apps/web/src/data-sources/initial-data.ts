@@ -1,7 +1,13 @@
-import { InitialData } from '@firelancer/core';
+import { InitialData, Permission } from '@firelancer/core';
 
 export const initialData: InitialData = {
-  roles: [],
+  roles: [
+    {
+      code: 'administrator',
+      description: 'Administrator',
+      permissions: [Permission.CreateCustomer, Permission.ReadCustomer, Permission.UpdateCustomer, Permission.DeleteCustomer],
+    },
+  ],
   facets: [
     'category:Web Development',
     'category:Web & Mobile Design',

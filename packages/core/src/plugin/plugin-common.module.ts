@@ -6,6 +6,7 @@ import { DataImportModule } from '../data-import/data-import.module';
 import { EventBusModule } from '../event-bus/event-bus.module';
 import { JobQueueModule } from '../job-queue/job-queue.module';
 import { ServiceModule } from '../service/service.module';
+import { ProcessContextModule } from '../process-context/process-context.module';
 
 /**
  * @description
@@ -20,7 +21,25 @@ import { ServiceModule } from '../service/service.module';
  * * `ConfigModule`, allowing the injection of the ConfigService.
  */
 @Module({
-  imports: [EventBusModule, ConfigModule, ConnectionModule.forPlugin(), ServiceModule, CacheModule, JobQueueModule, DataImportModule],
-  exports: [EventBusModule, ConfigModule, ConnectionModule.forPlugin(), ServiceModule, CacheModule, JobQueueModule, DataImportModule],
+  imports: [
+    ProcessContextModule,
+    EventBusModule,
+    ConfigModule,
+    ConnectionModule.forPlugin(),
+    ServiceModule,
+    CacheModule,
+    JobQueueModule,
+    DataImportModule,
+  ],
+  exports: [
+    ProcessContextModule,
+    EventBusModule,
+    ConfigModule,
+    ConnectionModule.forPlugin(),
+    ServiceModule,
+    CacheModule,
+    JobQueueModule,
+    DataImportModule,
+  ],
 })
 export class PluginCommonModule {}

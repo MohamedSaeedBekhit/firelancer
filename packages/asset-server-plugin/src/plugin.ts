@@ -18,6 +18,7 @@ import {
   RuntimeFirelancerConfig,
   Logger,
   Type,
+  ProcessContext,
 } from '@firelancer/core';
 
 async function getFileType(buffer: Buffer) {
@@ -164,6 +165,8 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
     return this;
   }
 
+  constructor(private processContext: ProcessContext) {}
+
   static async configure(config: RuntimeFirelancerConfig) {
     const storageStrategyFactory = this.options.storageStrategyFactory || defaultAssetStorageStrategyFactory;
     this.assetStorage = await storageStrategyFactory(this.options);
@@ -175,6 +178,9 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
   }
 
   onApplicationBootstrap(): void {
+    if (this.processContext.isWorker) {
+      return;
+    }
     if (AssetServerPlugin.options.presets) {
       for (const preset of AssetServerPlugin.options.presets) {
         const existingIndex = this.presets.findIndex((p) => p.name === preset.name);
@@ -202,6 +208,9 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    if (this.processContext.isWorker) {
+      return;
+    }
     Logger.info('Creating asset server middleware', loggerCtx);
     consumer.apply(this.createAssetServer()).forRoutes(AssetServerPlugin.options.route);
     registerPluginStartupMessage('Asset server', AssetServerPlugin.options.route);

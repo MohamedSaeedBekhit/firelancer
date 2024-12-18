@@ -4,14 +4,15 @@ import { Middleware, MiddlewareHandler } from './common/shared-types';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { ConnectionModule } from './connection/connection.module';
-import { ServiceModule } from './service/service.module';
 import { PluginModule } from './plugin/plugin.module';
+import { ProcessContextModule } from './process-context/process-context.module';
+import { ServiceModule } from './service/service.module';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 const cookieSession = require('cookie-session');
 
 @Module({
-  imports: [PluginModule.forRoot(), ApiModule, ConfigModule, ServiceModule, ConnectionModule],
+  imports: [ProcessContextModule, PluginModule.forRoot(), ApiModule, ConfigModule, ServiceModule, ConnectionModule],
 })
 export class AppModule implements NestModule {
   constructor(private configService: ConfigService) {}

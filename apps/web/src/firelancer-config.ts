@@ -1,9 +1,9 @@
 require('dotenv').config();
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
 import { FirelancerConfig, Logger } from '@firelancer/core';
-import { HelloWorldPlugin } from './plugins/hello-world/plugin';
-import { join } from 'path';
 import { NextFunction, Request, Response } from 'express';
+import { join } from 'path';
+import { HelloWorldPlugin } from './plugins/hello-world/plugin';
 
 export const config: FirelancerConfig = {
   apiOptions: {
