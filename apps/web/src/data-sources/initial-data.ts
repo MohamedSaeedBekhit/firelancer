@@ -88,7 +88,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Web Development'], containsAny: false },
+          args: {
+            facetValueNames: ['Web Development'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -98,7 +101,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Web & Mobile Design'], containsAny: false },
+          args: {
+            facetValueNames: ['Web & Mobile Design'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -108,7 +114,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['QA Testing'], containsAny: false },
+          args: {
+            facetValueNames: ['QA Testing'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -118,7 +127,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Desktop Application Development'], containsAny: false },
+          args: {
+            facetValueNames: ['Desktop Application Development'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -128,7 +140,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Mobile Development'], containsAny: false },
+          args: {
+            facetValueNames: ['Mobile Development'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -151,7 +166,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Language Tutoring & Interpretation'], containsAny: false },
+          args: {
+            facetValueNames: ['Language Tutoring & Interpretation'],
+            containsAny: false,
+          },
         },
       ],
     },
@@ -161,7 +179,10 @@ export const initialData: InitialData = {
       filters: [
         {
           code: 'facet-value-filter',
-          args: { facetValueNames: ['Translation & Localization Services'], containsAny: false },
+          args: {
+            facetValueNames: ['Translation & Localization Services'],
+            containsAny: false,
+          },
         },
       ],
     },

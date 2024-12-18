@@ -23,8 +23,6 @@ let currentContext: ProcessContextType = 'server';
  *   }
  * }
  * ```
- *
- * @docsCategory common
  */
 export class ProcessContext {
   get isServer(): boolean {
@@ -39,8 +37,6 @@ export class ProcessContext {
  * @description
  * Should only be called in the core bootstrap functions in order to establish
  * the current process context.
- *
- * @internal
  */
 export function setProcessContext(context: ProcessContextType) {
   currentContext = context;

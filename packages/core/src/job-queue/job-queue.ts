@@ -13,8 +13,6 @@ import { CreateQueueOptions, JobData, JobOptions } from './types';
  * *Note*: JobQueue instances should not be directly instantiated. Rather, the
  * JobQueueService `createQueue()` method should be used (see that service
  * for example usage).
- *
- * @docsCategory JobQueue
  */
 export class JobQueue<Data extends JobData<Data> = object> {
   private running = false;

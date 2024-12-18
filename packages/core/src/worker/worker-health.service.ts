@@ -6,9 +6,6 @@ import { Logger } from '../config';
 /**
  * @description
  * Specifies the configuration for the Worker's HTTP health check endpoint.
- *
- * @since 1.2.0
- * @docsCategory worker
  */
 export interface WorkerHealthCheckConfig {
   /**
