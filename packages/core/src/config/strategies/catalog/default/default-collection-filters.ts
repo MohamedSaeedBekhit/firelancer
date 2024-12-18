@@ -2,6 +2,18 @@ import { ConfigArgDef } from '../../../../common/configurable-operation';
 import { JobPost } from '../../../../entity';
 import { CollectionFilter } from '../collection-filter';
 
+const { customAlphabet } = require('nanoid');
+
+/**
+ * @description
+ * Used to created unique key names for DB query parameters, to avoid conflicts if the
+ * same filter is applied multiple times.
+ */
+export function randomSuffix(prefix: string) {
+  const nanoid = customAlphabet('123456789abcdefghijklmnopqrstuvwxyz', 6);
+  return `${prefix}_${nanoid() as string}`;
+}
+
 /**
  * @description
  * Add this to your CollectionFilter `args` object to display the standard UI component
@@ -77,4 +89,34 @@ export const facetValueCollectionFilter = new CollectionFilter({
   },
 });
 
-export const defaultCollectionFilters = [facetValueCollectionFilter];
+export const jobPostIdCollectionFilter = new CollectionFilter({
+  args: {
+    jobPostIds: {
+      type: 'ID',
+      list: true,
+      label: 'Job Posts',
+    },
+    combineWithAnd: combineWithAndArg,
+  },
+  code: 'job-post-id-filter',
+  description: 'Manually select job posts',
+  apply: (qb, args) => {
+    const emptyIds = args.jobPostIds.length === 0;
+    const jobPostIdsKey = randomSuffix('jobPostIds');
+    const clause = `jobPost.id IN (:...${jobPostIdsKey})`;
+    const params = { [jobPostIdsKey]: args.jobPostIds };
+    if (args.combineWithAnd === false) {
+      if (emptyIds) {
+        return qb;
+      }
+      return qb.orWhere(clause, params);
+    } else {
+      if (emptyIds) {
+        return qb.andWhere('1 = 0');
+      }
+      return qb.andWhere(clause, params);
+    }
+  },
+});
+
+export const defaultCollectionFilters = [facetValueCollectionFilter, jobPostIdCollectionFilter];
