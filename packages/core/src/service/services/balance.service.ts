@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
 import { CreateBalanceEntryInput } from '../../api';
-import { BalanceEntryStatus, RequestContext } from '../../common';
+import { BalanceEntryStatus, ID, RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Customer } from '../../entity';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
@@ -25,7 +25,7 @@ export class BalanceService {
     });
   }
 
-  async settle(ctx: RequestContext, entryId: number): Promise<BalanceEntry> {
+  async settle(ctx: RequestContext, entryId: ID): Promise<BalanceEntry> {
     return this.connection.withTransaction(ctx, async (ctx) => {
       const entry = await this.connection.getEntityOrThrow(ctx, BalanceEntry, entryId);
       if (entry.status === BalanceEntryStatus.SETTELABLE) {
