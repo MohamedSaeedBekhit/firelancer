@@ -1,5 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSourceOptions } from 'typeorm';
+import { TypeOrmLogger } from '../config';
 import { ConfigModule } from '../config/config.module';
 import { ConfigService } from '../config/config.service';
 import { TransactionSubscriber } from './transaction-subscriber';
@@ -11,9 +13,14 @@ import { TransactionalConnection } from './transactional-connection';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        ...configService.dbConnectionOptions,
-      }),
+      useFactory: (configService: ConfigService) => {
+        const { dbConnectionOptions } = configService;
+        const logger = ConnectionModule.getTypeOrmLogger(dbConnectionOptions);
+        return {
+          ...dbConnectionOptions,
+          logger,
+        };
+      },
     }),
   ],
   providers: [TransactionalConnection, TransactionWrapper, TransactionSubscriber],
@@ -25,5 +32,13 @@ export class ConnectionModule {
       module: ConnectionModule,
       imports: [TypeOrmModule.forFeature()],
     };
+  }
+
+  static getTypeOrmLogger(dbConnectionOptions: DataSourceOptions) {
+    if (!dbConnectionOptions.logger) {
+      return new TypeOrmLogger(dbConnectionOptions.logging);
+    } else {
+      return dbConnectionOptions.logger;
+    }
   }
 }
