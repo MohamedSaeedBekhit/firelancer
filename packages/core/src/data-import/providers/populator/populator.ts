@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SearchService } from 'service/services/search.service';
 import { ConfigurableOperation } from '../../../api';
 import { ID, notNullOrUndefined, RequestContext } from '../../../common';
 import { normalizeString } from '../../../common/utils/normalize-string';
@@ -10,6 +9,7 @@ import { Collection } from '../../../entity/collection/collection.entity';
 import { FacetValue } from '../../../entity/facet-value/facet-value.entity';
 import { Facet } from '../../../entity/facet/facet.entity';
 import { CollectionService, FacetService, FacetValueService, RequestContextService, RoleService } from '../../../service';
+import { SearchService } from '../../../service/services/search.service';
 import { CollectionDefinition, CollectionFilterDefinition, FacetDefinition, InitialData, RoleDefinition } from '../../types';
 
 /**
