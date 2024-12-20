@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
-import { FirelancerConfig, Logger } from '@firelancer/core';
+import { DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
 import { NextFunction, Request, Response } from 'express';
 import { join } from 'path';
 import { HelloWorldPlugin } from './plugins/hello-world/plugin';
@@ -52,6 +52,7 @@ export const config: FirelancerConfig = {
       assetUploadDir: join(__dirname, '../static/assets'),
       assetUrlPrefix: process.env.IS_DEV ? undefined : 'https://www.my-shop.com/assets/',
     }),
+    DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
     HelloWorldPlugin,
   ],
 };
