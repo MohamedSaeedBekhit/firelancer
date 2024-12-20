@@ -13,16 +13,16 @@ import { FacetValue } from '../facet-value/facet-value.entity';
  */
 @Entity()
 export class Facet extends FirelancerEntity {
-  constructor(input?: DeepPartial<Facet>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Facet>) {
+        super(input);
+    }
 
-  @Column({ type: 'varchar', unique: true })
-  code: string;
+    @Column({ type: 'varchar', unique: true })
+    code: string;
 
-  @Column({ type: 'varchar' })
-  name: string;
+    @Column({ type: 'varchar' })
+    name: string;
 
-  @OneToMany(() => FacetValue, (value) => value.facet)
-  values: FacetValue[];
+    @OneToMany(() => FacetValue, (value) => value.facet)
+    values: FacetValue[];
 }

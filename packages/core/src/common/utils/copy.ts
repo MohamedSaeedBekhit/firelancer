@@ -4,11 +4,11 @@ export type PlainObject = { [key in string | number | symbol]: unknown };
 
 /** Returns the object type of the given payload */
 export function getType(payload: unknown): string {
-  return Object.prototype.toString.call(payload).slice(8, -1);
+    return Object.prototype.toString.call(payload).slice(8, -1);
 }
 
 export function isArray(payload: unknown): payload is unknown[] {
-  return getType(payload) === 'Array';
+    return getType(payload) === 'Array';
 }
 
 /**
@@ -16,9 +16,9 @@ export function isArray(payload: unknown): payload is unknown[] {
  * with other prototypes)
  */
 export function isPlainObject(payload: unknown): payload is PlainObject {
-  if (getType(payload) !== 'Object') return false;
-  const prototype = Object.getPrototypeOf(payload);
-  return !!prototype && prototype.constructor === Object && prototype === Object.prototype;
+    if (getType(payload) !== 'Object') return false;
+    const prototype = Object.getPrototypeOf(payload);
+    return !!prototype && prototype.constructor === Object && prototype === Object.prototype;
 }
 
 export type Options = { props?: (string | symbol)[]; nonenumerable?: boolean };
@@ -31,43 +31,43 @@ export type Options = { props?: (string | symbol)[]; nonenumerable?: boolean };
  * @returns the target with replaced values
  */
 export function copy<T>(target: T, options: Options = {}): T {
-  if (isArray(target)) {
-    return target.map((item) => copy(item, options)) as any;
-  }
-
-  if (!isPlainObject(target)) {
-    return target;
-  }
-
-  const props = Object.getOwnPropertyNames(target);
-  const symbols = Object.getOwnPropertySymbols(target);
-
-  return [...props, ...symbols].reduce<any>((carry, key) => {
-    if (isArray(options.props) && !options.props.includes(key)) {
-      return carry;
+    if (isArray(target)) {
+        return target.map((item) => copy(item, options)) as any;
     }
-    const val = (target as any)[key];
-    const newVal = copy(val, options);
-    assignProp(carry, key, newVal, target, options.nonenumerable);
-    return carry;
-  }, {} as T);
+
+    if (!isPlainObject(target)) {
+        return target;
+    }
+
+    const props = Object.getOwnPropertyNames(target);
+    const symbols = Object.getOwnPropertySymbols(target);
+
+    return [...props, ...symbols].reduce<any>((carry, key) => {
+        if (isArray(options.props) && !options.props.includes(key)) {
+            return carry;
+        }
+        const val = (target as any)[key];
+        const newVal = copy(val, options);
+        assignProp(carry, key, newVal, target, options.nonenumerable);
+        return carry;
+    }, {} as T);
 }
 
 function assignProp(
-  carry: PlainObject,
-  key: string | symbol,
-  newVal: any,
-  originalObject: PlainObject,
-  includeNonenumerable?: boolean,
+    carry: PlainObject,
+    key: string | symbol,
+    newVal: any,
+    originalObject: PlainObject,
+    includeNonenumerable?: boolean,
 ): void {
-  const propType = {}.propertyIsEnumerable.call(originalObject, key) ? 'enumerable' : 'nonenumerable';
-  if (propType === 'enumerable') carry[key as any] = newVal;
-  if (includeNonenumerable && propType === 'nonenumerable') {
-    Object.defineProperty(carry, key, {
-      value: newVal,
-      enumerable: false,
-      writable: true,
-      configurable: true,
-    });
-  }
+    const propType = {}.propertyIsEnumerable.call(originalObject, key) ? 'enumerable' : 'nonenumerable';
+    if (propType === 'enumerable') carry[key as any] = newVal;
+    if (includeNonenumerable && propType === 'nonenumerable') {
+        Object.defineProperty(carry, key, {
+            value: newVal,
+            enumerable: false,
+            writable: true,
+            configurable: true,
+        });
+    }
 }

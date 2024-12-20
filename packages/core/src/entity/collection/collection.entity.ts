@@ -11,44 +11,44 @@ import { JobPost } from '../job-post/job-post.entity';
 @Entity()
 @Tree('closure-table')
 export class Collection extends FirelancerEntity implements Orderable {
-  constructor(input?: DeepPartial<Collection>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Collection>) {
+        super(input);
+    }
 
-  @Column({ default: false })
-  isRoot: boolean;
+    @Column({ default: false })
+    isRoot: boolean;
 
-  @Column()
-  position: number;
+    @Column()
+    position: number;
 
-  @Column({ default: false })
-  isPrivate: boolean;
+    @Column({ default: false })
+    isPrivate: boolean;
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @Column()
-  description: string;
+    @Column()
+    description: string;
 
-  @Column()
-  slug: string;
+    @Column()
+    slug: string;
 
-  @Column('simple-json')
-  filters: ConfigurableOperation[];
+    @Column('simple-json')
+    filters: ConfigurableOperation[];
 
-  @Column({ default: true })
-  inheritFilters: boolean;
+    @Column({ default: true })
+    inheritFilters: boolean;
 
-  @ManyToMany(() => JobPost, (jobPost) => jobPost.collections)
-  @JoinTable()
-  jobPosts: JobPost[];
+    @ManyToMany(() => JobPost, (jobPost) => jobPost.collections)
+    @JoinTable()
+    jobPosts: JobPost[];
 
-  @TreeChildren()
-  children: Collection[];
+    @TreeChildren()
+    children: Collection[];
 
-  @TreeParent()
-  parent: Collection;
+    @TreeParent()
+    parent: Collection;
 
-  @Column({ nullable: true })
-  parentId: ID;
+    @Column({ nullable: true })
+    parentId: ID;
 }

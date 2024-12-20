@@ -8,11 +8,11 @@ import { FirelancerEvent } from '../firelancer-event';
  * If the "native" strategy is used, the additional `identifier` property will be available.
  */
 export class AttemptedLoginEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public strategy: string,
-    public identifier?: string,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public strategy: string,
+        public identifier?: string,
+    ) {
+        super();
+    }
 }

@@ -8,11 +8,11 @@ import { HistoryEntry } from './history-entry.entity';
  */
 @ChildEntity()
 export class CustomerHistoryEntry extends HistoryEntry {
-  constructor(input: DeepPartial<CustomerHistoryEntry>) {
-    super(input);
-  }
+    constructor(input: DeepPartial<CustomerHistoryEntry>) {
+        super(input);
+    }
 
-  @Index()
-  @ManyToOne(() => Customer, { onDelete: 'CASCADE' })
-  customer: Customer;
+    @Index()
+    @ManyToOne(() => Customer, { onDelete: 'CASCADE' })
+    customer: Customer;
 }

@@ -12,6 +12,6 @@ import { InjectableStrategy } from '../../../common/injectable-strategy';
  * :::
  */
 export interface PasswordHashingStrategy extends InjectableStrategy {
-  hash(plaintext: string): Promise<string>;
-  check(plaintext: string, hash: string): Promise<boolean>;
+    hash(plaintext: string): Promise<string>;
+    check(plaintext: string, hash: string): Promise<boolean>;
 }

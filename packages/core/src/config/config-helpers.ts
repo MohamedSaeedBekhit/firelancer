@@ -8,7 +8,7 @@ export let activeConfig: RuntimeFirelancerConfig;
  * Reset the activeConfig object back to the initial default state.
  */
 export function resetConfig() {
-  activeConfig = defaultConfig;
+    activeConfig = defaultConfig;
 }
 
 /**
@@ -16,10 +16,10 @@ export function resetConfig() {
  * bootstrapping the app.
  */
 export async function setConfig(userConfig: PartialFirelancerConfig) {
-  if (!activeConfig) {
-    activeConfig = defaultConfig;
-  }
-  activeConfig = merge(activeConfig, userConfig) as unknown as RuntimeFirelancerConfig;
+    if (!activeConfig) {
+        activeConfig = defaultConfig;
+    }
+    activeConfig = merge(activeConfig, userConfig) as unknown as RuntimeFirelancerConfig;
 }
 
 /**
@@ -27,9 +27,9 @@ export async function setConfig(userConfig: PartialFirelancerConfig) {
  * do not go through the normal bootstrap process.
  */
 export async function ensureConfigLoaded() {
-  if (!activeConfig) {
-    activeConfig = defaultConfig;
-  }
+    if (!activeConfig) {
+        activeConfig = defaultConfig;
+    }
 }
 
 /**
@@ -38,13 +38,13 @@ export async function ensureConfigLoaded() {
  * should be used to access config settings.
  */
 export function getConfig(): Readonly<RuntimeFirelancerConfig> {
-  if (!activeConfig) {
-    try {
-      activeConfig = defaultConfig;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      console.log('Error loading config. If this is a test, make sure you have called ensureConfigLoaded() before using the config.');
+    if (!activeConfig) {
+        try {
+            activeConfig = defaultConfig;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+            console.log('Error loading config. If this is a test, make sure you have called ensureConfigLoaded() before using the config.');
+        }
     }
-  }
-  return activeConfig;
+    return activeConfig;
 }

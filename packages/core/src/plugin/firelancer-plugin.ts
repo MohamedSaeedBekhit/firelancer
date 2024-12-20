@@ -14,45 +14,45 @@ import { PLUGIN_METADATA } from './plugin-metadata';
  * extra properties specific to Firelancer.
  */
 export interface FirelancerPluginMetadata extends ModuleMetadata {
-  /**
-   * @description
-   * A function which can modify the FirelancerConfig object before the server bootstraps.
-   */
-  configuration?: PluginConfigurationFn;
-  /**
-   * @description
-   * The plugin may extend the default Firelancer REST shop api by providing extended
-   * schema definitions and any required resolvers.
-   */
-  shopApiExtensions?: APIExtensionDefinition;
-  /**
-   * @description
-   * The plugin may extend the default Firelancer REST admin api by providing extended
-   * schema definitions and any required resolvers.
-   */
-  adminApiExtensions?: APIExtensionDefinition;
-  /**
-   * @description
-   * The plugin may define custom [TypeORM database entities](https://typeorm.io/#/entities).
-   */
-  entities?: Array<Type<unknown>> | (() => Array<Type<unknown>>);
-  /**
-   * @description
-   * The plugin should define a valid [semver version string](https://www.npmjs.com/package/semver) to indicate which versions of
-   * firelancer core it is compatible with. Attempting to use a plugin with an incompatible
-   * version of firelancer will result in an error and the server will be unable to bootstrap.
-   *
-   * If a plugin does not define this property, a message will be logged on bootstrap that the plugin is not
-   * guaranteed to be compatible with the current version of Firelancer.
-   *
-   * To effectively disable this check for a plugin, you can use an overly-permissive string such as `>0.0.0`.
-   *
-   * @example
-   * ```ts
-   * compatibility: '^3.0.0'
-   * ```
-   */
-  compatibility?: string;
+    /**
+     * @description
+     * A function which can modify the FirelancerConfig object before the server bootstraps.
+     */
+    configuration?: PluginConfigurationFn;
+    /**
+     * @description
+     * The plugin may extend the default Firelancer REST shop api by providing extended
+     * schema definitions and any required resolvers.
+     */
+    shopApiExtensions?: APIExtensionDefinition;
+    /**
+     * @description
+     * The plugin may extend the default Firelancer REST admin api by providing extended
+     * schema definitions and any required resolvers.
+     */
+    adminApiExtensions?: APIExtensionDefinition;
+    /**
+     * @description
+     * The plugin may define custom [TypeORM database entities](https://typeorm.io/#/entities).
+     */
+    entities?: Array<Type<unknown>> | (() => Array<Type<unknown>>);
+    /**
+     * @description
+     * The plugin should define a valid [semver version string](https://www.npmjs.com/package/semver) to indicate which versions of
+     * firelancer core it is compatible with. Attempting to use a plugin with an incompatible
+     * version of firelancer will result in an error and the server will be unable to bootstrap.
+     *
+     * If a plugin does not define this property, a message will be logged on bootstrap that the plugin is not
+     * guaranteed to be compatible with the current version of Firelancer.
+     *
+     * To effectively disable this check for a plugin, you can use an overly-permissive string such as `>0.0.0`.
+     *
+     * @example
+     * ```ts
+     * compatibility: '^3.0.0'
+     * ```
+     */
+    compatibility?: string;
 }
 
 /**
@@ -61,12 +61,12 @@ export interface FirelancerPluginMetadata extends ModuleMetadata {
  * */
 
 export interface APIExtensionDefinition {
-  /**
-   * @description
-   * An array of controllers. Should be defined as [Nestjs REST Controller](https://docs.nestjs.com/controllers)
-   * classes, i.e. using the Nest `\@Resolver()` decorator etc.
-   */
-  controllers?: Array<Type<unknown>> | (() => Array<Type<unknown>>);
+    /**
+     * @description
+     * An array of controllers. Should be defined as [Nestjs REST Controller](https://docs.nestjs.com/controllers)
+     * classes, i.e. using the Nest `\@Resolver()` decorator etc.
+     */
+    controllers?: Array<Type<unknown>> | (() => Array<Type<unknown>>);
 }
 
 /**
@@ -105,31 +105,31 @@ export type PluginConfigurationFn = (config: RuntimeFirelancerConfig) => Runtime
  * ```
  */
 export function FirelancerPlugin(pluginMetadata: FirelancerPluginMetadata): ClassDecorator {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  return (target: Function) => {
-    for (const metadataProperty of Object.values(PLUGIN_METADATA)) {
-      const property = metadataProperty as keyof FirelancerPluginMetadata;
-      if (pluginMetadata[property] != null) {
-        Reflect.defineMetadata(property, pluginMetadata[property], target);
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const nestModuleMetadata = pick(pluginMetadata, Object.values(MODULE_METADATA) as any);
-    const nestGlobalProviderTokens = [APP_INTERCEPTOR, APP_FILTER, APP_GUARD, APP_PIPE];
-    const exportedProviders = (nestModuleMetadata.providers || []).filter((provider) => {
-      if (isNamedProvider(provider)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (nestGlobalProviderTokens.includes(provider.provide as any)) {
-          return false;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    return (target: Function) => {
+        for (const metadataProperty of Object.values(PLUGIN_METADATA)) {
+            const property = metadataProperty as keyof FirelancerPluginMetadata;
+            if (pluginMetadata[property] != null) {
+                Reflect.defineMetadata(property, pluginMetadata[property], target);
+            }
         }
-      }
-      return true;
-    });
-    nestModuleMetadata.exports = [...(nestModuleMetadata.exports || []), ...exportedProviders];
-    Module(nestModuleMetadata)(target);
-  };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const nestModuleMetadata = pick(pluginMetadata, Object.values(MODULE_METADATA) as any);
+        const nestGlobalProviderTokens = [APP_INTERCEPTOR, APP_FILTER, APP_GUARD, APP_PIPE];
+        const exportedProviders = (nestModuleMetadata.providers || []).filter((provider) => {
+            if (isNamedProvider(provider)) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                if (nestGlobalProviderTokens.includes(provider.provide as any)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        nestModuleMetadata.exports = [...(nestModuleMetadata.exports || []), ...exportedProviders];
+        Module(nestModuleMetadata)(target);
+    };
 }
 
 function isNamedProvider(provider: Provider): provider is Exclude<Provider, NestType<unknown>> {
-  return Object.prototype.hasOwnProperty.call(provider, 'provide');
+    return Object.prototype.hasOwnProperty.call(provider, 'provide');
 }

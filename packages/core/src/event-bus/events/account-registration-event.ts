@@ -8,10 +8,10 @@ import { FirelancerEvent } from '../firelancer-event';
  * placing an order.
  */
 export class AccountRegistrationEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public user: User,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public user: User,
+    ) {
+        super();
+    }
 }

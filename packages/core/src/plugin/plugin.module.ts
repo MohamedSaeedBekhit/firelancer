@@ -7,13 +7,13 @@ import { ConfigModule } from '../config/config.module';
  * modules.
  */
 @Module({
-  imports: [ConfigModule],
+    imports: [ConfigModule],
 })
 export class PluginModule {
-  static forRoot(): DynamicModule {
-    return {
-      module: PluginModule,
-      imports: [...getConfig().plugins],
-    };
-  }
+    static forRoot(): DynamicModule {
+        return {
+            module: PluginModule,
+            imports: [...getConfig().plugins],
+        };
+    }
 }

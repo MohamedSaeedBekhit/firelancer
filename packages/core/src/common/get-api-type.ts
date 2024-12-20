@@ -11,12 +11,12 @@ export type ApiType = 'admin' | 'shop' | 'custom';
  * Determines which API the request came through based on the path.
  */
 export function getApiType(req: Request): ApiType {
-  const { apiOptions } = getConfig();
-  const apiType = req.path.split('/').filter(Boolean)[0];
-  if (apiType == apiOptions.adminApiPath) {
-    return 'admin';
-  } else if (apiType == apiOptions.shopApiPath) {
-    return 'shop';
-  }
-  return 'custom';
+    const { apiOptions } = getConfig();
+    const apiType = req.path.split('/').filter(Boolean)[0];
+    if (apiType == apiOptions.adminApiPath) {
+        return 'admin';
+    } else if (apiType == apiOptions.shopApiPath) {
+        return 'shop';
+    }
+    return 'custom';
 }

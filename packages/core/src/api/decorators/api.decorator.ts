@@ -20,6 +20,6 @@ import { getApiType } from '../../common/get-api-type';
  * ```
  */
 export const Api = createParamDecorator((data, ctx: ExecutionContext) => {
-  const info = ctx.getArgByIndex(3);
-  return getApiType(info);
+    const info = ctx.getArgByIndex(3);
+    return getApiType(info);
 });

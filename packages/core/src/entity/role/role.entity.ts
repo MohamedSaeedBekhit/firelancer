@@ -8,16 +8,16 @@ import { FirelancerEntity } from '../base/base.entity';
  */
 @Entity()
 export class Role extends FirelancerEntity {
-  constructor(input?: DeepPartial<Role>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Role>) {
+        super(input);
+    }
 
-  @Column()
-  code: string;
+    @Column()
+    code: string;
 
-  @Column()
-  description: string;
+    @Column()
+    description: string;
 
-  @Column('simple-array')
-  permissions: Permission[];
+    @Column('simple-array')
+    permissions: Permission[];
 }

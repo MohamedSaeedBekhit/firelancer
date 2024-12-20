@@ -8,11 +8,11 @@ import { FirelancerEvent } from '../firelancer-event';
  * associated with their account.
  */
 export class IdentifierChangeEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public user: User,
-    public oldIdentifier: string,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public user: User,
+        public oldIdentifier: string,
+    ) {
+        super();
+    }
 }

@@ -8,17 +8,17 @@ import { AuthenticationMethod } from './authentication-method.entity';
  */
 @ChildEntity()
 export class ExternalAuthenticationMethod extends AuthenticationMethod {
-  constructor(input: DeepPartial<ExternalAuthenticationMethod>) {
-    super(input);
-  }
+    constructor(input: DeepPartial<ExternalAuthenticationMethod>) {
+        super(input);
+    }
 
-  @Column()
-  strategy: string;
+    @Column()
+    strategy: string;
 
-  @Column()
-  externalIdentifier: string;
+    @Column()
+    externalIdentifier: string;
 
-  @Column('simple-json')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  metadata: any;
+    @Column('simple-json')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    metadata: any;
 }

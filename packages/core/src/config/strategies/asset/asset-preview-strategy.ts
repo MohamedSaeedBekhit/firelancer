@@ -18,5 +18,5 @@ import { InjectableStrategy, RequestContext } from '../../../common';
  * :::
  */
 export interface AssetPreviewStrategy extends InjectableStrategy {
-  generatePreviewImage(ctx: RequestContext, mimeType: string, data: Buffer): Promise<Buffer>;
+    generatePreviewImage(ctx: RequestContext, mimeType: string, data: Buffer): Promise<Buffer>;
 }

@@ -8,10 +8,10 @@ import { FirelancerEvent } from '../firelancer-event';
  * the `verifyCustomerAccount` mutation was executed.
  */
 export class AccountVerifiedEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public customer: Customer,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public customer: Customer,
+    ) {
+        super();
+    }
 }

@@ -9,7 +9,7 @@ import type { User } from '../user/user.entity';
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class AuthenticationMethod extends FirelancerEntity {
-  @Index()
-  @ManyToOne('User', 'authenticationMethods')
-  user: User;
+    @Index()
+    @ManyToOne('User', 'authenticationMethods')
+    user: User;
 }

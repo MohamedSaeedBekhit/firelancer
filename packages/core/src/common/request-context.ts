@@ -9,38 +9,38 @@ import { isObject } from './utils';
 import intersect from './utils/intersect';
 
 export type SerializedRequestContext = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  _req?: any;
-  _session: JsonCompatible<Required<CachedSession>>;
-  _apiType: ApiType;
-  _isAuthorized: boolean;
-  _authorizedAsOwnerOnly: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    _req?: any;
+    _session: JsonCompatible<Required<CachedSession>>;
+    _apiType: ApiType;
+    _isAuthorized: boolean;
+    _authorizedAsOwnerOnly: boolean;
 };
 
 /**
  * This object is used to store the RequestContext on the Express Request object.
  */
 interface RequestContextStore {
-  /**
-   * This is the default RequestContext for the handler.
-   */
-  default: RequestContext;
-  /**
-   * If a transaction is started, the resulting RequestContext is stored here.
-   * This RequestContext will have a transaction manager attached via the
-   * TRANSACTION_MANAGER_KEY symbol.
-   *
-   * When a transaction is started, the TRANSACTION_MANAGER_KEY symbol is added to the RequestContext
-   * object. This is then detected inside the internal_setRequestContext function and the
-   * RequestContext object is stored in the RequestContextStore under the withTransactionManager key.
-   */
-  withTransactionManager?: RequestContext;
+    /**
+     * This is the default RequestContext for the handler.
+     */
+    default: RequestContext;
+    /**
+     * If a transaction is started, the resulting RequestContext is stored here.
+     * This RequestContext will have a transaction manager attached via the
+     * TRANSACTION_MANAGER_KEY symbol.
+     *
+     * When a transaction is started, the TRANSACTION_MANAGER_KEY symbol is added to the RequestContext
+     * object. This is then detected inside the internal_setRequestContext function and the
+     * RequestContext object is stored in the RequestContextStore under the withTransactionManager key.
+     */
+    withTransactionManager?: RequestContext;
 }
 
 interface RequestWithStores extends Request {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  [REQUEST_CONTEXT_MAP_KEY]?: Map<Function, RequestContextStore> | undefined;
-  [REQUEST_CONTEXT_KEY]?: RequestContextStore | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    [REQUEST_CONTEXT_MAP_KEY]?: Map<Function, RequestContextStore> | undefined;
+    [REQUEST_CONTEXT_KEY]?: RequestContextStore | undefined;
 }
 
 /**
@@ -52,33 +52,33 @@ interface RequestWithStores extends Request {
  * and retrieve the `RequestContext` in a resolver:
  */
 export function internal_setRequestContext(req: RequestWithStores, ctx: RequestContext, executionContext?: ExecutionContext) {
-  // If we have access to the `ExecutionContext`, it means we are able to bind
-  // the `ctx` object to the specific "handler", i.e. the controller (for REST).
-  let item: RequestContextStore | undefined;
-  if (executionContext && typeof executionContext.getHandler === 'function') {
-    const map = req[REQUEST_CONTEXT_MAP_KEY] || new Map();
-    item = map.get(executionContext.getHandler());
-    const ctxHasTransaction = Object.getOwnPropertySymbols(ctx).includes(TRANSACTION_MANAGER_KEY);
-    if (item) {
-      item.default = item.default ?? ctx;
-      if (ctxHasTransaction) {
-        item.withTransactionManager = ctx;
-      }
-    } else {
-      item = {
-        default: ctx,
-        withTransactionManager: ctxHasTransaction ? ctx : undefined,
-      };
-    }
-    map.set(executionContext.getHandler(), item);
+    // If we have access to the `ExecutionContext`, it means we are able to bind
+    // the `ctx` object to the specific "handler", i.e. the controller (for REST).
+    let item: RequestContextStore | undefined;
+    if (executionContext && typeof executionContext.getHandler === 'function') {
+        const map = req[REQUEST_CONTEXT_MAP_KEY] || new Map();
+        item = map.get(executionContext.getHandler());
+        const ctxHasTransaction = Object.getOwnPropertySymbols(ctx).includes(TRANSACTION_MANAGER_KEY);
+        if (item) {
+            item.default = item.default ?? ctx;
+            if (ctxHasTransaction) {
+                item.withTransactionManager = ctx;
+            }
+        } else {
+            item = {
+                default: ctx,
+                withTransactionManager: ctxHasTransaction ? ctx : undefined,
+            };
+        }
+        map.set(executionContext.getHandler(), item);
 
-    req[REQUEST_CONTEXT_MAP_KEY] = map;
-  }
-  // We also bind to a shared key so that we can access the `ctx` object
-  // later even if we don't have a reference to the `ExecutionContext`
-  req[REQUEST_CONTEXT_KEY] = item ?? {
-    default: ctx,
-  };
+        req[REQUEST_CONTEXT_MAP_KEY] = map;
+    }
+    // We also bind to a shared key so that we can access the `ctx` object
+    // later even if we don't have a reference to the `ExecutionContext`
+    req[REQUEST_CONTEXT_KEY] = item ?? {
+        default: ctx,
+    };
 }
 
 /**
@@ -87,29 +87,29 @@ export function internal_setRequestContext(req: RequestWithStores, ctx: RequestC
  * for more details on this mechanism.
  */
 export function internal_getRequestContext(req: RequestWithStores, executionContext?: ExecutionContext): RequestContext | undefined {
-  let item: RequestContextStore | undefined;
-  if (executionContext && typeof executionContext.getHandler === 'function') {
-    const map = req[REQUEST_CONTEXT_MAP_KEY];
-    item = map?.get(executionContext.getHandler());
-    // If we have a ctx associated with the current handler (resolver function), we
-    // return it. Otherwise, we fall back to the shared key which will be there.
-    if (item) {
-      return item.withTransactionManager || item.default;
+    let item: RequestContextStore | undefined;
+    if (executionContext && typeof executionContext.getHandler === 'function') {
+        const map = req[REQUEST_CONTEXT_MAP_KEY];
+        item = map?.get(executionContext.getHandler());
+        // If we have a ctx associated with the current handler (resolver function), we
+        // return it. Otherwise, we fall back to the shared key which will be there.
+        if (item) {
+            return item.withTransactionManager || item.default;
+        }
     }
-  }
 
-  if (!item) {
-    item = req[REQUEST_CONTEXT_KEY];
-  }
+    if (!item) {
+        item = req[REQUEST_CONTEXT_KEY];
+    }
 
-  const transactionalCtx =
-    item?.withTransactionManager &&
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item.withTransactionManager as any as EntityManager | undefined)?.queryRunner?.isReleased === false
-      ? item.withTransactionManager
-      : undefined;
+    const transactionalCtx =
+        item?.withTransactionManager &&
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (item.withTransactionManager as any as EntityManager | undefined)?.queryRunner?.isReleased === false
+            ? item.withTransactionManager
+            : undefined;
 
-  return transactionalCtx || item?.default;
+    return transactionalCtx || item?.default;
 }
 
 /**
@@ -133,188 +133,188 @@ export function internal_getRequestContext(req: RequestWithStores, executionCont
  * ```
  */
 export class RequestContext {
-  private readonly _req?: Request;
-  private readonly _session?: CachedSession;
-  private readonly _apiType: ApiType;
-  private readonly _isAuthorized: boolean;
-  private readonly _authorizedAsOwnerOnly: boolean;
+    private readonly _req?: Request;
+    private readonly _session?: CachedSession;
+    private readonly _apiType: ApiType;
+    private readonly _isAuthorized: boolean;
+    private readonly _authorizedAsOwnerOnly: boolean;
 
-  constructor(options: {
-    req?: Request;
-    apiType: ApiType;
-    session?: CachedSession;
-    isAuthorized: boolean;
-    authorizedAsOwnerOnly: boolean;
-  }) {
-    const { req, apiType, session } = options;
-    this._req = req;
-    this._apiType = apiType;
-    this._session = session;
-    this._isAuthorized = options.isAuthorized;
-    this._authorizedAsOwnerOnly = options.authorizedAsOwnerOnly;
-  }
-
-  /**
-   * @description
-   * Creates an "empty" RequestContext object. This is only intended to be used
-   * when a service method must be called outside the normal request-response
-   * cycle, e.g. when programmatically populating data. Usually a better alternative
-   * is to use the RequestContextService `create()` method, which allows more control
-   * over the resulting RequestContext object.
-   */
-  static empty(): RequestContext {
-    return new RequestContext({
-      apiType: 'admin',
-      isAuthorized: true,
-      authorizedAsOwnerOnly: false,
-    });
-  }
-
-  /**
-   * @description
-   * Returns `true` if there is an active Session & User associated with this request,
-   * and that User has the specified permissions.
-   */
-  userHasPermissions(permissions: Permission[]): boolean {
-    const user = this.session?.user;
-    if (!user) {
-      return false;
+    constructor(options: {
+        req?: Request;
+        apiType: ApiType;
+        session?: CachedSession;
+        isAuthorized: boolean;
+        authorizedAsOwnerOnly: boolean;
+    }) {
+        const { req, apiType, session } = options;
+        this._req = req;
+        this._apiType = apiType;
+        this._session = session;
+        this._isAuthorized = options.isAuthorized;
+        this._authorizedAsOwnerOnly = options.authorizedAsOwnerOnly;
     }
-    if (permissions.length === 0) {
-      return true;
+
+    /**
+     * @description
+     * Creates an "empty" RequestContext object. This is only intended to be used
+     * when a service method must be called outside the normal request-response
+     * cycle, e.g. when programmatically populating data. Usually a better alternative
+     * is to use the RequestContextService `create()` method, which allows more control
+     * over the resulting RequestContext object.
+     */
+    static empty(): RequestContext {
+        return new RequestContext({
+            apiType: 'admin',
+            isAuthorized: true,
+            authorizedAsOwnerOnly: false,
+        });
     }
-    const matched = intersect(permissions, user.permissions);
-    const hasPermissions = permissions.length === matched.length;
 
-    return hasPermissions;
-  }
-
-  /**
-   * @description
-   * Creates a new RequestContext object from a serialized object created by the
-   * `serialize()` method.
-   */
-  static deserialize(ctxObject: SerializedRequestContext): RequestContext {
-    return new RequestContext({
-      req: ctxObject._req,
-      apiType: ctxObject._apiType,
-      session: {
-        ...ctxObject._session,
-        expires: ctxObject._session?.expires && new Date(ctxObject._session.expires),
-      },
-      isAuthorized: ctxObject._isAuthorized,
-      authorizedAsOwnerOnly: ctxObject._authorizedAsOwnerOnly,
-    });
-  }
-
-  /**
-   * @description
-   * Serializes the RequestContext object into a JSON-compatible simple object.
-   * This is useful when you need to send a RequestContext object to another
-   * process, e.g. to pass it to the Job Queue via the JobQueueService.
-   */
-  serialize(): SerializedRequestContext {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const serializableThis: any = Object.assign({}, this);
-    if (this._req) {
-      serializableThis._req = this.shallowCloneRequestObject(this._req);
-    }
-    return JSON.parse(JSON.stringify(serializableThis));
-  }
-
-  /**
-   * @description
-   * Creates a shallow copy of the RequestContext instance. This means that
-   * mutations to the copy itself will not affect the original,
-   * but deep mutations *will* also affect the original.
-   */
-  copy(): RequestContext {
-    return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
-  }
-
-  /**
-   * The Express "Request" object is huge and contains many circular
-   * references. We will preserve just a subset of the whole, by preserving
-   * only the serializable properties up to 2 levels deep.
-   * @private
-   */
-  private shallowCloneRequestObject(req: Request) {
-    function copySimpleFieldsToDepth(target: any, maxDepth: number, depth: number = 0) {
-      const result: any = {};
-      // eslint-disable-next-line guard-for-in
-      for (const key in target) {
-        if (key === 'host' && depth === 0) {
-          // avoid Express "deprecated: req.host" warning
-          continue;
+    /**
+     * @description
+     * Returns `true` if there is an active Session & User associated with this request,
+     * and that User has the specified permissions.
+     */
+    userHasPermissions(permissions: Permission[]): boolean {
+        const user = this.session?.user;
+        if (!user) {
+            return false;
         }
-        let val: any;
-        try {
-          val = target[key];
-        } catch (e: any) {
-          val = String(e);
+        if (permissions.length === 0) {
+            return true;
         }
+        const matched = intersect(permissions, user.permissions);
+        const hasPermissions = permissions.length === matched.length;
 
-        if (Array.isArray(val)) {
-          depth++;
-          result[key] = val.map((v) => {
-            if (!isObject(v) && typeof val !== 'function') {
-              return v;
-            } else {
-              return copySimpleFieldsToDepth(v, maxDepth, depth);
+        return hasPermissions;
+    }
+
+    /**
+     * @description
+     * Creates a new RequestContext object from a serialized object created by the
+     * `serialize()` method.
+     */
+    static deserialize(ctxObject: SerializedRequestContext): RequestContext {
+        return new RequestContext({
+            req: ctxObject._req,
+            apiType: ctxObject._apiType,
+            session: {
+                ...ctxObject._session,
+                expires: ctxObject._session?.expires && new Date(ctxObject._session.expires),
+            },
+            isAuthorized: ctxObject._isAuthorized,
+            authorizedAsOwnerOnly: ctxObject._authorizedAsOwnerOnly,
+        });
+    }
+
+    /**
+     * @description
+     * Serializes the RequestContext object into a JSON-compatible simple object.
+     * This is useful when you need to send a RequestContext object to another
+     * process, e.g. to pass it to the Job Queue via the JobQueueService.
+     */
+    serialize(): SerializedRequestContext {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const serializableThis: any = Object.assign({}, this);
+        if (this._req) {
+            serializableThis._req = this.shallowCloneRequestObject(this._req);
+        }
+        return JSON.parse(JSON.stringify(serializableThis));
+    }
+
+    /**
+     * @description
+     * Creates a shallow copy of the RequestContext instance. This means that
+     * mutations to the copy itself will not affect the original,
+     * but deep mutations *will* also affect the original.
+     */
+    copy(): RequestContext {
+        return Object.assign(Object.create(Object.getPrototypeOf(this)), this);
+    }
+
+    /**
+     * The Express "Request" object is huge and contains many circular
+     * references. We will preserve just a subset of the whole, by preserving
+     * only the serializable properties up to 2 levels deep.
+     * @private
+     */
+    private shallowCloneRequestObject(req: Request) {
+        function copySimpleFieldsToDepth(target: any, maxDepth: number, depth: number = 0) {
+            const result: any = {};
+            // eslint-disable-next-line guard-for-in
+            for (const key in target) {
+                if (key === 'host' && depth === 0) {
+                    // avoid Express "deprecated: req.host" warning
+                    continue;
+                }
+                let val: any;
+                try {
+                    val = target[key];
+                } catch (e: any) {
+                    val = String(e);
+                }
+
+                if (Array.isArray(val)) {
+                    depth++;
+                    result[key] = val.map((v) => {
+                        if (!isObject(v) && typeof val !== 'function') {
+                            return v;
+                        } else {
+                            return copySimpleFieldsToDepth(v, maxDepth, depth);
+                        }
+                    });
+                    depth--;
+                } else if (!isObject(val) && typeof val !== 'function') {
+                    result[key] = val;
+                } else if (depth < maxDepth) {
+                    depth++;
+                    result[key] = copySimpleFieldsToDepth(val, maxDepth, depth);
+                    depth--;
+                }
             }
-          });
-          depth--;
-        } else if (!isObject(val) && typeof val !== 'function') {
-          result[key] = val;
-        } else if (depth < maxDepth) {
-          depth++;
-          result[key] = copySimpleFieldsToDepth(val, maxDepth, depth);
-          depth--;
+            return result;
         }
-      }
-      return result;
+        return copySimpleFieldsToDepth(req, 1);
     }
-    return copySimpleFieldsToDepth(req, 1);
-  }
 
-  /**
-   * @description
-   * The raw Express request object.
-   */
-  get req(): Request | undefined {
-    return this._req;
-  }
+    /**
+     * @description
+     * The raw Express request object.
+     */
+    get req(): Request | undefined {
+        return this._req;
+    }
 
-  /**
-   * @description
-   * Signals which API this request was received by, e.g. `admin` or `shop`.
-   */
-  get apiType(): ApiType {
-    return this._apiType;
-  }
+    /**
+     * @description
+     * Signals which API this request was received by, e.g. `admin` or `shop`.
+     */
+    get apiType(): ApiType {
+        return this._apiType;
+    }
 
-  get session(): CachedSession | undefined {
-    return this._session;
-  }
+    get session(): CachedSession | undefined {
+        return this._session;
+    }
 
-  get activeUserId(): ID | undefined {
-    return this.session?.user?.id;
-  }
+    get activeUserId(): ID | undefined {
+        return this.session?.user?.id;
+    }
 
-  /**
-   * @description
-   * True if the current session is authorized to access the current controller method.
-   */
-  get isAuthorized(): boolean {
-    return this._isAuthorized;
-  }
+    /**
+     * @description
+     * True if the current session is authorized to access the current controller method.
+     */
+    get isAuthorized(): boolean {
+        return this._isAuthorized;
+    }
 
-  /**
-   * @description
-   * True if the current anonymous session is only authorized to operate on entities that
-   * are owned by the current session.
-   */
-  get authorizedAsOwnerOnly(): boolean {
-    return this._authorizedAsOwnerOnly;
-  }
+    /**
+     * @description
+     * True if the current anonymous session is only authorized to operate on entities that
+     * are owned by the current session.
+     */
+    get authorizedAsOwnerOnly(): boolean {
+        return this._authorizedAsOwnerOnly;
+    }
 }

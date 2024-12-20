@@ -5,13 +5,13 @@ import { JobConfig } from '../../../job-queue/types';
 
 @Entity()
 export class JobRecordBuffer extends FirelancerEntity {
-  constructor(input: DeepPartial<JobRecordBuffer>) {
-    super(input);
-  }
+    constructor(input: DeepPartial<JobRecordBuffer>) {
+        super(input);
+    }
 
-  @Column()
-  bufferId: string;
+    @Column()
+    bufferId: string;
 
-  @Column('simple-json')
-  job: JobConfig<any>;
+    @Column('simple-json')
+    job: JobConfig<any>;
 }

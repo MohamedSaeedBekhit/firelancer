@@ -10,7 +10,7 @@ type AssetInputTypes = CreateAssetInput | UpdateAssetInput | ID;
  * This event is fired whenever a Asset is added, updated or deleted.
  */
 export class AssetEvent extends FirelancerEntityEvent<Asset, AssetInputTypes> {
-  constructor(ctx: RequestContext, entity: Asset, type: 'created' | 'updated' | 'deleted', input?: AssetInputTypes) {
-    super(entity, type, ctx, input);
-  }
+    constructor(ctx: RequestContext, entity: Asset, type: 'created' | 'updated' | 'deleted', input?: AssetInputTypes) {
+        super(entity, type, ctx, input);
+    }
 }

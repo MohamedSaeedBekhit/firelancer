@@ -8,10 +8,10 @@ import { ID, Permission } from '../../../common/shared-types';
  *
  */
 export type CachedSessionUser = {
-  id: ID;
-  identifier: string;
-  verified: boolean;
-  permissions: Permission[];
+    id: ID;
+    identifier: string;
+    verified: boolean;
+    permissions: Permission[];
 };
 
 /**
@@ -20,17 +20,17 @@ export type CachedSessionUser = {
  * store.
  */
 export type CachedSession = {
-  /**
-   * @description
-   * The timestamp after which this cache entry is considered stale and
-   * a fresh copy of the data will be set. Based on the `sessionCacheTTL` option.
-   */
-  id: ID;
-  user?: CachedSessionUser;
-  token: string;
-  expires: Date;
-  authenticationStrategy?: string;
-  cacheExpiry: number;
+    /**
+     * @description
+     * The timestamp after which this cache entry is considered stale and
+     * a fresh copy of the data will be set. Based on the `sessionCacheTTL` option.
+     */
+    id: ID;
+    user?: CachedSessionUser;
+    token: string;
+    expires: Date;
+    authenticationStrategy?: string;
+    cacheExpiry: number;
 };
 
 /**
@@ -142,29 +142,29 @@ export type CachedSession = {
  * ```
  */
 export interface SessionCacheStrategy extends InjectableStrategy {
-  /**
-   * @description
-   * Store the session in the cache. When caching a session, the data
-   * should not be modified apart from performing any transforms needed to
-   * get it into a state to be stored, e.g. JSON.stringify().
-   */
-  set(session: CachedSession): void | Promise<void>;
+    /**
+     * @description
+     * Store the session in the cache. When caching a session, the data
+     * should not be modified apart from performing any transforms needed to
+     * get it into a state to be stored, e.g. JSON.stringify().
+     */
+    set(session: CachedSession): void | Promise<void>;
 
-  /**
-   * @description
-   * Retrieve the session from the cache
-   */
-  get(sessionToken: string): CachedSession | undefined | Promise<CachedSession | undefined>;
+    /**
+     * @description
+     * Retrieve the session from the cache
+     */
+    get(sessionToken: string): CachedSession | undefined | Promise<CachedSession | undefined>;
 
-  /**
-   * @description
-   * Delete a session from the cache
-   */
-  delete(sessionToken: string): void | Promise<void>;
+    /**
+     * @description
+     * Delete a session from the cache
+     */
+    delete(sessionToken: string): void | Promise<void>;
 
-  /**
-   * @description
-   * Clear the entire cache
-   */
-  clear(): void | Promise<void>;
+    /**
+     * @description
+     * Clear the entire cache
+     */
+    clear(): void | Promise<void>;
 }

@@ -7,13 +7,13 @@ import { ConfigService } from '../../../config/config.service';
  */
 @Injectable()
 export class PasswordCipher {
-  constructor(private configService: ConfigService) {}
+    constructor(private configService: ConfigService) {}
 
-  hash(plaintext: string): Promise<string> {
-    return this.configService.authOptions.passwordHashingStrategy.hash(plaintext);
-  }
+    hash(plaintext: string): Promise<string> {
+        return this.configService.authOptions.passwordHashingStrategy.hash(plaintext);
+    }
 
-  check(plaintext: string, hash: string): Promise<boolean> {
-    return this.configService.authOptions.passwordHashingStrategy.check(plaintext, hash);
-  }
+    check(plaintext: string, hash: string): Promise<boolean> {
+        return this.configService.authOptions.passwordHashingStrategy.check(plaintext, hash);
+    }
 }

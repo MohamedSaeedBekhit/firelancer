@@ -5,34 +5,34 @@ import { LoggerService } from '@nestjs/common';
  * An enum of valid logging levels.
  */
 export enum LogLevel {
-  /**
-   * @description
-   * Log Errors only. These are usually indicative of some potentially
-   * serious issue, so should be acted upon.
-   */
-  Error = 0,
-  /**
-   * @description
-   * Warnings indicate that some situation may require investigation
-   * and handling. But not as serious as an Error.
-   */
-  Warn = 1,
-  /**
-   * @description
-   * Logs general information such as startup messages.
-   */
-  Info = 2,
-  /**
-   * @description
-   * Logs additional information
-   */
-  Verbose = 3,
-  /**
-   * @description
-   * Logs detailed info useful in debug scenarios, including stack traces for
-   * all errors. In production this would probably generate too much noise.
-   */
-  Debug = 4,
+    /**
+     * @description
+     * Log Errors only. These are usually indicative of some potentially
+     * serious issue, so should be acted upon.
+     */
+    Error = 0,
+    /**
+     * @description
+     * Warnings indicate that some situation may require investigation
+     * and handling. But not as serious as an Error.
+     */
+    Warn = 1,
+    /**
+     * @description
+     * Logs general information such as startup messages.
+     */
+    Info = 2,
+    /**
+     * @description
+     * Logs additional information
+     */
+    Verbose = 3,
+    /**
+     * @description
+     * Logs detailed info useful in debug scenarios, including stack traces for
+     * all errors. In production this would probably generate too much noise.
+     */
+    Debug = 4,
 }
 
 /**
@@ -41,30 +41,30 @@ export enum LogLevel {
  * the config.
  */
 export interface FirelancerLogger {
-  error(message: string, context?: string, trace?: string): void;
-  warn(message: string, context?: string): void;
-  info(message: string, context?: string): void;
-  verbose(message: string, context?: string): void;
-  debug(message: string, context?: string): void;
-  setDefaultContext?(defaultContext: string): void;
+    error(message: string, context?: string, trace?: string): void;
+    warn(message: string, context?: string): void;
+    info(message: string, context?: string): void;
+    verbose(message: string, context?: string): void;
+    debug(message: string, context?: string): void;
+    setDefaultContext?(defaultContext: string): void;
 }
 
 const noopLogger: FirelancerLogger = {
-  error() {
-    /* */
-  },
-  warn() {
-    /* */
-  },
-  info() {
-    /* */
-  },
-  verbose() {
-    /* */
-  },
-  debug() {
-    /* */
-  },
+    error() {
+        /* */
+    },
+    warn() {
+        /* */
+    },
+    info() {
+        /* */
+    },
+    verbose() {
+        /* */
+    },
+    debug() {
+        /* */
+    },
 };
 
 /**
@@ -128,59 +128,59 @@ const noopLogger: FirelancerLogger = {
  * ```
  */
 export class Logger implements LoggerService {
-  private static _instance: typeof Logger = Logger;
-  private static _logger: FirelancerLogger;
+    private static _instance: typeof Logger = Logger;
+    private static _logger: FirelancerLogger;
 
-  static get logger(): FirelancerLogger {
-    return this._logger || noopLogger;
-  }
+    static get logger(): FirelancerLogger {
+        return this._logger || noopLogger;
+    }
 
-  private get instance(): typeof Logger {
-    const { _instance } = Logger;
-    return _instance;
-  }
+    private get instance(): typeof Logger {
+        const { _instance } = Logger;
+        return _instance;
+    }
 
-  static useLogger(logger: FirelancerLogger) {
-    Logger._logger = logger;
-  }
+    static useLogger(logger: FirelancerLogger) {
+        Logger._logger = logger;
+    }
 
-  error(message: any, trace?: string, context?: string): any {
-    this.instance.error(message, context, trace);
-  }
+    error(message: any, trace?: string, context?: string): any {
+        this.instance.error(message, context, trace);
+    }
 
-  warn(message: any, context?: string): any {
-    this.instance.warn(message, context);
-  }
+    warn(message: any, context?: string): any {
+        this.instance.warn(message, context);
+    }
 
-  log(message: any, context?: string): any {
-    this.instance.info(message, context);
-  }
+    log(message: any, context?: string): any {
+        this.instance.info(message, context);
+    }
 
-  verbose(message: any, context?: string): any {
-    this.instance.verbose(message, context);
-  }
+    verbose(message: any, context?: string): any {
+        this.instance.verbose(message, context);
+    }
 
-  debug(message: any, context?: string): any {
-    this.instance.debug(message, context);
-  }
+    debug(message: any, context?: string): any {
+        this.instance.debug(message, context);
+    }
 
-  static error(message: string, context?: string, trace?: string): void {
-    Logger.logger.error(message, context, trace);
-  }
+    static error(message: string, context?: string, trace?: string): void {
+        Logger.logger.error(message, context, trace);
+    }
 
-  static warn(message: string, context?: string): void {
-    Logger.logger.warn(message, context);
-  }
+    static warn(message: string, context?: string): void {
+        Logger.logger.warn(message, context);
+    }
 
-  static info(message: string, context?: string): void {
-    Logger.logger.info(message, context);
-  }
+    static info(message: string, context?: string): void {
+        Logger.logger.info(message, context);
+    }
 
-  static verbose(message: string, context?: string): void {
-    Logger.logger.verbose(message, context);
-  }
+    static verbose(message: string, context?: string): void {
+        Logger.logger.verbose(message, context);
+    }
 
-  static debug(message: string, context?: string): void {
-    Logger.logger.debug(message, context);
-  }
+    static debug(message: string, context?: string): void {
+        Logger.logger.debug(message, context);
+    }
 }

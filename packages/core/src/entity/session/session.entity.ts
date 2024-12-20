@@ -9,20 +9,20 @@ import { FirelancerEntity } from '../base/base.entity';
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export abstract class Session extends FirelancerEntity {
-  @Index({ unique: true })
-  @Column()
-  token: string;
+    @Index({ unique: true })
+    @Column()
+    token: string;
 
-  @Column()
-  expires: Date;
+    @Column()
+    expires: Date;
 
-  @Column()
-  invalidated: boolean;
+    @Column()
+    invalidated: boolean;
 
-  // @RelationId((session: Session) => session.activeOrder)
-  // activeOrderId?: ID;
+    // @RelationId((session: Session) => session.activeOrder)
+    // activeOrderId?: ID;
 
-  // @Index()
-  // @ManyToOne((type) => Order)
-  // activeOrder: Order | null;
+    // @Index()
+    // @ManyToOne((type) => Order)
+    // activeOrder: Order | null;
 }

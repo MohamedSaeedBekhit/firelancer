@@ -18,65 +18,65 @@ import { DefaultLogger } from './strategies/logger/default-logger';
  * The default configuration settings which are used if not explicitly overridden in the bootstrap() call.
  */
 export const defaultConfig: RuntimeFirelancerConfig = {
-  logger: new DefaultLogger(),
-  apiOptions: {
-    port: 3042,
-    hostname: 'localhost',
-    adminApiPath: 'admin-api',
-    shopApiPath: 'shop-api',
-    cors: {
-      origin: true,
-      credentials: true,
+    logger: new DefaultLogger(),
+    apiOptions: {
+        port: 3042,
+        hostname: 'localhost',
+        adminApiPath: 'admin-api',
+        shopApiPath: 'shop-api',
+        cors: {
+            origin: true,
+            credentials: true,
+        },
+        middlewares: [],
     },
-    middlewares: [],
-  },
-  dbConnectionOptions: {
-    type: 'postgres',
-    synchronize: true,
-  },
-  authOptions: {
-    disableAuth: false,
-    tokenMethod: 'cookie',
-    customPermissions: [],
-    cookieOptions: {
-      secret: randomBytes(16).toString('base64url'),
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
+    dbConnectionOptions: {
+        type: 'postgres',
+        synchronize: true,
     },
-    authTokenHeaderKey: DEFAULT_AUTH_TOKEN_HEADER_KEY,
-    sessionDuration: '1y',
-    sessionCacheStrategy: new InMemorySessionCacheStrategy(),
-    sessionCacheTTL: 300,
-    requireVerification: true,
-    verificationTokenDuration: '7d',
-    superadminCredentials: {
-      identifier: SUPER_ADMIN_USER_IDENTIFIER,
-      password: SUPER_ADMIN_USER_PASSWORD,
+    authOptions: {
+        disableAuth: false,
+        tokenMethod: 'cookie',
+        customPermissions: [],
+        cookieOptions: {
+            secret: randomBytes(16).toString('base64url'),
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+        },
+        authTokenHeaderKey: DEFAULT_AUTH_TOKEN_HEADER_KEY,
+        sessionDuration: '1y',
+        sessionCacheStrategy: new InMemorySessionCacheStrategy(),
+        sessionCacheTTL: 300,
+        requireVerification: true,
+        verificationTokenDuration: '7d',
+        superadminCredentials: {
+            identifier: SUPER_ADMIN_USER_IDENTIFIER,
+            password: SUPER_ADMIN_USER_PASSWORD,
+        },
+        shopAuthenticationStrategy: [new NativeAuthenticationStrategy()],
+        adminAuthenticationStrategy: [new NativeAuthenticationStrategy()],
+        passwordHashingStrategy: new BcryptPasswordHashingStrategy(),
+        passwordValidationStrategy: new DefaultPasswordValidationStrategy({ minLength: 4 }),
     },
-    shopAuthenticationStrategy: [new NativeAuthenticationStrategy()],
-    adminAuthenticationStrategy: [new NativeAuthenticationStrategy()],
-    passwordHashingStrategy: new BcryptPasswordHashingStrategy(),
-    passwordValidationStrategy: new DefaultPasswordValidationStrategy({ minLength: 4 }),
-  },
-  assetOptions: {
-    assetNamingStrategy: new DefaultAssetNamingStrategy(),
-    assetStorageStrategy: new NoAssetStorageStrategy(),
-    assetPreviewStrategy: new NoAssetPreviewStrategy(),
-    permittedFileTypes: ['image/*', 'video/*', 'audio/*', '.pdf'],
-    uploadMaxFileSize: 20971520,
-  },
-  jobQueueOptions: {
-    jobQueueStrategy: new InMemoryJobQueueStrategy(),
-    jobBufferStorageStrategy: new InMemoryJobBufferStorageStrategy(),
-    activeQueues: [],
-    prefix: '',
-  },
-  catalogOptions: {
-    collectionFilters: defaultCollectionFilters,
-  },
-  systemOptions: {
-    errorHandlers: [],
-  },
-  plugins: [],
+    assetOptions: {
+        assetNamingStrategy: new DefaultAssetNamingStrategy(),
+        assetStorageStrategy: new NoAssetStorageStrategy(),
+        assetPreviewStrategy: new NoAssetPreviewStrategy(),
+        permittedFileTypes: ['image/*', 'video/*', 'audio/*', '.pdf'],
+        uploadMaxFileSize: 20971520,
+    },
+    jobQueueOptions: {
+        jobQueueStrategy: new InMemoryJobQueueStrategy(),
+        jobBufferStorageStrategy: new InMemoryJobBufferStorageStrategy(),
+        activeQueues: [],
+        prefix: '',
+    },
+    catalogOptions: {
+        collectionFilters: defaultCollectionFilters,
+    },
+    systemOptions: {
+        errorHandlers: [],
+    },
+    plugins: [],
 };

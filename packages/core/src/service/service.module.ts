@@ -21,21 +21,23 @@ import { JobPostService } from './services/job-post.service';
 import { RoleService } from './services/role.service';
 import { SessionService } from './services/session.service';
 import { UserService } from './services/user.service';
+import { SearchService } from './services/search.service';
 
 const services = [
-  AdministratorService,
-  AssetService,
-  AuthService,
-  BalanceService,
-  CustomerService,
-  FacetService,
-  FacetValueService,
-  HistoryService,
-  JobPostService,
-  RoleService,
-  SessionService,
-  UserService,
-  CollectionService,
+    AdministratorService,
+    AssetService,
+    AuthService,
+    BalanceService,
+    CustomerService,
+    FacetService,
+    FacetValueService,
+    HistoryService,
+    JobPostService,
+    RoleService,
+    SessionService,
+    UserService,
+    CollectionService,
+    SearchService,
 ];
 
 const helpers = [RequestContextService, PasswordCipher, VerificationTokenGenerator, ConfigArgService];
@@ -46,9 +48,9 @@ const helpers = [RequestContextService, PasswordCipher, VerificationTokenGenerat
  * only run a single time.
  */
 @Module({
-  imports: [ConfigModule, ConnectionModule, EventBusModule, JobQueueModule],
-  providers: [...services, ...helpers, InitializerService],
-  exports: [...services, ...helpers, ConnectionModule],
+    imports: [ConfigModule, ConnectionModule, EventBusModule, JobQueueModule],
+    providers: [...services, ...helpers, InitializerService],
+    exports: [...services, ...helpers, ConnectionModule],
 })
 export class ServiceCoreModule {}
 
@@ -60,7 +62,7 @@ export class ServiceCoreModule {}
  * into a format suitable for the service layer logic.
  */
 @Module({
-  imports: [ServiceCoreModule],
-  exports: [ServiceCoreModule],
+    imports: [ServiceCoreModule],
+    exports: [ServiceCoreModule],
 })
 export class ServiceModule {}

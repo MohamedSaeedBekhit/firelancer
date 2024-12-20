@@ -75,21 +75,21 @@ import { JobData } from '../types';
  * ```
  */
 export interface JobBuffer<Data extends JobData<Data> = object> {
-  readonly id: string;
+    readonly id: string;
 
-  /**
-   * @description
-   * This method is called whenever a job is added to the job queue. If it returns `true`, then
-   * the job will be _buffered_ and _not_ added to the job queue. If it returns `false`, the job
-   * will be added to the job queue as normal.
-   */
-  collect(job: Job<Data>): boolean | Promise<boolean>;
+    /**
+     * @description
+     * This method is called whenever a job is added to the job queue. If it returns `true`, then
+     * the job will be _buffered_ and _not_ added to the job queue. If it returns `false`, the job
+     * will be added to the job queue as normal.
+     */
+    collect(job: Job<Data>): boolean | Promise<boolean>;
 
-  /**
-   * @description
-   * This method is called whenever the buffer gets flushed via a call to `JobQueueService.flush()`.
-   * It allows logic to be run on the buffered jobs which enables optimizations such as
-   * aggregating and de-duplicating the work of many jobs into one job.
-   */
-  reduce(collectedJobs: Array<Job<Data>>): Array<Job<Data>> | Promise<Array<Job<Data>>>;
+    /**
+     * @description
+     * This method is called whenever the buffer gets flushed via a call to `JobQueueService.flush()`.
+     * It allows logic to be run on the buffered jobs which enables optimizations such as
+     * aggregating and de-duplicating the work of many jobs into one job.
+     */
+    reduce(collectedJobs: Array<Job<Data>>): Array<Job<Data>> | Promise<Array<Job<Data>>>;
 }

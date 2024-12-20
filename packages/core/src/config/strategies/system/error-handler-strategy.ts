@@ -71,17 +71,17 @@ import { Job } from '../../../job-queue';
  * ```
  */
 export interface ErrorHandlerStrategy extends InjectableStrategy {
-  /**
-   * @description
-   * This method will be invoked for any error thrown during the execution of the
-   * server.
-   */
-  handleServerError(exception: Error, context: { host: ArgumentsHost }): void | Promise<void>;
+    /**
+     * @description
+     * This method will be invoked for any error thrown during the execution of the
+     * server.
+     */
+    handleServerError(exception: Error, context: { host: ArgumentsHost }): void | Promise<void>;
 
-  /**
-   * @description
-   * This method will be invoked for any error thrown during the execution of a
-   * job on the worker.
-   */
-  handleWorkerError(exception: Error, context: { job: Job }): void | Promise<void>;
+    /**
+     * @description
+     * This method will be invoked for any error thrown during the execution of a
+     * job on the worker.
+     */
+    handleWorkerError(exception: Error, context: { job: Job }): void | Promise<void>;
 }

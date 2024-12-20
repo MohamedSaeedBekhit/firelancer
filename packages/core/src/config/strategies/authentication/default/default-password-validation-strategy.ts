@@ -12,20 +12,20 @@ import { PasswordValidationStrategy } from '../password-validation-strategy';
  * this default will be made more strict.
  */
 export class DefaultPasswordValidationStrategy implements PasswordValidationStrategy {
-  constructor(private options: { minLength?: number; regexp?: RegExp }) {}
+    constructor(private options: { minLength?: number; regexp?: RegExp }) {}
 
-  validate(ctx: RequestContext, password: string): boolean | string {
-    const { minLength, regexp } = this.options;
-    if (minLength != null) {
-      if (password.length < minLength) {
-        return false;
-      }
+    validate(ctx: RequestContext, password: string): boolean | string {
+        const { minLength, regexp } = this.options;
+        if (minLength != null) {
+            if (password.length < minLength) {
+                return false;
+            }
+        }
+        if (regexp != null) {
+            if (!regexp.test(password)) {
+                return false;
+            }
+        }
+        return true;
     }
-    if (regexp != null) {
-      if (!regexp.test(password)) {
-        return false;
-      }
-    }
-    return true;
-  }
 }

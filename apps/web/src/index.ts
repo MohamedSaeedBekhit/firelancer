@@ -1,6 +1,8 @@
-import { bootstrap } from '@firelancer/core';
+import { bootstrap, runMigrations } from '@firelancer/core';
 import { config } from './firelancer-config';
 
-bootstrap(config).catch((err) => {
-  console.log(err);
-});
+runMigrations(config)
+    .then(() => bootstrap(config))
+    .catch((err) => {
+        console.log(err);
+    });

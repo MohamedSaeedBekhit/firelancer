@@ -10,7 +10,7 @@ type CollectionInputTypes = CreateCollectionInput | UpdateCollectionInput | ID;
  * This event is fired whenever a Collection is added, updated or deleted.
  */
 export class CollectionEvent extends FirelancerEntityEvent<Collection, CollectionInputTypes> {
-  constructor(ctx: RequestContext, entity: Collection, type: 'created' | 'updated' | 'deleted', input?: CollectionInputTypes) {
-    super(entity, type, ctx, input);
-  }
+    constructor(ctx: RequestContext, entity: Collection, type: 'created' | 'updated' | 'deleted', input?: CollectionInputTypes) {
+        super(entity, type, ctx, input);
+    }
 }

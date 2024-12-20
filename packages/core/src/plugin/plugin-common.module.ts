@@ -21,25 +21,25 @@ import { ProcessContextModule } from '../process-context/process-context.module'
  * * `ConfigModule`, allowing the injection of the ConfigService.
  */
 @Module({
-  imports: [
-    ProcessContextModule,
-    EventBusModule,
-    ConfigModule,
-    ConnectionModule.forPlugin(),
-    ServiceModule,
-    CacheModule,
-    JobQueueModule,
-    DataImportModule,
-  ],
-  exports: [
-    ProcessContextModule,
-    EventBusModule,
-    ConfigModule,
-    ConnectionModule.forPlugin(),
-    ServiceModule,
-    CacheModule,
-    JobQueueModule,
-    DataImportModule,
-  ],
+    imports: [
+        ProcessContextModule,
+        EventBusModule,
+        ConfigModule,
+        ConnectionModule.forPlugin(),
+        ServiceModule,
+        CacheModule,
+        JobQueueModule,
+        DataImportModule,
+    ],
+    exports: [
+        ProcessContextModule,
+        EventBusModule,
+        ConfigModule,
+        ConnectionModule.forPlugin(),
+        ServiceModule,
+        CacheModule,
+        JobQueueModule,
+        DataImportModule,
+    ],
 })
 export class PluginCommonModule {}

@@ -7,10 +7,10 @@ import { FirelancerEvent } from '../firelancer-event';
  * This event is fired when a password reset is executed with a verified token.
  */
 export class PasswordResetVerifiedEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public user: User,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public user: User,
+    ) {
+        super();
+    }
 }

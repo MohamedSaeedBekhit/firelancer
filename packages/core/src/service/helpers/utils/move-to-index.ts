@@ -8,19 +8,19 @@ import { FirelancerEntity } from '../../../entity';
  * persisted to the database.
  */
 export function moveToIndex<T extends Orderable & FirelancerEntity>(index: number, target: T, siblings: T[]): T[] {
-  const normalizedIndex = Math.max(Math.min(index, siblings.length), 0);
-  let currentIndex = siblings.findIndex((sibling) => idsAreEqual(sibling.id, target.id));
-  const orderedSiblings = [...siblings].sort((a, b) => (a.position > b.position ? 1 : -1));
-  const siblingsWithTarget = currentIndex < 0 ? [...orderedSiblings, target] : [...orderedSiblings];
-  currentIndex = siblingsWithTarget.findIndex((sibling) => idsAreEqual(sibling.id, target.id));
-  if (currentIndex !== normalizedIndex) {
-    siblingsWithTarget.splice(normalizedIndex, 0, siblingsWithTarget.splice(currentIndex, 1)[0]);
-    siblingsWithTarget.forEach((collection, i) => {
-      collection.position = i;
-      if (target.id === collection.id) {
-        target.position = i;
-      }
-    });
-  }
-  return siblingsWithTarget;
+    const normalizedIndex = Math.max(Math.min(index, siblings.length), 0);
+    let currentIndex = siblings.findIndex((sibling) => idsAreEqual(sibling.id, target.id));
+    const orderedSiblings = [...siblings].sort((a, b) => (a.position > b.position ? 1 : -1));
+    const siblingsWithTarget = currentIndex < 0 ? [...orderedSiblings, target] : [...orderedSiblings];
+    currentIndex = siblingsWithTarget.findIndex((sibling) => idsAreEqual(sibling.id, target.id));
+    if (currentIndex !== normalizedIndex) {
+        siblingsWithTarget.splice(normalizedIndex, 0, siblingsWithTarget.splice(currentIndex, 1)[0]);
+        siblingsWithTarget.forEach((collection, i) => {
+            collection.position = i;
+            if (target.id === collection.id) {
+                target.position = i;
+            }
+        });
+    }
+    return siblingsWithTarget;
 }

@@ -12,11 +12,11 @@ import { FirelancerEvent } from '../firelancer-event';
  * 2. are now part of this collection after modification but were not before
  */
 export class CollectionModificationEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public collection: Collection,
-    public jobPostsIds: ID[],
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public collection: Collection,
+        public jobPostsIds: ID[],
+    ) {
+        super();
+    }
 }

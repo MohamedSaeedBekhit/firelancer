@@ -15,43 +15,43 @@ import { ShopJobPostController } from './controllers/shop/job-post.controller';
 const { apiOptions } = getConfig();
 
 @Module({
-  imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.adminApiPath, module: AdminModule }])],
-  controllers: [AdminAuthController, AdministratorController],
+    imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.adminApiPath, module: AdminModule }])],
+    controllers: [AdminAuthController, AdministratorController],
 })
 export class AdminModule {}
 
 @Module({
-  imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.shopApiPath, module: ShopModule }])],
-  controllers: [ShopAuthController, ShopJobPostController],
+    imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.shopApiPath, module: ShopModule }])],
+    controllers: [ShopAuthController, ShopJobPostController],
 })
 export class ShopModule {}
 
 @Module({
-  imports: [
-    ConfigModule,
-    ServiceModule,
-    ConnectionModule,
-    AdminModule,
-    ShopModule,
-    ...createDynamicRestModulesForPlugins('admin'),
-    ...createDynamicRestModulesForPlugins('shop'),
-  ],
-  providers: [
-    {
-      provide: APP_PIPE,
-      useValue: new ValidationPipe({
-        transform: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
-    },
-  ],
+    imports: [
+        ConfigModule,
+        ServiceModule,
+        ConnectionModule,
+        AdminModule,
+        ShopModule,
+        ...createDynamicRestModulesForPlugins('admin'),
+        ...createDynamicRestModulesForPlugins('shop'),
+    ],
+    providers: [
+        {
+            provide: APP_PIPE,
+            useValue: new ValidationPipe({
+                transform: true,
+                transformOptions: { enableImplicitConversion: true },
+            }),
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AuthGuard,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        },
+    ],
 })
 export class ApiModule {}

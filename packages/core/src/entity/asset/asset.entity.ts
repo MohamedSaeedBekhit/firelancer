@@ -9,34 +9,34 @@ import { FirelancerEntity } from '../base/base.entity';
  */
 @Entity()
 export class Asset extends FirelancerEntity {
-  constructor(input?: DeepPartial<Asset>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Asset>) {
+        super(input);
+    }
 
-  @Column()
-  name: string;
+    @Column()
+    name: string;
 
-  @Column('varchar')
-  type: AssetType;
+    @Column('varchar')
+    type: AssetType;
 
-  @Column()
-  mimeType: string;
+    @Column()
+    mimeType: string;
 
-  @Column({ default: 0 })
-  width: number;
+    @Column({ default: 0 })
+    width: number;
 
-  @Column({ default: 0 })
-  height: number;
+    @Column({ default: 0 })
+    height: number;
 
-  @Column()
-  fileSize: number;
+    @Column()
+    fileSize: number;
 
-  @Column()
-  source: string;
+    @Column()
+    source: string;
 
-  @Column()
-  preview: string;
+    @Column()
+    preview: string;
 
-  @Column('simple-json', { nullable: true })
-  focalPoint: { x: number; y: number } | null;
+    @Column('simple-json', { nullable: true })
+    focalPoint: { x: number; y: number } | null;
 }

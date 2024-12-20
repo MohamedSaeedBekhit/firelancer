@@ -7,10 +7,10 @@ import { FirelancerEvent } from '../firelancer-event';
  * This event is fired when a user successfully logs in via the shop or admin API `login` mutation.
  */
 export class LoginEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public user: User,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public user: User,
+    ) {
+        super();
+    }
 }

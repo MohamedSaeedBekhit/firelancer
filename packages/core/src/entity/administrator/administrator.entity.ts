@@ -10,23 +10,23 @@ import { User } from '../user/user.entity';
  */
 @Entity()
 export class Administrator extends FirelancerEntity implements SoftDeletable {
-  constructor(input?: DeepPartial<Administrator>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Administrator>) {
+        super(input);
+    }
 
-  @Column({ type: Date, nullable: true })
-  deletedAt: Date | null;
+    @Column({ type: Date, nullable: true })
+    deletedAt: Date | null;
 
-  @Column()
-  firstName: string;
+    @Column()
+    firstName: string;
 
-  @Column()
-  lastName: string;
+    @Column()
+    lastName: string;
 
-  @Column({ unique: true })
-  emailAddress: string;
+    @Column({ unique: true })
+    emailAddress: string;
 
-  @OneToOne(() => User)
-  @JoinColumn()
-  user: User;
+    @OneToOne(() => User)
+    @JoinColumn()
+    user: User;
 }

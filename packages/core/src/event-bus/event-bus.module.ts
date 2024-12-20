@@ -3,8 +3,8 @@ import { ConnectionModule } from '../connection/connection.module';
 import { EventBus } from './event-bus';
 
 @Module({
-  imports: [ConnectionModule],
-  providers: [EventBus],
-  exports: [EventBus],
+    imports: [ConnectionModule],
+    providers: [EventBus],
+    exports: [EventBus],
 })
 export class EventBusModule {}

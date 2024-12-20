@@ -5,14 +5,14 @@ import { ID } from '../../common';
 
 @Entity()
 export class JobPostAsset extends OrderableAsset {
-  constructor(input?: DeepPartial<JobPostAsset>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<JobPostAsset>) {
+        super(input);
+    }
 
-  @Column()
-  jobPostId: ID;
+    @Column()
+    jobPostId: ID;
 
-  @Index()
-  @ManyToOne(() => JobPost, (jobPost) => jobPost.assets, { onDelete: 'CASCADE' })
-  jobPost: JobPost;
+    @Index()
+    @ManyToOne(() => JobPost, (jobPost) => jobPost.assets, { onDelete: 'CASCADE' })
+    jobPost: JobPost;
 }

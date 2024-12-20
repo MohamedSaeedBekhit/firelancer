@@ -16,6 +16,6 @@ import { internal_getRequestContext } from '../../common/request-context';
  * ```
  */
 export const Ctx = createParamDecorator((data, executionContext: ExecutionContext) => {
-  const context = parseContext(executionContext);
-  return internal_getRequestContext(context.req, executionContext);
+    const context = parseContext(executionContext);
+    return internal_getRequestContext(context.req, executionContext);
 });

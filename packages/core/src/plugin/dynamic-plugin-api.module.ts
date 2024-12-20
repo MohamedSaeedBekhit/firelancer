@@ -11,51 +11,51 @@ const dynamicApiModuleClassMap: { [name: string]: Type<unknown> } = {};
  * any configured plugins.
  */
 export function createDynamicRestModulesForPlugins(apiType: 'shop' | 'admin'): DynamicModule[] {
-  const config = getConfig();
-  return config.plugins
-    .map((plugin) => {
-      const pluginModule = isDynamicModule(plugin) ? plugin.module : plugin;
-      const controllers = restControllersFor(plugin, apiType) || [];
+    const config = getConfig();
+    return config.plugins
+        .map((plugin) => {
+            const pluginModule = isDynamicModule(plugin) ? plugin.module : plugin;
+            const controllers = restControllersFor(plugin, apiType) || [];
 
-      if (controllers.length) {
-        const className = dynamicClassName(pluginModule, apiType);
-        dynamicApiModuleClassMap[className] = class {};
-        Object.defineProperty(dynamicApiModuleClassMap[className], 'name', { value: className });
-        const { imports } = getModuleMetadata(pluginModule);
-        return {
-          module: dynamicApiModuleClassMap[className],
-          imports: [
-            pluginModule,
-            ...imports,
-            RouterModule.register([
-              {
-                path: apiType === 'admin' ? config.apiOptions.adminApiPath : config.apiOptions.shopApiPath,
-                module: dynamicApiModuleClassMap[className],
-              },
-            ]),
-          ],
-          controllers: [...controllers],
-        };
-      }
-    })
-    .filter(notNullOrUndefined);
+            if (controllers.length) {
+                const className = dynamicClassName(pluginModule, apiType);
+                dynamicApiModuleClassMap[className] = class {};
+                Object.defineProperty(dynamicApiModuleClassMap[className], 'name', { value: className });
+                const { imports } = getModuleMetadata(pluginModule);
+                return {
+                    module: dynamicApiModuleClassMap[className],
+                    imports: [
+                        pluginModule,
+                        ...imports,
+                        RouterModule.register([
+                            {
+                                path: apiType === 'admin' ? config.apiOptions.adminApiPath : config.apiOptions.shopApiPath,
+                                module: dynamicApiModuleClassMap[className],
+                            },
+                        ]),
+                    ],
+                    controllers: [...controllers],
+                };
+            }
+        })
+        .filter(notNullOrUndefined);
 }
 
 /**
  * This function retrieves any dynamic modules which were created with createDynamicRestModulesForPlugins.
  */
 export function getDynamicRestModulesForPlugins(apiType: 'shop' | 'admin'): Array<Type<unknown>> {
-  return getConfig()
-    .plugins.map((plugin) => {
-      const pluginModule = isDynamicModule(plugin) ? plugin.module : plugin;
-      restControllersFor(plugin, apiType);
+    return getConfig()
+        .plugins.map((plugin) => {
+            const pluginModule = isDynamicModule(plugin) ? plugin.module : plugin;
+            restControllersFor(plugin, apiType);
 
-      const className = dynamicClassName(pluginModule, apiType);
-      return dynamicApiModuleClassMap[className];
-    })
-    .filter(notNullOrUndefined);
+            const className = dynamicClassName(pluginModule, apiType);
+            return dynamicApiModuleClassMap[className];
+        })
+        .filter(notNullOrUndefined);
 }
 
 function dynamicClassName(module: Type<unknown>, apiType: 'shop' | 'admin'): string {
-  return module.name + 'Dynamic' + (apiType === 'shop' ? 'Shop' : 'Admin') + 'Module';
+    return module.name + 'Dynamic' + (apiType === 'shop' ? 'Shop' : 'Admin') + 'Module';
 }

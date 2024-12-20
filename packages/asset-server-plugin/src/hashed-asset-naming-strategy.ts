@@ -16,16 +16,16 @@ import path from 'path';
  * only contain less than 800 files.
  */
 export class HashedAssetNamingStrategy extends DefaultAssetNamingStrategy {
-  generateSourceFileName(ctx: RequestContext, originalFileName: string, conflictFileName?: string): string {
-    const filename = super.generateSourceFileName(ctx, originalFileName, conflictFileName);
-    return path.join('source', this.getHashedDir(filename), filename);
-  }
-  generatePreviewFileName(ctx: RequestContext, originalFileName: string, conflictFileName?: string): string {
-    const filename = super.generatePreviewFileName(ctx, originalFileName, conflictFileName);
-    return path.join('preview', this.getHashedDir(filename), filename);
-  }
+    generateSourceFileName(ctx: RequestContext, originalFileName: string, conflictFileName?: string): string {
+        const filename = super.generateSourceFileName(ctx, originalFileName, conflictFileName);
+        return path.join('source', this.getHashedDir(filename), filename);
+    }
+    generatePreviewFileName(ctx: RequestContext, originalFileName: string, conflictFileName?: string): string {
+        const filename = super.generatePreviewFileName(ctx, originalFileName, conflictFileName);
+        return path.join('preview', this.getHashedDir(filename), filename);
+    }
 
-  private getHashedDir(filename: string): string {
-    return createHash('md5').update(filename).digest('hex').slice(0, 2);
-  }
+    private getHashedDir(filename: string): string {
+        return createHash('md5').update(filename).digest('hex').slice(0, 2);
+    }
 }

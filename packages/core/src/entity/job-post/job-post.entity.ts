@@ -12,41 +12,41 @@ import { JobPostAsset } from './job-post-asset.entity';
  */
 @Entity()
 export class JobPost extends FirelancerEntity implements SoftDeletable, Draftable {
-  constructor(input?: DeepPartial<JobPost>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<JobPost>) {
+        super(input);
+    }
 
-  @Column({ type: Date, nullable: true })
-  deletedAt: Date | null;
+    @Column({ type: Date, nullable: true })
+    deletedAt: Date | null;
 
-  @Column({ type: Date, nullable: true })
-  publishedAt: Date | null;
+    @Column({ type: Date, nullable: true })
+    publishedAt: Date | null;
 
-  @Column()
-  customerId: ID;
+    @Column()
+    customerId: ID;
 
-  @ManyToOne(() => Customer, (customer) => customer.jobPosts)
-  customer: Customer;
+    @ManyToOne(() => Customer, (customer) => customer.jobPosts)
+    customer: Customer;
 
-  @Column()
-  title: string;
+    @Column()
+    title: string;
 
-  @Column()
-  description: string;
+    @Column()
+    description: string;
 
-  @Column()
-  enabled: boolean;
+    @Column()
+    enabled: boolean;
 
-  @Column()
-  private: boolean;
+    @Column()
+    private: boolean;
 
-  @OneToMany(() => JobPostAsset, (jobPostAsset) => jobPostAsset.jobPost)
-  assets: JobPostAsset[];
+    @OneToMany(() => JobPostAsset, (jobPostAsset) => jobPostAsset.jobPost)
+    assets: JobPostAsset[];
 
-  @ManyToMany(() => FacetValue, (facetValue) => facetValue.jobPosts)
-  @JoinTable()
-  facetValues: FacetValue[];
+    @ManyToMany(() => FacetValue, (facetValue) => facetValue.jobPosts)
+    @JoinTable()
+    facetValues: FacetValue[];
 
-  @ManyToMany(() => Collection, (collection) => collection.jobPosts)
-  collections: Collection[];
+    @ManyToMany(() => Collection, (collection) => collection.jobPosts)
+    collections: Collection[];
 }

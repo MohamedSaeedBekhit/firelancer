@@ -25,12 +25,12 @@ let currentContext: ProcessContextType = 'server';
  * ```
  */
 export class ProcessContext {
-  get isServer(): boolean {
-    return currentContext === 'server';
-  }
-  get isWorker(): boolean {
-    return currentContext === 'worker';
-  }
+    get isServer(): boolean {
+        return currentContext === 'server';
+    }
+    get isWorker(): boolean {
+        return currentContext === 'worker';
+    }
 }
 
 /**
@@ -39,5 +39,5 @@ export class ProcessContext {
  * the current process context.
  */
 export function setProcessContext(context: ProcessContextType) {
-  currentContext = context;
+    currentContext = context;
 }

@@ -1,20 +1,20 @@
 import { SelectQueryBuilder } from 'typeorm';
 import { ConfigArg } from '../../../api';
 import {
-  ConfigArgs,
-  ConfigArgValues,
-  ConfigurableOperationDef,
-  ConfigurableOperationDefOptions,
+    ConfigArgs,
+    ConfigArgValues,
+    ConfigurableOperationDef,
+    ConfigurableOperationDefOptions,
 } from '../../../common/configurable-operation';
 import { JobPost } from '../../../entity';
 
 export type ApplyCollectionFilterFn<T extends ConfigArgs> = (
-  qb: SelectQueryBuilder<JobPost>,
-  args: ConfigArgValues<T>,
+    qb: SelectQueryBuilder<JobPost>,
+    args: ConfigArgValues<T>,
 ) => SelectQueryBuilder<JobPost>;
 
 export interface CollectionFilterConfig<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T> {
-  apply: ApplyCollectionFilterFn<T>;
+    apply: ApplyCollectionFilterFn<T>;
 }
 /* eslint-disable max-len */
 /**
@@ -51,14 +51,14 @@ export interface CollectionFilterConfig<T extends ConfigArgs> extends Configurab
  * ```
  */
 export class CollectionFilter<T extends ConfigArgs = ConfigArgs> extends ConfigurableOperationDef<T> {
-  /* eslint-enable max-len */
-  private readonly applyFn: ApplyCollectionFilterFn<T>;
-  constructor(config: CollectionFilterConfig<T>) {
-    super(config);
-    this.applyFn = config.apply;
-  }
+    /* eslint-enable max-len */
+    private readonly applyFn: ApplyCollectionFilterFn<T>;
+    constructor(config: CollectionFilterConfig<T>) {
+        super(config);
+        this.applyFn = config.apply;
+    }
 
-  apply(qb: SelectQueryBuilder<JobPost>, args: ConfigArg[]): SelectQueryBuilder<JobPost> {
-    return this.applyFn(qb, this.argsArrayToHash(args));
-  }
+    apply(qb: SelectQueryBuilder<JobPost>, args: ConfigArg[]): SelectQueryBuilder<JobPost> {
+        return this.applyFn(qb, this.argsArrayToHash(args));
+    }
 }

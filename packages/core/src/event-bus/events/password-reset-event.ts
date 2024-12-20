@@ -7,10 +7,10 @@ import { FirelancerEvent } from '../firelancer-event';
  * This event is fired when a Customer requests a password reset email.
  */
 export class PasswordResetEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public user: User,
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public user: User,
+    ) {
+        super();
+    }
 }

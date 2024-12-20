@@ -21,22 +21,22 @@ type ProcessFunc<Data extends JobData<Data> = object> = (job: Job<Data>) => Prom
  * ```
  */
 export abstract class InjectableJobQueueStrategy {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected started = new Map<string, ProcessFunc<any>>();
-  protected hasInitialized = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    protected started = new Map<string, ProcessFunc<any>>();
+    protected hasInitialized = false;
 
-  init(injector: Injector) {
-    this.hasInitialized = true;
-    for (const [queueName, process] of this.started) {
-      this.start(queueName, process);
+    init(injector: Injector) {
+        this.hasInitialized = true;
+        for (const [queueName, process] of this.started) {
+            this.start(queueName, process);
+        }
+        this.started.clear();
     }
-    this.started.clear();
-  }
 
-  destroy() {
-    this.hasInitialized = false;
-  }
+    destroy() {
+        this.hasInitialized = false;
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  abstract start<Data extends JobData<Data> = object>(queueName: string, process: (job: Job<Data>) => Promise<any>): void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    abstract start<Data extends JobData<Data> = object>(queueName: string, process: (job: Job<Data>) => Promise<any>): void;
 }

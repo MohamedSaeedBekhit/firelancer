@@ -8,23 +8,23 @@ import { Session } from './session.entity';
  */
 @ChildEntity()
 export class AuthenticatedSession extends Session {
-  constructor(input: DeepPartial<AuthenticatedSession>) {
-    super(input);
-  }
+    constructor(input: DeepPartial<AuthenticatedSession>) {
+        super(input);
+    }
 
-  /**
-   * @description
-   * The User who has authenticated to create this session.
-   */
-  @Index()
-  @ManyToOne(() => User, (user) => user.sessions)
-  user: User;
+    /**
+     * @description
+     * The User who has authenticated to create this session.
+     */
+    @Index()
+    @ManyToOne(() => User, (user) => user.sessions)
+    user: User;
 
-  /**
-   * @description
-   * The name of the AuthenticationStrategy used when authenticating
-   * to create this session.
-   */
-  @Column()
-  authenticationStrategy: string;
+    /**
+     * @description
+     * The name of the AuthenticationStrategy used when authenticating
+     * to create this session.
+     */
+    @Column()
+    authenticationStrategy: string;
 }

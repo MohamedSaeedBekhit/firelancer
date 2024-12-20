@@ -25,67 +25,67 @@ import { PERMISSIONS_METADATA_KEY } from '../decorators/allow.decorator';
  */
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private configService: ConfigService,
-    private requestContextService: RequestContextService,
-    private sessionService: SessionService,
-  ) {}
+    constructor(
+        private reflector: Reflector,
+        private configService: ConfigService,
+        private requestContextService: RequestContextService,
+        private sessionService: SessionService,
+    ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const { req, res } = parseContext(context);
-    const permissions = this.reflector.get<Permission[] | undefined>(PERMISSIONS_METADATA_KEY, context.getHandler());
-    const isAuthDisabled = this.configService.authOptions.disableAuth;
-    const isPublicPermissionRequired = !!permissions && permissions.includes(Permission.Public);
-    const isOwnerPermissionRequired = !!permissions && permissions.includes(Permission.Owner);
+    async canActivate(context: ExecutionContext): Promise<boolean> {
+        const { req, res } = parseContext(context);
+        const permissions = this.reflector.get<Permission[] | undefined>(PERMISSIONS_METADATA_KEY, context.getHandler());
+        const isAuthDisabled = this.configService.authOptions.disableAuth;
+        const isPublicPermissionRequired = !!permissions && permissions.includes(Permission.Public);
+        const isOwnerPermissionRequired = !!permissions && permissions.includes(Permission.Owner);
 
-    const session = await this.getSession(req, res, isOwnerPermissionRequired);
-    const requestContext = await this.requestContextService.fromRequest(req, session, permissions);
-    internal_setRequestContext(req, requestContext, context);
+        const session = await this.getSession(req, res, isOwnerPermissionRequired);
+        const requestContext = await this.requestContextService.fromRequest(req, session, permissions);
+        internal_setRequestContext(req, requestContext, context);
 
-    if (isAuthDisabled || !permissions || isPublicPermissionRequired) {
-      return true;
-    } else {
-      const canActivate = requestContext.userHasPermissions(permissions) || requestContext.authorizedAsOwnerOnly;
-      if (!canActivate) {
-        throw new ForbiddenError();
-      } else {
-        return canActivate;
-      }
+        if (isAuthDisabled || !permissions || isPublicPermissionRequired) {
+            return true;
+        } else {
+            const canActivate = requestContext.userHasPermissions(permissions) || requestContext.authorizedAsOwnerOnly;
+            if (!canActivate) {
+                throw new ForbiddenError();
+            } else {
+                return canActivate;
+            }
+        }
     }
-  }
 
-  private async getSession(req: Request, res: Response, isOwnerPermissionRequired: boolean): Promise<CachedSession | undefined> {
-    const { authOptions } = this.configService;
-    const sessionToken = extractSessionToken(req, authOptions.tokenMethod);
-    let serializedSession: CachedSession | undefined;
-    if (sessionToken) {
-      serializedSession = await this.sessionService.getSessionFromToken(sessionToken);
-      if (serializedSession) {
+    private async getSession(req: Request, res: Response, isOwnerPermissionRequired: boolean): Promise<CachedSession | undefined> {
+        const { authOptions } = this.configService;
+        const sessionToken = extractSessionToken(req, authOptions.tokenMethod);
+        let serializedSession: CachedSession | undefined;
+        if (sessionToken) {
+            serializedSession = await this.sessionService.getSessionFromToken(sessionToken);
+            if (serializedSession) {
+                return serializedSession;
+            }
+            // if there is a token but it cannot be validated to a Session,
+            // then the token is no longer valid and should be unset.
+            setSessionToken({
+                sessionToken: '',
+                rememberMe: false,
+                authOptions,
+                req,
+                res,
+            });
+        }
+
+        // current anonymous session is only authorized to operate on entities that are owned by the current session.
+        if (isOwnerPermissionRequired && !serializedSession) {
+            serializedSession = await this.sessionService.createAnonymousSession();
+            setSessionToken({
+                sessionToken: serializedSession.token,
+                rememberMe: true,
+                authOptions: authOptions as Required<AuthOptions>,
+                req,
+                res,
+            });
+        }
         return serializedSession;
-      }
-      // if there is a token but it cannot be validated to a Session,
-      // then the token is no longer valid and should be unset.
-      setSessionToken({
-        sessionToken: '',
-        rememberMe: false,
-        authOptions,
-        req,
-        res,
-      });
     }
-
-    // current anonymous session is only authorized to operate on entities that are owned by the current session.
-    if (isOwnerPermissionRequired && !serializedSession) {
-      serializedSession = await this.sessionService.createAnonymousSession();
-      setSessionToken({
-        sessionToken: serializedSession.token,
-        rememberMe: true,
-        authOptions: authOptions as Required<AuthOptions>,
-        req,
-        res,
-      });
-    }
-    return serializedSession;
-  }
 }

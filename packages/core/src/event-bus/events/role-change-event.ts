@@ -9,12 +9,12 @@ import { FirelancerEvent } from '../firelancer-event';
  * The property `roleIds` only contains the removed or assigned role ids.
  */
 export class RoleChangeEvent extends FirelancerEvent {
-  constructor(
-    public ctx: RequestContext,
-    public admin: Administrator,
-    public roleIds: ID[],
-    public type: 'assigned' | 'removed',
-  ) {
-    super();
-  }
+    constructor(
+        public ctx: RequestContext,
+        public admin: Administrator,
+        public roleIds: ID[],
+        public type: 'assigned' | 'removed',
+    ) {
+        super();
+    }
 }

@@ -12,32 +12,32 @@ import { User } from '../user/user.entity';
  */
 @Entity()
 export class Customer extends FirelancerEntity implements SoftDeletable {
-  constructor(input?: DeepPartial<Customer>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<Customer>) {
+        super(input);
+    }
 
-  @Column({ type: Date, nullable: true })
-  deletedAt: Date | null;
+    @Column({ type: Date, nullable: true })
+    deletedAt: Date | null;
 
-  @Column({ type: 'varchar', nullable: true })
-  title: string | null;
+    @Column({ type: 'varchar', nullable: true })
+    title: string | null;
 
-  @Column()
-  firstName: string;
+    @Column()
+    firstName: string;
 
-  @Column()
-  lastName: string;
+    @Column()
+    lastName: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  phoneNumber: string | null;
+    @Column({ type: 'varchar', nullable: true })
+    phoneNumber: string | null;
 
-  @Column()
-  emailAddress: string;
+    @Column()
+    emailAddress: string;
 
-  @OneToOne(() => User, { eager: true })
-  @JoinColumn()
-  user?: User;
+    @OneToOne(() => User, { eager: true })
+    @JoinColumn()
+    user?: User;
 
-  @OneToMany(() => JobPost, (jobPost) => jobPost.customer)
-  jobPosts: JobPost[];
+    @OneToMany(() => JobPost, (jobPost) => jobPost.customer)
+    jobPosts: JobPost[];
 }

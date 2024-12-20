@@ -13,77 +13,77 @@ import { SqlJobQueueStrategy } from './config/strategies/sql-job-queue-strategy'
  * Configuration options for the DefaultJobQueuePlugin. These values get passed into the SqlJobQueueStrategy.
  */
 export interface DefaultJobQueueOptions {
-  /**
-   * @description
-   * The interval in ms between polling the database for new jobs. If many job queues
-   * are active, the polling may cause undue load on the database, in which case this value
-   * should be increased to e.g. 1000.
-   *
-   * @default 200
-   */
-  pollInterval?: number | ((queueName: string) => number);
-  /**
-   * @description
-   * How many jobs from a given queue to process concurrently.
-   *
-   * @default 1
-   */
-  concurrency?: number;
-  /**
-   * @description
-   * The strategy used to decide how long to wait before retrying a failed job.
-   *
-   * @default () => 1000
-   */
-  backoffStrategy?: BackoffStrategy;
-  /**
-   * @description
-   * When a job is added to the JobQueue using `JobQueue.add()`, the calling
-   * code may specify the number of retries in case of failure. This option allows
-   * you to override that number and specify your own number of retries based on
-   * the job being added.
-   *
-   * @example
-   * ```ts
-   * setRetries: (queueName, job) => {
-   *   if (queueName === 'send-email') {
-   *     // Override the default number of retries
-   *     // for the 'send-email' job because we have
-   *     // a very unreliable email service.
-   *     return 10;
-   *   }
-   *   return job.retries;
-   * }
-   *  ```
-   * @param queueName
-   * @param job
-   */
-  setRetries?: (queueName: string, job: Job) => number;
-  /**
-   * @description
-   * If set to `true`, the database will be used to store buffered jobs. This is
-   * recommended for production.
-   *
-   * When enabled, a new `JobRecordBuffer` database entity will be defined which will
-   * require a migration when first enabling this option.
-   */
-  useDatabaseForBuffer?: boolean;
-  /**
-   * @description
-   * The timeout in ms which the queue will use when attempting a graceful shutdown.
-   * That means when the server is shut down but a job is running, the job queue will
-   * wait for the job to complete before allowing the server to shut down. If the job
-   * does not complete within this timeout window, the job will be forced to stop
-   * and the server will shut down anyway.
-   * @default 20_000
-   */
-  gracefulShutdownTimeout?: number;
+    /**
+     * @description
+     * The interval in ms between polling the database for new jobs. If many job queues
+     * are active, the polling may cause undue load on the database, in which case this value
+     * should be increased to e.g. 1000.
+     *
+     * @default 200
+     */
+    pollInterval?: number | ((queueName: string) => number);
+    /**
+     * @description
+     * How many jobs from a given queue to process concurrently.
+     *
+     * @default 1
+     */
+    concurrency?: number;
+    /**
+     * @description
+     * The strategy used to decide how long to wait before retrying a failed job.
+     *
+     * @default () => 1000
+     */
+    backoffStrategy?: BackoffStrategy;
+    /**
+     * @description
+     * When a job is added to the JobQueue using `JobQueue.add()`, the calling
+     * code may specify the number of retries in case of failure. This option allows
+     * you to override that number and specify your own number of retries based on
+     * the job being added.
+     *
+     * @example
+     * ```ts
+     * setRetries: (queueName, job) => {
+     *   if (queueName === 'send-email') {
+     *     // Override the default number of retries
+     *     // for the 'send-email' job because we have
+     *     // a very unreliable email service.
+     *     return 10;
+     *   }
+     *   return job.retries;
+     * }
+     *  ```
+     * @param queueName
+     * @param job
+     */
+    setRetries?: (queueName: string, job: Job) => number;
+    /**
+     * @description
+     * If set to `true`, the database will be used to store buffered jobs. This is
+     * recommended for production.
+     *
+     * When enabled, a new `JobRecordBuffer` database entity will be defined which will
+     * require a migration when first enabling this option.
+     */
+    useDatabaseForBuffer?: boolean;
+    /**
+     * @description
+     * The timeout in ms which the queue will use when attempting a graceful shutdown.
+     * That means when the server is shut down but a job is running, the job queue will
+     * wait for the job to complete before allowing the server to shut down. If the job
+     * does not complete within this timeout window, the job will be forced to stop
+     * and the server will shut down anyway.
+     * @default 20_000
+     */
+    gracefulShutdownTimeout?: number;
 }
 
 /**
  * @description
  * A plugin which configures Firelancer to use the SQL database to persist the JobQueue jobs using the SqlJobQueueStrategy. If you add this
- * plugin to an existing Firelancer installation, you'll need to run a[database migration, since this
+ * plugin to an existing Firelancer installation, you'll need to run a database migration, since this
  * plugin will add a new "job_record" table to the database.
  *
  * @example
@@ -168,29 +168,29 @@ export interface DefaultJobQueueOptions {
  * ```
  */
 @FirelancerPlugin({
-  imports: [PluginCommonModule],
-  entities: () => (DefaultJobQueuePlugin.options.useDatabaseForBuffer === true ? [JobRecord, JobRecordBuffer] : [JobRecord]),
-  configuration: (config) => {
-    const { pollInterval, concurrency, backoffStrategy, setRetries, gracefulShutdownTimeout } = DefaultJobQueuePlugin.options ?? {};
-    config.jobQueueOptions.jobQueueStrategy = new SqlJobQueueStrategy({
-      concurrency,
-      pollInterval,
-      backoffStrategy,
-      setRetries,
-      gracefulShutdownTimeout,
-    });
-    if (DefaultJobQueuePlugin.options.useDatabaseForBuffer === true) {
-      config.jobQueueOptions.jobBufferStorageStrategy = new SqlJobBufferStorageStrategy();
-    }
-    return config;
-  },
-  compatibility: '^0.0.0',
+    imports: [PluginCommonModule],
+    entities: () => (DefaultJobQueuePlugin.options.useDatabaseForBuffer === true ? [JobRecord, JobRecordBuffer] : [JobRecord]),
+    configuration: (config) => {
+        const { pollInterval, concurrency, backoffStrategy, setRetries, gracefulShutdownTimeout } = DefaultJobQueuePlugin.options ?? {};
+        config.jobQueueOptions.jobQueueStrategy = new SqlJobQueueStrategy({
+            concurrency,
+            pollInterval,
+            backoffStrategy,
+            setRetries,
+            gracefulShutdownTimeout,
+        });
+        if (DefaultJobQueuePlugin.options.useDatabaseForBuffer === true) {
+            config.jobQueueOptions.jobBufferStorageStrategy = new SqlJobBufferStorageStrategy();
+        }
+        return config;
+    },
+    compatibility: '^0.0.0',
 })
 export class DefaultJobQueuePlugin {
-  static options: DefaultJobQueueOptions = {};
+    static options: DefaultJobQueueOptions = {};
 
-  static init(options: DefaultJobQueueOptions): Type<DefaultJobQueuePlugin> {
-    DefaultJobQueuePlugin.options = options;
-    return DefaultJobQueuePlugin;
-  }
+    static init(options: DefaultJobQueueOptions): Type<DefaultJobQueuePlugin> {
+        DefaultJobQueuePlugin.options = options;
+        return DefaultJobQueuePlugin;
+    }
 }

@@ -6,7 +6,7 @@ import { AssetType, ID } from './shared-types';
  * Takes a predicate function and returns a negated version.
  */
 export function not(predicate: (...args: any[]) => boolean) {
-  return (...args: any[]) => !predicate(...args);
+    return (...args: any[]) => !predicate(...args);
 }
 
 /**
@@ -14,7 +14,7 @@ export function not(predicate: (...args: any[]) => boolean) {
  * in a filter operation.
  */
 export function notNullOrUndefined<T>(val: T | undefined | null): val is T {
-  return val !== undefined && val !== null;
+    return val !== undefined && val !== null;
 }
 
 /**
@@ -22,14 +22,14 @@ export function notNullOrUndefined<T>(val: T | undefined | null): val is T {
  * as determined by a === equality check on the given compareBy property.
  */
 export function foundIn<T>(set: T[], compareBy: keyof T) {
-  return (item: T) => set.some((t) => t[compareBy] === item[compareBy]);
+    return (item: T) => set.some((t) => t[compareBy] === item[compareBy]);
 }
 
 /**
  * Used in exhaustiveness checks to assert a codepath should never be reached.
  */
 export function assertNever(value: never): never {
-  throw new Error(`Expected never, got ${typeof value} (${JSON.stringify(value)})`);
+    throw new Error(`Expected never, got ${typeof value} (${JSON.stringify(value)})`);
 }
 
 /**
@@ -39,7 +39,7 @@ export function assertNever(value: never): never {
  * just successfully created or updated it.
  */
 export function assertFound<T>(promise: Promise<T | undefined | null>): Promise<T> {
-  return promise as Promise<T>;
+    return promise as Promise<T>;
 }
 
 /**
@@ -47,10 +47,10 @@ export function assertFound<T>(promise: Promise<T | undefined | null>): Promise<
  * (string or number).
  */
 export function idsAreEqual(id1?: ID, id2?: ID): boolean {
-  if (id1 === undefined || id2 === undefined) {
-    return false;
-  }
-  return id1.toString() === id2.toString();
+    if (id1 === undefined || id2 === undefined) {
+        return false;
+    }
+    return id1.toString() === id2.toString();
 }
 
 /**
@@ -61,7 +61,7 @@ export function idsAreEqual(id1?: ID, id2?: ID): boolean {
  * upper/lower case. See more discussion here: https://ux.stackexchange.com/a/16849
  */
 export function normalizeEmailAddress(input: string): string {
-  return isEmailAddressLike(input) ? input.trim().toLowerCase() : input.trim();
+    return isEmailAddressLike(input) ? input.trim().toLowerCase() : input.trim();
 }
 
 /**
@@ -72,11 +72,11 @@ export function normalizeEmailAddress(input: string): string {
  * identifiers for other authentication methods.
  */
 export function isEmailAddressLike(input: string): boolean {
-  if (input.length > 1000) {
-    // This limit is in place to prevent abuse via a polynomial-time regex attack
-    throw new Error('Input too long');
-  }
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim());
+    if (input.length > 1000) {
+        // This limit is in place to prevent abuse via a polynomial-time regex attack
+        throw new Error('Input too long');
+    }
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim());
 }
 
 /**
@@ -84,11 +84,11 @@ export function isEmailAddressLike(input: string): boolean {
  * value.
  */
 export async function awaitPromiseOrObservable<T>(value: T | Promise<T> | Observable<T>): Promise<T> {
-  let result = await value;
-  if (result instanceof Observable) {
-    result = await lastValueFrom(result);
-  }
-  return result;
+    let result = await value;
+    if (result instanceof Observable) {
+        result = await lastValueFrom(result);
+    }
+    return result;
 }
 
 /**
@@ -113,42 +113,42 @@ export async function awaitPromiseOrObservable<T>(value: T | Promise<T> | Observ
  * ```
  */
 export function asyncObservable<T>(work: (observer: Observer<T>) => Promise<T | void>): Observable<T> {
-  return new Observable<T>((subscriber) => {
-    void (async () => {
-      try {
-        const result = await work(subscriber);
-        if (result) {
-          subscriber.next(result);
-        }
-        subscriber.complete();
-      } catch (e: any) {
-        subscriber.error(e);
-      }
-    })();
-  });
+    return new Observable<T>((subscriber) => {
+        void (async () => {
+            try {
+                const result = await work(subscriber);
+                if (result) {
+                    subscriber.next(result);
+                }
+                subscriber.complete();
+            } catch (e: any) {
+                subscriber.error(e);
+            }
+        })();
+    });
 }
 
 /**
  * Returns the AssetType based on the mime type.
  */
 export function getAssetType(mimeType: string): AssetType {
-  const type = mimeType.split('/')[0];
-  switch (type) {
-    case 'image':
-      return AssetType.IMAGE;
-    case 'video':
-      return AssetType.VIDEO;
-    default:
-      return AssetType.BINARY;
-  }
+    const type = mimeType.split('/')[0];
+    switch (type) {
+        case 'image':
+            return AssetType.IMAGE;
+        case 'video':
+            return AssetType.VIDEO;
+        default:
+            return AssetType.BINARY;
+    }
 }
 
 export function isClassInstance(item: any): boolean {
-  // Even if item is an object, it might not have a constructor as in the
-  // case when it is a null-prototype object, i.e. created using `Object.create(null)`.
-  return isObject(item) && item.constructor && item.constructor.name !== 'Object';
+    // Even if item is an object, it might not have a constructor as in the
+    // case when it is a null-prototype object, i.e. created using `Object.create(null)`.
+    return isObject(item) && item.constructor && item.constructor.name !== 'Object';
 }
 
 export function isObject(item: any): item is object {
-  return item && typeof item === 'object' && !Array.isArray(item);
+    return item && typeof item === 'object' && !Array.isArray(item);
 }

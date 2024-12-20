@@ -10,24 +10,24 @@ import { JobPost } from '../job-post/job-post.entity';
  */
 @Entity()
 export class FacetValue extends FirelancerEntity {
-  constructor(input?: DeepPartial<FacetValue>) {
-    super(input);
-  }
+    constructor(input?: DeepPartial<FacetValue>) {
+        super(input);
+    }
 
-  @Column({ type: 'varchar' })
-  code: string;
+    @Column({ type: 'varchar' })
+    code: string;
 
-  @Column({ type: 'varchar' })
-  name: string;
+    @Column({ type: 'varchar' })
+    name: string;
 
-  @Column()
-  facetId: ID;
+    @Column()
+    facetId: ID;
 
-  @Index()
-  @ManyToOne(() => Facet, (group) => group.values, { onDelete: 'CASCADE' })
-  facet: Facet;
+    @Index()
+    @ManyToOne(() => Facet, (group) => group.values, { onDelete: 'CASCADE' })
+    facet: Facet;
 
-  @ManyToMany(() => JobPost, (jobPost) => jobPost.facetValues)
-  @JoinTable()
-  jobPosts: JobPost[];
+    @ManyToMany(() => JobPost, (jobPost) => jobPost.facetValues)
+    @JoinTable()
+    jobPosts: JobPost[];
 }

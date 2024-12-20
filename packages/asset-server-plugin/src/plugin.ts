@@ -11,19 +11,19 @@ import { SharpAssetPreviewStrategy } from './sharp-asset-preview-strategy';
 import { transformImage } from './transform-image';
 import { AssetServerOptions, ImageTransformPreset } from './types';
 import {
-  AssetStorageStrategy,
-  FirelancerPlugin,
-  PluginCommonModule,
-  registerPluginStartupMessage,
-  RuntimeFirelancerConfig,
-  Logger,
-  Type,
-  ProcessContext,
+    AssetStorageStrategy,
+    FirelancerPlugin,
+    PluginCommonModule,
+    registerPluginStartupMessage,
+    RuntimeFirelancerConfig,
+    Logger,
+    Type,
+    ProcessContext,
 } from '@firelancer/core';
 
 async function getFileType(buffer: Buffer) {
-  const { fileTypeFromBuffer } = await import('file-type');
-  return fileTypeFromBuffer(buffer);
+    const { fileTypeFromBuffer } = await import('file-type');
+    return fileTypeFromBuffer(buffer);
 }
 
 /**
@@ -139,249 +139,249 @@ async function getFileType(buffer: Buffer) {
  * a given configuration. Caching can be disabled per-request by setting the `?cache=false` query parameter.
  */
 @FirelancerPlugin({
-  imports: [PluginCommonModule],
-  configuration: (config) => AssetServerPlugin.configure(config),
-  compatibility: '^0.0.0',
+    imports: [PluginCommonModule],
+    configuration: (config) => AssetServerPlugin.configure(config),
+    compatibility: '^0.0.0',
 })
 export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
-  private static assetStorage: AssetStorageStrategy;
-  private readonly cacheDir = 'cache';
-  private presets: ImageTransformPreset[] = [
-    { name: 'tiny', width: 50, height: 50, mode: 'crop' },
-    { name: 'thumb', width: 150, height: 150, mode: 'crop' },
-    { name: 'small', width: 300, height: 300, mode: 'resize' },
-    { name: 'medium', width: 500, height: 500, mode: 'resize' },
-    { name: 'large', width: 800, height: 800, mode: 'resize' },
-  ];
-  private static options: AssetServerOptions;
-  private cacheHeader: string;
+    private static assetStorage: AssetStorageStrategy;
+    private readonly cacheDir = 'cache';
+    private presets: ImageTransformPreset[] = [
+        { name: 'tiny', width: 50, height: 50, mode: 'crop' },
+        { name: 'thumb', width: 150, height: 150, mode: 'crop' },
+        { name: 'small', width: 300, height: 300, mode: 'resize' },
+        { name: 'medium', width: 500, height: 500, mode: 'resize' },
+        { name: 'large', width: 800, height: 800, mode: 'resize' },
+    ];
+    private static options: AssetServerOptions;
+    private cacheHeader: string;
 
-  /**
-   * @description
-   * Set the plugin options.
-   */
-  static init(options: AssetServerOptions): Type<AssetServerPlugin> {
-    AssetServerPlugin.options = options;
-    return this;
-  }
-
-  constructor(private processContext: ProcessContext) {}
-
-  static async configure(config: RuntimeFirelancerConfig) {
-    const storageStrategyFactory = this.options.storageStrategyFactory || defaultAssetStorageStrategyFactory;
-    this.assetStorage = await storageStrategyFactory(this.options);
-    config.assetOptions.assetPreviewStrategy =
-      this.options.previewStrategy ?? new SharpAssetPreviewStrategy({ maxWidth: 1600, maxHeight: 1600 });
-    config.assetOptions.assetStorageStrategy = this.assetStorage;
-    config.assetOptions.assetNamingStrategy = this.options.namingStrategy || new HashedAssetNamingStrategy();
-    return config;
-  }
-
-  onApplicationBootstrap(): void {
-    if (this.processContext.isWorker) {
-      return;
+    /**
+     * @description
+     * Set the plugin options.
+     */
+    static init(options: AssetServerOptions): Type<AssetServerPlugin> {
+        AssetServerPlugin.options = options;
+        return this;
     }
-    if (AssetServerPlugin.options.presets) {
-      for (const preset of AssetServerPlugin.options.presets) {
-        const existingIndex = this.presets.findIndex((p) => p.name === preset.name);
-        if (-1 < existingIndex) {
-          this.presets.splice(existingIndex, 1, preset);
+
+    constructor(private processContext: ProcessContext) {}
+
+    static async configure(config: RuntimeFirelancerConfig) {
+        const storageStrategyFactory = this.options.storageStrategyFactory || defaultAssetStorageStrategyFactory;
+        this.assetStorage = await storageStrategyFactory(this.options);
+        config.assetOptions.assetPreviewStrategy =
+            this.options.previewStrategy ?? new SharpAssetPreviewStrategy({ maxWidth: 1600, maxHeight: 1600 });
+        config.assetOptions.assetStorageStrategy = this.assetStorage;
+        config.assetOptions.assetNamingStrategy = this.options.namingStrategy || new HashedAssetNamingStrategy();
+        return config;
+    }
+
+    onApplicationBootstrap(): void {
+        if (this.processContext.isWorker) {
+            return;
+        }
+        if (AssetServerPlugin.options.presets) {
+            for (const preset of AssetServerPlugin.options.presets) {
+                const existingIndex = this.presets.findIndex((p) => p.name === preset.name);
+                if (-1 < existingIndex) {
+                    this.presets.splice(existingIndex, 1, preset);
+                } else {
+                    this.presets.push(preset);
+                }
+            }
+        }
+        // Configure Cache-Control header
+        const { cacheHeader } = AssetServerPlugin.options;
+        if (!cacheHeader) {
+            this.cacheHeader = DEFAULT_CACHE_HEADER;
         } else {
-          this.presets.push(preset);
+            if (typeof cacheHeader === 'string') {
+                this.cacheHeader = cacheHeader;
+            } else {
+                this.cacheHeader = [cacheHeader.restriction, `max-age: ${cacheHeader.maxAge}`].filter((value) => !!value).join(', ');
+            }
         }
-      }
-    }
-    // Configure Cache-Control header
-    const { cacheHeader } = AssetServerPlugin.options;
-    if (!cacheHeader) {
-      this.cacheHeader = DEFAULT_CACHE_HEADER;
-    } else {
-      if (typeof cacheHeader === 'string') {
-        this.cacheHeader = cacheHeader;
-      } else {
-        this.cacheHeader = [cacheHeader.restriction, `max-age: ${cacheHeader.maxAge}`].filter((value) => !!value).join(', ');
-      }
+
+        const cachePath = path.join(AssetServerPlugin.options.assetUploadDir, this.cacheDir);
+        fs.ensureDirSync(cachePath);
     }
 
-    const cachePath = path.join(AssetServerPlugin.options.assetUploadDir, this.cacheDir);
-    fs.ensureDirSync(cachePath);
-  }
-
-  configure(consumer: MiddlewareConsumer) {
-    if (this.processContext.isWorker) {
-      return;
-    }
-    Logger.info('Creating asset server middleware', loggerCtx);
-    consumer.apply(this.createAssetServer()).forRoutes(AssetServerPlugin.options.route);
-    registerPluginStartupMessage('Asset server', AssetServerPlugin.options.route);
-  }
-
-  /**
-   * Creates the image server instance
-   */
-  private createAssetServer() {
-    const assetServer = express.Router();
-    assetServer.use(this.sendAsset(), this.generateTransformedImage());
-    return assetServer;
-  }
-
-  /**
-   * Reads the file requested and send the response to the browser.
-   */
-  private sendAsset() {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const key = this.getFileNameFromRequest(req);
-      try {
-        const file = await AssetServerPlugin.assetStorage.readFileToBuffer(key);
-        let mimeType = this.getMimeType(key);
-        if (!mimeType) {
-          mimeType = (await getFileType(file))?.mime || 'application/octet-stream';
+    configure(consumer: MiddlewareConsumer) {
+        if (this.processContext.isWorker) {
+            return;
         }
-        res.contentType(mimeType);
-        res.setHeader('content-security-policy', "default-src 'self'");
-        res.setHeader('Cache-Control', this.cacheHeader);
-        res.send(file);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
-      } catch (e: any) {
-        const err = new Error('File not found');
+        Logger.info('Creating asset server middleware', loggerCtx);
+        consumer.apply(this.createAssetServer()).forRoutes(AssetServerPlugin.options.route);
+        registerPluginStartupMessage('Asset server', AssetServerPlugin.options.route);
+    }
+
+    /**
+     * Creates the image server instance
+     */
+    private createAssetServer() {
+        const assetServer = express.Router();
+        assetServer.use(this.sendAsset(), this.generateTransformedImage());
+        return assetServer;
+    }
+
+    /**
+     * Reads the file requested and send the response to the browser.
+     */
+    private sendAsset() {
+        return async (req: Request, res: Response, next: NextFunction) => {
+            const key = this.getFileNameFromRequest(req);
+            try {
+                const file = await AssetServerPlugin.assetStorage.readFileToBuffer(key);
+                let mimeType = this.getMimeType(key);
+                if (!mimeType) {
+                    mimeType = (await getFileType(file))?.mime || 'application/octet-stream';
+                }
+                res.contentType(mimeType);
+                res.setHeader('content-security-policy', "default-src 'self'");
+                res.setHeader('Cache-Control', this.cacheHeader);
+                res.send(file);
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
+            } catch (e: any) {
+                const err = new Error('File not found');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (err as any).status = 404;
+                return next(err);
+            }
+        };
+    }
+
+    /**
+     * If an exception was thrown by the first handler, then it may be because a transformed image
+     * is being requested which does not yet exist. In this case, this handler will generate the
+     * transformed image, save it to cache, and serve the result as a response.
+     */
+    private generateTransformedImage() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (err as any).status = 404;
-        return next(err);
-      }
-    };
-  }
+        return async (err: any, req: Request, res: Response, next: NextFunction) => {
+            if (err && (err.status === 404 || err.statusCode === 404)) {
+                if (req.query) {
+                    const decodedReqPath = this.sanitizeFilePath(req.path);
+                    Logger.debug(`Pre-cached Asset not found: ${decodedReqPath}`, loggerCtx);
+                    let file: Buffer;
+                    try {
+                        file = await AssetServerPlugin.assetStorage.readFileToBuffer(decodedReqPath);
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    } catch (err) {
+                        res.status(404).send('Resource not found');
+                        return;
+                    }
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const image = await transformImage(file, req.query as any, this.presets || []);
+                    try {
+                        const imageBuffer = await image.toBuffer();
+                        const cachedFileName = this.getFileNameFromRequest(req);
+                        if (!req.query.cache || req.query.cache === 'true') {
+                            await AssetServerPlugin.assetStorage.writeFileFromBuffer(cachedFileName, imageBuffer);
+                            Logger.debug(`Saved cached asset: ${cachedFileName}`, loggerCtx);
+                        }
+                        let mimeType = this.getMimeType(cachedFileName);
+                        if (!mimeType) {
+                            mimeType = (await getFileType(imageBuffer))?.mime || 'image/jpeg';
+                        }
+                        res.set('Content-Type', mimeType);
+                        res.setHeader('content-security-policy', "default-src 'self'");
+                        res.send(imageBuffer);
+                        return;
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
+                    } catch (e: any) {
+                        Logger.error(e.message, loggerCtx, e.stack);
+                        res.status(500).send('An error occurred when generating the image');
+                        return;
+                    }
+                }
+            }
+            next();
+        };
+    }
 
-  /**
-   * If an exception was thrown by the first handler, then it may be because a transformed image
-   * is being requested which does not yet exist. In this case, this handler will generate the
-   * transformed image, save it to cache, and serve the result as a response.
-   */
-  private generateTransformedImage() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return async (err: any, req: Request, res: Response, next: NextFunction) => {
-      if (err && (err.status === 404 || err.statusCode === 404)) {
-        if (req.query) {
-          const decodedReqPath = this.sanitizeFilePath(req.path);
-          Logger.debug(`Pre-cached Asset not found: ${decodedReqPath}`, loggerCtx);
-          let file: Buffer;
-          try {
-            file = await AssetServerPlugin.assetStorage.readFileToBuffer(decodedReqPath);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          } catch (err) {
-            res.status(404).send('Resource not found');
-            return;
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const image = await transformImage(file, req.query as any, this.presets || []);
-          try {
-            const imageBuffer = await image.toBuffer();
-            const cachedFileName = this.getFileNameFromRequest(req);
-            if (!req.query.cache || req.query.cache === 'true') {
-              await AssetServerPlugin.assetStorage.writeFileFromBuffer(cachedFileName, imageBuffer);
-              Logger.debug(`Saved cached asset: ${cachedFileName}`, loggerCtx);
+    private getFileNameFromRequest(req: Request): string {
+        const { w, h, mode, preset, fpx, fpy, format, q } = req.query;
+        /* eslint-disable @typescript-eslint/restrict-template-expressions */
+        const focalPoint = fpx && fpy ? `_fpx${fpx}_fpy${fpy}` : '';
+        const quality = q ? `_q${q}` : '';
+        const imageFormat = getValidFormat(format);
+        let imageParamsString = '';
+        if (w || h) {
+            const width = w || '';
+            const height = h || '';
+            imageParamsString = `_transform_w${width}_h${height}_m${mode}`;
+        } else if (preset) {
+            if (this.presets && !!this.presets.find((p) => p.name === preset)) {
+                imageParamsString = `_transform_pre_${preset}`;
             }
-            let mimeType = this.getMimeType(cachedFileName);
-            if (!mimeType) {
-              mimeType = (await getFileType(imageBuffer))?.mime || 'image/jpeg';
-            }
-            res.set('Content-Type', mimeType);
-            res.setHeader('content-security-policy', "default-src 'self'");
-            res.send(imageBuffer);
-            return;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
-          } catch (e: any) {
-            Logger.error(e.message, loggerCtx, e.stack);
-            res.status(500).send('An error occurred when generating the image');
-            return;
-          }
         }
-      }
-      next();
-    };
-  }
 
-  private getFileNameFromRequest(req: Request): string {
-    const { w, h, mode, preset, fpx, fpy, format, q } = req.query;
-    /* eslint-disable @typescript-eslint/restrict-template-expressions */
-    const focalPoint = fpx && fpy ? `_fpx${fpx}_fpy${fpy}` : '';
-    const quality = q ? `_q${q}` : '';
-    const imageFormat = getValidFormat(format);
-    let imageParamsString = '';
-    if (w || h) {
-      const width = w || '';
-      const height = h || '';
-      imageParamsString = `_transform_w${width}_h${height}_m${mode}`;
-    } else if (preset) {
-      if (this.presets && !!this.presets.find((p) => p.name === preset)) {
-        imageParamsString = `_transform_pre_${preset}`;
-      }
+        if (focalPoint) {
+            imageParamsString += focalPoint;
+        }
+        if (imageFormat) {
+            imageParamsString += imageFormat;
+        }
+        if (quality) {
+            imageParamsString += quality;
+        }
+
+        const decodedReqPath = this.sanitizeFilePath(req.path);
+        if (imageParamsString !== '') {
+            const imageParamHash = this.md5(imageParamsString);
+            return path.join(this.cacheDir, this.addSuffix(decodedReqPath, imageParamHash, imageFormat));
+        } else {
+            return decodedReqPath;
+        }
     }
 
-    if (focalPoint) {
-      imageParamsString += focalPoint;
-    }
-    if (imageFormat) {
-      imageParamsString += imageFormat;
-    }
-    if (quality) {
-      imageParamsString += quality;
+    /**
+     * Sanitize the file path to prevent directory traversal attacks.
+     */
+    private sanitizeFilePath(filePath: string): string {
+        let decodedPath: string;
+        try {
+            decodedPath = decodeURIComponent(filePath);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
+        } catch (e: any) {
+            Logger.error((e.message as string) + ': ' + filePath, loggerCtx);
+            return '';
+        }
+        return path.normalize(decodedPath).replace(/(\.\.[/\\])+/, '');
     }
 
-    const decodedReqPath = this.sanitizeFilePath(req.path);
-    if (imageParamsString !== '') {
-      const imageParamHash = this.md5(imageParamsString);
-      return path.join(this.cacheDir, this.addSuffix(decodedReqPath, imageParamHash, imageFormat));
-    } else {
-      return decodedReqPath;
+    private md5(input: string): string {
+        return createHash('md5').update(input).digest('hex');
     }
-  }
 
-  /**
-   * Sanitize the file path to prevent directory traversal attacks.
-   */
-  private sanitizeFilePath(filePath: string): string {
-    let decodedPath: string;
-    try {
-      decodedPath = decodeURIComponent(filePath);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      Logger.error((e.message as string) + ': ' + filePath, loggerCtx);
-      return '';
+    private addSuffix(fileName: string, suffix: string, ext?: string): string {
+        const originalExt = path.extname(fileName);
+        const effectiveExt = ext ? `.${ext}` : originalExt;
+        const baseName = path.basename(fileName, originalExt);
+        const dirName = path.dirname(fileName);
+        return path.join(dirName, `${baseName}${suffix}${effectiveExt}`);
     }
-    return path.normalize(decodedPath).replace(/(\.\.[/\\])+/, '');
-  }
 
-  private md5(input: string): string {
-    return createHash('md5').update(input).digest('hex');
-  }
-
-  private addSuffix(fileName: string, suffix: string, ext?: string): string {
-    const originalExt = path.extname(fileName);
-    const effectiveExt = ext ? `.${ext}` : originalExt;
-    const baseName = path.basename(fileName, originalExt);
-    const dirName = path.dirname(fileName);
-    return path.join(dirName, `${baseName}${suffix}${effectiveExt}`);
-  }
-
-  /**
-   * Attempt to get the mime type from the file name.
-   */
-  private getMimeType(fileName: string): string | undefined {
-    const ext = path.extname(fileName);
-    switch (ext) {
-      case '.jpg':
-      case '.jpeg':
-        return 'image/jpeg';
-      case '.png':
-        return 'image/png';
-      case '.gif':
-        return 'image/gif';
-      case '.svg':
-        return 'image/svg+xml';
-      case '.tiff':
-        return 'image/tiff';
-      case '.webp':
-        return 'image/webp';
+    /**
+     * Attempt to get the mime type from the file name.
+     */
+    private getMimeType(fileName: string): string | undefined {
+        const ext = path.extname(fileName);
+        switch (ext) {
+            case '.jpg':
+            case '.jpeg':
+                return 'image/jpeg';
+            case '.png':
+                return 'image/png';
+            case '.gif':
+                return 'image/gif';
+            case '.svg':
+                return 'image/svg+xml';
+            case '.tiff':
+                return 'image/tiff';
+            case '.webp':
+                return 'image/webp';
+        }
     }
-  }
 }

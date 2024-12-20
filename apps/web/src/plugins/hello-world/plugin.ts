@@ -4,18 +4,18 @@ import { HelloWorldController } from './api/hello-world.controller';
 import { loggerCtx } from './constants';
 
 @FirelancerPlugin({
-  imports: [PluginCommonModule],
-  shopApiExtensions: {
-    controllers: [HelloWorldController],
-  },
-  compatibility: '^0.0.0',
+    imports: [PluginCommonModule],
+    shopApiExtensions: {
+        controllers: [HelloWorldController],
+    },
+    compatibility: '^0.0.0',
 })
 export class HelloWorldPlugin implements OnApplicationBootstrap {
-  constructor(private eventBus: EventBus) {}
+    constructor(private eventBus: EventBus) {}
 
-  onApplicationBootstrap() {
-    this.eventBus.ofType(AttemptedLoginEvent).subscribe((event) => {
-      Logger.info('user attemped to login', loggerCtx);
-    });
-  }
+    onApplicationBootstrap() {
+        this.eventBus.ofType(AttemptedLoginEvent).subscribe((event) => {
+            Logger.info('user attemped to login', loggerCtx);
+        });
+    }
 }

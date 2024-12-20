@@ -13,50 +13,50 @@ import { CachedSession, SessionCacheStrategy } from '../session-cache-strategy';
  *
  */
 export class InMemorySessionCacheStrategy implements SessionCacheStrategy {
-  private readonly cache = new Map<string, CachedSession>();
-  private readonly cacheSize: number = 1000;
+    private readonly cache = new Map<string, CachedSession>();
+    private readonly cacheSize: number = 1000;
 
-  constructor(cacheSize?: number) {
-    if (cacheSize != null) {
-      if (cacheSize < 1) {
-        throw new Error('cacheSize must be a positive integer');
-      }
-      this.cacheSize = Math.round(cacheSize);
+    constructor(cacheSize?: number) {
+        if (cacheSize != null) {
+            if (cacheSize < 1) {
+                throw new Error('cacheSize must be a positive integer');
+            }
+            this.cacheSize = Math.round(cacheSize);
+        }
     }
-  }
 
-  delete(sessionToken: string) {
-    this.cache.delete(sessionToken);
-  }
-
-  get(sessionToken: string) {
-    const item = this.cache.get(sessionToken);
-    if (item) {
-      // refresh key
-      this.cache.delete(sessionToken);
-      this.cache.set(sessionToken, item);
+    delete(sessionToken: string) {
+        this.cache.delete(sessionToken);
     }
-    return item;
-  }
 
-  set(session: CachedSession) {
-    this.cache.set(session.token, session);
-
-    if (this.cache.has(session.token)) {
-      // refresh key
-      this.cache.delete(session.token);
-    } else if (this.cache.size === this.cacheSize) {
-      // evict oldest
-      this.cache.delete(this.first() ?? '');
+    get(sessionToken: string) {
+        const item = this.cache.get(sessionToken);
+        if (item) {
+            // refresh key
+            this.cache.delete(sessionToken);
+            this.cache.set(sessionToken, item);
+        }
+        return item;
     }
-    this.cache.set(session.token, session);
-  }
 
-  clear() {
-    this.cache.clear();
-  }
+    set(session: CachedSession) {
+        this.cache.set(session.token, session);
 
-  private first() {
-    return this.cache.keys().next().value;
-  }
+        if (this.cache.has(session.token)) {
+            // refresh key
+            this.cache.delete(session.token);
+        } else if (this.cache.size === this.cacheSize) {
+            // evict oldest
+            this.cache.delete(this.first() ?? '');
+        }
+        this.cache.set(session.token, session);
+    }
+
+    clear() {
+        this.cache.clear();
+    }
+
+    private first() {
+        return this.cache.keys().next().value;
+    }
 }

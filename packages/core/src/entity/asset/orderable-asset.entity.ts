@@ -12,17 +12,17 @@ import { FirelancerEntity } from '../base/base.entity';
  * See https://typeorm.io/#/many-to-many-relations/many-to-many-relations-with-custom-properties
  */
 export abstract class OrderableAsset extends FirelancerEntity implements Orderable {
-  protected constructor(input?: DeepPartial<OrderableAsset>) {
-    super(input);
-  }
+    protected constructor(input?: DeepPartial<OrderableAsset>) {
+        super(input);
+    }
 
-  @Column()
-  assetId: ID;
+    @Column()
+    assetId: ID;
 
-  @Index()
-  @ManyToOne(() => Asset, { eager: true, onDelete: 'CASCADE' })
-  asset: Asset;
+    @Index()
+    @ManyToOne(() => Asset, { eager: true, onDelete: 'CASCADE' })
+    asset: Asset;
 
-  @Column()
-  position: number;
+    @Column()
+    position: number;
 }
