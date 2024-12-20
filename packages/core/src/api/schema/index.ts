@@ -1,5 +1,6 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Buffer } from 'buffer';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -20,104 +21,128 @@ import { BalanceEntryType, CustomerType, ID, Permission } from '../../common/sha
 import { Customer } from '../../entity';
 
 export class CreateAdministratorInput {
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @IsEmail()
   emailAddress: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   firstName: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   lastName: string;
 
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   password: string;
 
-  @IsArray()
+  @ApiProperty({ isArray: true, type: 'number' })
+  @IsNumber({}, { each: true })
   roleIds: Array<ID>;
 }
 
 export class UpdateAdministratorInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   emailAddress?: string;
 
+  @ApiProperty()
   @IsString()
   @IsOptional()
   firstName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   lastName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   password?: string;
 
-  @IsArray()
+  @ApiProperty({ isArray: true, type: 'number' })
+  @IsNumber({}, { each: true })
   @IsOptional()
   roleIds?: Array<ID>;
 }
 
 export class UpdateActiveAdministratorInput {
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   emailAddress?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   firstName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   lastName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   password?: string;
 }
 
 export class CurrentUser {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiProperty()
   @IsString()
   identifier: string;
 }
 
 export class MutationLoginArgs {
+  @ApiProperty()
   @IsString()
   password: string;
 
+  @ApiPropertyOptional()
   @IsBoolean()
   @IsOptional()
   rememberMe?: boolean;
 
+  @ApiProperty()
   @IsString()
   username: string;
 }
 
 export class NativeAuthInput {
+  @ApiProperty()
   @IsString()
   password: string;
 
+  @ApiProperty()
   @IsString()
   username: string;
 }
 
 export class AuthenticationInput {
+  @ApiPropertyOptional()
   @IsOptional()
   native?: NativeAuthInput;
 }
 
 export class MutationAuthenticateArgs {
+  @ApiProperty()
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()
@@ -131,109 +156,136 @@ export class MutationAuthenticateArgs {
 }
 
 export class CreateCustomerInput {
+  @ApiProperty()
   @IsString()
   emailAddress: string;
 
+  @ApiProperty()
   @IsEnum(CustomerType)
   customerType: CustomerType;
 
+  @ApiProperty()
   @IsString()
   firstName: string;
 
+  @ApiProperty()
   @IsString()
   lastName: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   phoneNumber?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   title?: string;
 }
 
 export class UpdateCustomerInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   emailAddress?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   firstName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   lastName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   phoneNumber?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   title?: string;
 }
 
 export class RegisterCustomerInput {
+  @ApiProperty()
   @IsString()
   emailAddress: string;
 
+  @ApiProperty()
   @IsEnum(CustomerType)
   customerType: CustomerType;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   firstName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   lastName?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   password?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   phoneNumber?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   title?: string;
 }
 
 export class CreateRoleInput {
+  @ApiProperty()
   @IsString()
   code: string;
 
+  @ApiProperty()
   @IsString()
   description: string;
 
-  @IsArray()
+  @ApiProperty()
+  @IsEnum(Permission, { each: true })
   permissions: Array<Permission>;
 }
 
 export class UpdateRoleInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   code?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   description?: string;
 
-  @IsArray()
+  @ApiPropertyOptional()
+  @IsEnum(Permission, { each: true })
   @IsOptional()
   permissions?: Array<Permission>;
 }
 
 export class MutationRegisterCustomerAccountArgs {
+  @ApiProperty()
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()
@@ -243,54 +295,66 @@ export class MutationRegisterCustomerAccountArgs {
 }
 
 export class MutationVerifyCustomerAccountArgs {
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   password?: string;
 
+  @ApiProperty()
   @IsString()
   token: string;
 }
 
 export class MutationRefreshCustomerVerificationArgs {
+  @ApiProperty()
   @IsString()
   emailAddress: string;
 }
 
 export class MutationRequestPasswordResetArgs {
+  @ApiProperty()
   @IsString()
   emailAddress: string;
 }
 
 export class MutationResetPasswordArgs {
+  @ApiProperty()
   @IsString()
   password: string;
 
+  @ApiProperty()
   @IsString()
   token: string;
 }
 
 export class MutationUpdateCustomerPasswordArgs {
+  @ApiProperty()
   @IsString()
   currentPassword: string;
 
+  @ApiProperty()
   @IsString()
   newPassword: string;
 }
 
 export class MutationRequestUpdateCustomerEmailAddressArgs {
+  @ApiProperty()
   @IsString()
   newEmailAddress: string;
 
+  @ApiProperty()
   @IsString()
   password: string;
 }
 
 export class MutationUpdateCustomerEmailAddressArgs {
+  @ApiProperty()
   @IsString()
   token: string;
 }
 
 export class MutationCreateAdministratorArgs {
+  @ApiProperty()
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()
@@ -300,6 +364,7 @@ export class MutationCreateAdministratorArgs {
 }
 
 export class MutationUpdateAdministratorArgs {
+  @ApiProperty()
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()
@@ -309,6 +374,7 @@ export class MutationUpdateAdministratorArgs {
 }
 
 export class MutationUpdateActiveAdministratorArgs {
+  @ApiProperty()
   @IsDefined()
   @IsNotEmptyObject()
   @IsObject()
@@ -318,19 +384,23 @@ export class MutationUpdateActiveAdministratorArgs {
 }
 
 export class MutationAssignRoleToAdministratorArgs {
+  @ApiProperty()
   @IsNumber()
   administratorId: ID;
 
+  @ApiProperty()
   @IsNumber()
   roleId: ID;
 }
 
 export class MutationDeleteAdministratorArgs {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 }
 
 export class QueryAdministratorArgs {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 }
@@ -362,112 +432,145 @@ export class CreateAssetInput {
 }
 
 export class CoordinateInput {
+  @ApiProperty()
   @IsNumber()
   x: number;
 
+  @ApiProperty()
   @IsNumber()
   y: number;
 }
 
 export class UpdateAssetInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @IsOptional()
+  @IsNotEmptyObject()
+  @IsObject()
+  @ValidateNested()
+  @ApiProperty()
+  @Type(() => CoordinateInput)
   focalPoint?: CoordinateInput;
 
+  @ApiProperty()
   @IsString()
   @IsOptional()
   name?: string;
 
+  @ApiProperty()
   @IsString()
   @IsOptional()
   tags?: string;
 }
 
 export class CreateJobPostInput {
+  @ApiProperty()
   @IsNumber()
   customerId: ID;
 
+  @ApiProperty()
   @IsString()
   title: string;
 
+  @ApiProperty()
   @IsString()
   description: string;
 
+  @ApiProperty()
   @IsBoolean()
   enabled: boolean;
 
+  @ApiProperty()
   @IsBoolean()
   private: boolean;
 
-  @IsArray()
+  @ApiPropertyOptional({ isArray: true, type: 'number' })
+  @IsNumber({}, { each: true })
   @IsOptional()
   assetIds?: ID[];
 
-  @IsArray()
+  @ApiPropertyOptional({ isArray: true, type: 'number' })
+  @IsNumber({}, { each: true })
   @IsOptional()
   facetValueIds?: ID[];
 }
 
 export class MutationCreateJobPostArgs {
+  @ApiProperty()
   @IsString()
   title: string;
 
+  @ApiProperty()
   @IsString()
   description: string;
 
+  @ApiProperty()
   @IsBoolean()
   private: boolean;
 
-  @Transform(({ value }) => (typeof value === 'string' ? JSON.parse(value) : value))
-  @IsArray()
+  @ApiPropertyOptional({ isArray: true, type: 'number' })
+  @IsNumber({}, { each: true })
   @IsOptional()
-  facetValueIds?: ID[];
+  facetValueIds?: Array<ID>;
 }
 
 export class CreateFacetValueInput {
+  @ApiProperty()
   @IsString()
   code: string;
 
+  @ApiProperty()
   @IsString()
   name: string;
 
+  @ApiProperty()
   @IsNumber()
   facetId: ID;
 }
 
 export class CreateFacetValueWithFacetInput {
+  @ApiProperty()
   @IsString()
   code: string;
 
+  @ApiProperty()
   @IsString()
   name: string;
 }
 
 export class UpdateFacetValueInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   code?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   name?: string;
 
+  @ApiPropertyOptional()
   @IsNumber()
   @IsOptional()
   facetId?: ID;
 }
 
 export class CreateFacetInput {
+  @ApiProperty()
   @IsString()
   code: string;
 
+  @ApiProperty()
   @IsString()
   name: string;
 
+  @ApiPropertyOptional()
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
@@ -476,13 +579,16 @@ export class CreateFacetInput {
 }
 
 export class UpdateFacetInput {
+  @ApiProperty()
   @IsNumber()
   id: ID;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   code?: string;
 
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   name?: string;
