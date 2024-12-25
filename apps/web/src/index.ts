@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { bootstrap, runMigrations } from '@firelancer/core';
 import { config } from './firelancer-config';
 

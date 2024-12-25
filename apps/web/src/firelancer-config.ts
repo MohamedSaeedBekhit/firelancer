@@ -1,4 +1,3 @@
-require('dotenv').config();
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
 import { DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
 import { NextFunction, Request, Response } from 'express';

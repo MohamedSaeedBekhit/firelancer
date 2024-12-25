@@ -55,11 +55,7 @@ export class CollectionService implements OnModuleInit {
             .pipe(debounceTime(50))
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             .subscribe(async (event) => {
-                const collections = await this.connection.rawConnection
-                    .getRepository(Collection)
-                    .createQueryBuilder('collection')
-                    .select('collection.id', 'id')
-                    .getRawMany();
+                const collections = await this.connection.rawConnection.getRepository(Collection).find({ select: { id: true } });
                 await this.applyFiltersQueue.add(
                     {
                         ctx: event.ctx.serialize(),
@@ -108,7 +104,7 @@ export class CollectionService implements OnModuleInit {
                         if (affectedJobPostIds.length) {
                             // To avoid performance issues on huge collections we first split the affected job-post ids into chunks
                             this.chunkArray(affectedJobPostIds, 50000).map((chunk) =>
-                                this.eventBus.publish(new CollectionModificationEvent(ctx, collection as Collection, chunk)),
+                                this.eventBus.publish(new CollectionModificationEvent(ctx, collection, chunk)),
                             );
                         }
                     }

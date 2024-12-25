@@ -28,6 +28,5 @@ export class FacetValue extends FirelancerEntity {
     facet: Facet;
 
     @ManyToMany(() => JobPost, (jobPost) => jobPost.facetValues)
-    @JoinTable()
     jobPosts: JobPost[];
 }
