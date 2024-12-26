@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
 import { DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
 import { NextFunction, Request, Response } from 'express';
@@ -35,6 +36,7 @@ export const config: FirelancerConfig = {
         password: process.env.POSTGRES_CONNECTION_PASSWORD!,
         database: process.env.POSTGRES_DATABASE!,
         synchronize: false,
+        migrations: [join(__dirname, './migrations/*.+(js|ts)')],
     },
     authOptions: {
         tokenMethod: ['cookie', 'bearer'],

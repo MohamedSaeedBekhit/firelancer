@@ -7,7 +7,7 @@ export interface CountryDefinition {
 }
 
 export interface FacetValueCollectionFilterDefinition {
-    code: 'facet-value-filter';
+    code: 'job-post-facet-value-filter';
     args: {
         facetValueNames: string[];
         containsAny: boolean;

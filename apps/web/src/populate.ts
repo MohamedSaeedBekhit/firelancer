@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { bootstrap, JobQueueService } from '@firelancer/core';
 import { populate } from '@firelancer/core/cli';
 import { initialData } from './data-sources/initial-data';

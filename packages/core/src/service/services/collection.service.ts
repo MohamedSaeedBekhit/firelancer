@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
 import { In } from 'typeorm';
+import { camelCase } from 'typeorm/util/StringUtils.js';
 import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, UpdateCollectionInput } from '../../api';
 import {
     assertFound,
@@ -11,13 +12,14 @@ import {
     JobState,
     RequestContext,
     SerializedRequestContext,
+    Type,
 } from '../../common';
 import { pick } from '../../common/utils/pick';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
-import { JobPost } from '../../entity';
+import { FirelancerEntity, JobPost } from '../../entity';
 import { Collection } from '../../entity/collection/collection.entity';
-import { EventBus, JobPostEvent } from '../../event-bus';
+import { EventBus, FirelancerEvent, JobPostEvent } from '../../event-bus';
 import { CollectionEvent } from '../../event-bus/events/collection-event';
 import { CollectionModificationEvent } from '../../event-bus/events/collection-modification-event';
 import { JobQueue, JobQueueService } from '../../job-queue';
@@ -25,10 +27,25 @@ import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
 import { moveToIndex } from '../helpers/utils/move-to-index';
 import { patchEntity } from '../helpers/utils/patch-entity';
 
+export type CollectableEntity<Entity extends FirelancerEntity, Event extends FirelancerEvent> = {
+    entityName: string;
+    entityType: Type<Entity>;
+    entityEvent: Type<Event>;
+};
+
+const collectableEntities: CollectableEntity<any, any>[] = [
+    {
+        entityName: 'JobPost',
+        entityType: JobPost,
+        entityEvent: JobPostEvent,
+    },
+];
+
 export type ApplyCollectionFiltersJobData = {
     ctx: SerializedRequestContext;
     collectionIds: ID[];
-    applyToChangedJobPostsOnly?: boolean;
+    entityName: string;
+    applyToChangedEntitiesOnly?: boolean;
 };
 
 /**
@@ -49,22 +66,22 @@ export class CollectionService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        const jobPostsEvents$ = this.eventBus.ofType(JobPostEvent);
-
-        merge(jobPostsEvents$)
-            .pipe(debounceTime(50))
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            .subscribe(async (event) => {
-                const collections = await this.connection.rawConnection.getRepository(Collection).find({ select: { id: true } });
-                await this.applyFiltersQueue.add(
-                    {
-                        ctx: event.ctx.serialize(),
-                        collectionIds: collections.map((c) => c.id),
-                        applyToChangedJobPostsOnly: true,
-                    },
-                    { ctx: event.ctx },
-                );
-            });
+        for (const { entityName, entityEvent } of collectableEntities) {
+            merge(this.eventBus.ofType(entityEvent))
+                .pipe(debounceTime(50))
+                .subscribe(async (event) => {
+                    const collections = await this.connection.rawConnection.getRepository(Collection).find({ select: { id: true } });
+                    await this.applyFiltersQueue.add(
+                        {
+                            ctx: event.ctx.serialize(),
+                            collectionIds: collections.map((c) => c.id),
+                            applyToChangedEntitiesOnly: true,
+                            entityName,
+                        },
+                        { ctx: event.ctx },
+                    );
+                });
+        }
 
         this.applyFiltersQueue = await this.jobQueueService.createQueue({
             name: 'apply-collection-filters',
@@ -82,7 +99,6 @@ export class CollectionService implements OnModuleInit {
                             retries: 5,
                             retryDelay: 50,
                         });
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     } catch (err) {
                         Logger.warn(`Could not find Collection with id ${collectionId}, skipping`);
                     }
@@ -90,7 +106,11 @@ export class CollectionService implements OnModuleInit {
                     if (collection !== undefined) {
                         let affectedJobPostIds: ID[] = [];
                         try {
-                            affectedJobPostIds = await this.applyCollectionFiltersInternal(collection, job.data.applyToChangedJobPostsOnly);
+                            affectedJobPostIds = await this.applyCollectionFiltersInternal(
+                                collection,
+                                job.data.entityName,
+                                job.data.applyToChangedEntitiesOnly,
+                            );
                         } catch (e: unknown) {
                             Logger.error(
                                 `An error occurred when processing the filters for the collection "${collection.name}" (id: ${collection.id})`,
@@ -242,14 +262,18 @@ export class CollectionService implements OnModuleInit {
         collection.filters = this.getCollectionFiltersFromInput(input);
         await this.connection.getRepository(ctx, Collection).save(collection);
 
-        await this.applyFiltersQueue.add(
-            {
-                ctx: ctx.serialize(),
-                collectionIds: [collection.id],
-            },
-            { ctx },
-        );
-        // await this.eventBus.publish(new CollectionEvent(ctx, collection, 'created', input));
+        for (const { entityName } of collectableEntities) {
+            await this.applyFiltersQueue.add(
+                {
+                    ctx: ctx.serialize(),
+                    collectionIds: [collection.id],
+                    entityName,
+                },
+                { ctx },
+            );
+        }
+
+        await this.eventBus.publish(new CollectionEvent(ctx, collection, 'created', input));
         return assertFound(this.findOne(ctx, collection.id));
     }
 
@@ -262,14 +286,17 @@ export class CollectionService implements OnModuleInit {
         await this.connection.getRepository(ctx, Collection).save(updatedCollection, { reload: false });
 
         if (input.filters) {
-            await this.applyFiltersQueue.add(
-                {
-                    ctx: ctx.serialize(),
-                    collectionIds: [collection.id],
-                    applyToChangedJobPostsOnly: false,
-                },
-                { ctx },
-            );
+            for (const { entityName } of collectableEntities) {
+                await this.applyFiltersQueue.add(
+                    {
+                        ctx: ctx.serialize(),
+                        collectionIds: [collection.id],
+                        entityName,
+                        applyToChangedEntitiesOnly: false,
+                    },
+                    { ctx },
+                );
+            }
         } else {
             const affectedJobPostIds = await this.getCollectionJobPostIds(collection);
             await this.eventBus.publish(new CollectionModificationEvent(ctx, collection, affectedJobPostIds));
@@ -328,13 +355,16 @@ export class CollectionService implements OnModuleInit {
         siblings = moveToIndex(input.index, target, siblings);
 
         await this.connection.getRepository(ctx, Collection).save(siblings);
-        await this.applyFiltersQueue.add(
-            {
-                ctx: ctx.serialize(),
-                collectionIds: [target.id],
-            },
-            { ctx },
-        );
+        for (const { entityName } of collectableEntities) {
+            await this.applyFiltersQueue.add(
+                {
+                    ctx: ctx.serialize(),
+                    collectionIds: [target.id],
+                    entityName,
+                },
+                { ctx },
+            );
+        }
         return assertFound(this.findOne(ctx, input.collectionId));
     }
 
@@ -357,62 +387,75 @@ export class CollectionService implements OnModuleInit {
         return results;
     };
 
-    private async applyCollectionFiltersInternal(collection: Collection, applyToChangedJobPostsOnly = true): Promise<ID[]> {
+    private async applyCollectionFiltersInternal(
+        collection: Collection,
+        entityName: string,
+        applyToChangedEntitiesOnly = true,
+    ): Promise<ID[]> {
+        const entity = collectableEntities.find((e) => e.entityName === entityName);
+        const entityRelationName = `${camelCase(entityName)}s`;
+        if (!entity) {
+            throw new Error(`Entity "${entityName}" not found`);
+        }
+
         const masterConnection = this.connection.rawConnection.createQueryRunner('master').connection;
         const ancestorFilters = await this.getAncestorFilters(collection);
         const filters = [...ancestorFilters, ...(collection.filters || [])];
-
         const { collectionFilters } = this.configService.catalogOptions;
 
-        // Create a basic query to retrieve the IDs of job posts that match the collection filters
+        // Create a basic query to retrieve the IDs of entities that match the collection filters
         let filteredQb = masterConnection
-            .getRepository(JobPost)
-            .createQueryBuilder('jobPost')
-            .select('jobPost.id', 'id')
+            .getRepository(entity.entityType)
+            .createQueryBuilder('entity')
+            .select('entity.id', 'id')
             .setFindOptions({ loadEagerRelations: false });
 
-        // If there are no filters, we need to ensure that the query returns no results
+        // If there are no filters, ensure the query returns no results
         if (filters.length === 0) {
             filteredQb.andWhere('1 = 0');
         }
 
-        // Applies the CollectionFilters and returns an array of JobPost entities which match
+        // Applies the CollectionFilters and returns an array of entities that match
+
+        //  Applies the CollectionFilters and returns an array of entity instances which match
         for (const filterType of collectionFilters) {
-            const filtersOfType = filters.filter((f) => f.code === filterType.code);
-            if (filtersOfType.length) {
-                for (const filter of filtersOfType) {
-                    filteredQb = filterType.apply(filteredQb, filter.args);
+            if (filterType.entityType.name == entityName) {
+                const filtersOfType = filters.filter((f) => f.code === filterType.code);
+                if (filtersOfType.length) {
+                    for (const filter of filtersOfType) {
+                        filteredQb = filterType.apply(filteredQb, filter.args);
+                    }
                 }
             }
         }
 
-        // Subquery for existing job posts in the collection
-        const existingJobPostsQb = masterConnection
-            .getRepository(JobPost)
-            .createQueryBuilder('jobPost')
-            .select('jobPost.id', 'id')
+        // Subquery for existing entities in the collection
+        const existingEntitiesQb = masterConnection
+            .getRepository(entity.entityType)
+            .createQueryBuilder('entity')
+            .select('entity.id', 'id')
             .setFindOptions({ loadEagerRelations: false })
-            .innerJoin('jobPost.collections', 'collection', 'collection.id = :id', { id: collection.id });
+            .innerJoin(`entity.collections`, 'collection', 'collection.id = :id', { id: collection.id });
 
-        // Using CTE to find job posts to add
+        // Using CTE to find entities to add
         const addQb = masterConnection
             .createQueryBuilder()
-            .addCommonTableExpression(filteredQb, '_filtered_job_posts')
-            .addCommonTableExpression(existingJobPostsQb, '_existing_job_posts')
-            .select('filtered_job_posts.id')
-            .from('_filtered_job_posts', 'filtered_job_posts')
-            .leftJoin('_existing_job_posts', 'existing_job_posts', 'filtered_job_posts.id = existing_job_posts.id')
-            .where('existing_job_posts.id IS NULL');
+            .addCommonTableExpression(filteredQb, '_filtered_entities')
+            .addCommonTableExpression(existingEntitiesQb, '_existing_entities')
+            .select('filtered_entities.id')
+            .from('_filtered_entities', 'filtered_entities')
+            .leftJoin('_existing_entities', 'existing_entities', 'filtered_entities.id = existing_entities.id')
+            .where('existing_entities.id IS NULL');
 
-        // Using CTE to find the job posts to be deleted
+        // Using CTE to find the entities to be deleted
         const removeQb = masterConnection
             .createQueryBuilder()
-            .addCommonTableExpression(filteredQb, '_filtered_job_posts')
-            .addCommonTableExpression(existingJobPostsQb, '_existing_job_posts')
-            .select('existing_job_posts.id')
-            .from('_existing_job_posts', 'existing_job_posts')
-            .leftJoin('_filtered_job_posts', 'filtered_job_posts', 'existing_job_posts.id = filtered_job_posts.id')
-            .where('filtered_job_posts.id IS NULL')
+            .addCommonTableExpression(filteredQb, '_filtered_entities')
+            .addCommonTableExpression(existingEntitiesQb, '_existing_entities')
+            .select('existing_entities.id')
+            .from('_existing_entities', 'existing_entities')
+            .leftJoin('_filtered_entities', 'filtered_entities', 'existing_entities.id = filtered_entities.id')
+            .where('filtered_entities.id IS NULL')
             .setParameters({ id: collection.id });
 
         const [toAddIds, toRemoveIds] = await Promise.all([
@@ -425,13 +468,17 @@ export class CollectionService implements OnModuleInit {
                 const chunkedDeleteIds = this.chunkArray(toRemoveIds, 5000);
                 const chunkedAddIds = this.chunkArray(toAddIds, 5000);
                 await Promise.all([
-                    // Delete job posts that should no longer be in the collection
+                    // Delete entities that should no longer be in the collection
                     ...chunkedDeleteIds.map((chunk) =>
-                        transactionalEntityManager.createQueryBuilder().relation(Collection, 'jobPosts').of(collection).remove(chunk),
+                        transactionalEntityManager
+                            .createQueryBuilder()
+                            .relation(Collection, entityRelationName)
+                            .of(collection)
+                            .remove(chunk),
                     ),
-                    // Adding job posts that should be in the collection
+                    // Add entities that should be in the collection
                     ...chunkedAddIds.map((chunk) =>
-                        transactionalEntityManager.createQueryBuilder().relation(Collection, 'jobPosts').of(collection).add(chunk),
+                        transactionalEntityManager.createQueryBuilder().relation(Collection, entityRelationName).of(collection).add(chunk),
                     ),
                 ]);
             });
@@ -441,11 +488,11 @@ export class CollectionService implements OnModuleInit {
             }
         }
 
-        if (applyToChangedJobPostsOnly) {
+        if (applyToChangedEntitiesOnly) {
             return [...toAddIds, ...toRemoveIds];
         }
 
-        return [...(await existingJobPostsQb.getRawMany().then((results) => results.map((result) => result.id))), ...toRemoveIds];
+        return [...(await existingEntitiesQb.getRawMany().then((results) => results.map((result) => result.id))), ...toRemoveIds];
     }
 
     /**

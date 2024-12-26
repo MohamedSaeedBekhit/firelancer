@@ -37,6 +37,7 @@ export class JobPostService {
                     assets: { asset: true },
                     facetValues: { facet: true },
                 },
+                loadEagerRelations: false,
             })
             .then((result) => result ?? undefined);
     }

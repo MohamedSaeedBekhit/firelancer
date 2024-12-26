@@ -74,7 +74,6 @@ export class RequestContextService {
 
     /**
      * TODO: Deprecate and remove, since this function is now handled internally in the RequestContext.
-     * @private
      */
     userHasPermissions(permissions: Permission[], user?: CachedSessionUser): boolean {
         if (!user) {

@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { bootstrapWorker } from '@firelancer/core';
 import { config } from './firelancer-config';
 

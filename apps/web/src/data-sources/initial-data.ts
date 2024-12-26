@@ -68,7 +68,7 @@ export const initialData: InitialData = {
             name: 'Web, Mobile, & Software Development',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: [
                             'Web Development',
@@ -81,110 +81,119 @@ export const initialData: InitialData = {
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Web, Mobile, & Software Development',
             name: 'Web Development',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Web Development'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Web, Mobile, & Software Development',
             name: 'Web & Mobile Design',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Web & Mobile Design'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Web, Mobile, & Software Development',
             name: 'QA Testing',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['QA Testing'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Web, Mobile, & Software Development',
             name: 'Desktop Application Development',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Desktop Application Development'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Web, Mobile, & Software Development',
             name: 'Mobile Development',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Mobile Development'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         // Translation
         {
             name: 'Translation',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Language Tutoring & Interpretation', 'Translation & Localization Services'],
                         containsAny: true,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Translation',
             name: 'Language Tutoring & Interpretation',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Language Tutoring & Interpretation'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
         {
             parentName: 'Translation',
             name: 'Translation & Localization Services',
             filters: [
                 {
-                    code: 'facet-value-filter',
+                    code: 'job-post-facet-value-filter',
                     args: {
                         facetValueNames: ['Translation & Localization Services'],
                         containsAny: false,
                     },
                 },
             ],
+            inheritFilters: false,
         },
     ],
     countries: [

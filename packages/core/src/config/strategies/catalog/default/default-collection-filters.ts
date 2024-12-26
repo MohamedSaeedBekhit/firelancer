@@ -1,7 +1,6 @@
 import { ConfigArgDef } from '../../../../common/configurable-operation';
 import { JobPost } from '../../../../entity';
 import { CollectionFilter } from '../collection-filter';
-
 const { customAlphabet } = require('nanoid');
 
 /**
@@ -30,7 +29,10 @@ export const combineWithAndArg: ConfigArgDef<'boolean'> = {
 /**
  * Filters for JobPosts having the given facetValueIds
  */
-export const facetValueCollectionFilter = new CollectionFilter({
+export const jobPostFacetValueCollectionFilter = new CollectionFilter({
+    entityType: JobPost,
+    code: 'job-post-facet-value-filter',
+    description: 'Filter by facet values',
     args: {
         facetValueIds: {
             type: 'ID',
@@ -41,12 +43,10 @@ export const facetValueCollectionFilter = new CollectionFilter({
             type: 'boolean',
             label: 'Contains any',
             description:
-                'If checked, job-posts must have at least one of the selected facet values. If not checked, the job-post must have all selected values.',
+                'If checked, job posts must have at least one of the selected facet values. If not checked, the job post must have all selected values.',
         },
         combineWithAnd: combineWithAndArg,
     },
-    code: 'facet-value-filter',
-    description: 'Filter by facet values',
     apply: (qb, args) => {
         const ids = args.facetValueIds;
 
@@ -56,20 +56,20 @@ export const facetValueCollectionFilter = new CollectionFilter({
             const idsName = `ids_${safeIdsConcat}`;
             const countName = `count_${safeIdsConcat}`;
             const jobPostQuery = qb.connection
-                .createQueryBuilder(JobPost, 'job_post')
-                .select('job_post.id', 'job_post_id')
+                .createQueryBuilder(JobPost, 'entity')
+                .select('entity.id', 'entity_id')
                 .addSelect('facet_value.id', 'facet_value_id')
-                .leftJoin('job_post.facetValues', 'facet_value')
+                .leftJoin('entity.facetValues', 'facet_value')
                 .where(`facet_value.id IN (:...${idsName})`);
 
             const jobPostIds = qb.connection
                 .createQueryBuilder()
-                .select('job_post_ids_table.job_post_id')
-                .from(`(${jobPostQuery.getQuery()})`, 'job_post_ids_table')
-                .groupBy('job_post_id')
+                .select('entity_ids_table.entity_id')
+                .from(`(${jobPostQuery.getQuery()})`, 'entity_ids_table')
+                .groupBy('entity_id')
                 .having(`COUNT(*) >= :${countName}`);
 
-            const clause = `jobPost.id IN (${jobPostIds.getQuery()})`;
+            const clause = `entity.id IN (${jobPostIds.getQuery()})`;
             const params = {
                 [idsName]: ids,
                 [countName]: args.containsAny ? 1 : ids.length,
@@ -90,6 +90,9 @@ export const facetValueCollectionFilter = new CollectionFilter({
 });
 
 export const jobPostIdCollectionFilter = new CollectionFilter({
+    entityType: JobPost,
+    code: 'job-post-id-filter',
+    description: 'Manually select job posts',
     args: {
         jobPostIds: {
             type: 'ID',
@@ -98,13 +101,11 @@ export const jobPostIdCollectionFilter = new CollectionFilter({
         },
         combineWithAnd: combineWithAndArg,
     },
-    code: 'job-post-id-filter',
-    description: 'Manually select job posts',
     apply: (qb, args) => {
         const emptyIds = args.jobPostIds.length === 0;
-        const jobPostIdsKey = randomSuffix('jobPostIds');
-        const clause = `jobPost.id IN (:...${jobPostIdsKey})`;
-        const params = { [jobPostIdsKey]: args.jobPostIds };
+        const entityIdsKey = randomSuffix('entityIds');
+        const clause = `entity.id IN (:...${entityIdsKey})`;
+        const params = { [entityIdsKey]: args.jobPostIds };
         if (args.combineWithAnd === false) {
             if (emptyIds) {
                 return qb;
@@ -119,4 +120,4 @@ export const jobPostIdCollectionFilter = new CollectionFilter({
     },
 });
 
-export const defaultCollectionFilters = [facetValueCollectionFilter, jobPostIdCollectionFilter];
+export const defaultCollectionFilters = [jobPostFacetValueCollectionFilter, jobPostIdCollectionFilter];

@@ -12,9 +12,9 @@ import { PasswordHashingStrategy } from './strategies/authentication/password-ha
 import { PasswordValidationStrategy } from './strategies/authentication/password-validation-strategy';
 import { CollectionFilter } from './strategies/catalog/collection-filter';
 import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
+import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
-import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 
 /**
  * @description

@@ -146,7 +146,7 @@ export class Populator {
 
     private processFilterDefinition(filter: CollectionFilterDefinition, allFacetValues: FacetValue[]): ConfigurableOperation {
         switch (filter.code) {
-            case 'facet-value-filter':
+            case 'job-post-facet-value-filter':
                 const facetValueIds = filter.args.facetValueNames
                     .map((name) =>
                         allFacetValues.find((fv) => {
