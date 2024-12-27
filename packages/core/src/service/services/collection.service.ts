@@ -395,8 +395,6 @@ export class CollectionService implements OnModuleInit {
         entityType: Type<any>,
         applyToChangedEntitiesOnly = true,
     ): Promise<ID[]> {
-        const entityName = camelCase(entityType.name);
-
         const masterConnection = this.connection.rawConnection.createQueryRunner('master').connection;
         const ancestorFilters = await this.getAncestorFilters(collection);
         const filters = [...ancestorFilters, ...(collection.filters || [])];
@@ -416,7 +414,7 @@ export class CollectionService implements OnModuleInit {
 
         //  Applies the CollectionFilters and returns an array of entity instances which match
         for (const filterType of collectionFilters) {
-            if (filterType.entityType.name == entityName) {
+            if (filterType.entityType.name == entityType.name) {
                 const filtersOfType = filters.filter((f) => f.code === filterType.code);
                 if (filtersOfType.length) {
                     for (const filter of filtersOfType) {
@@ -461,17 +459,18 @@ export class CollectionService implements OnModuleInit {
         ]);
 
         try {
+            const entityRelation = `${camelCase(entityType.name)}s`;
             await this.connection.rawConnection.transaction(async (transactionalEntityManager) => {
                 const chunkedDeleteIds = this.chunkArray(toRemoveIds, 5000);
                 const chunkedAddIds = this.chunkArray(toAddIds, 5000);
                 await Promise.all([
                     // Delete entities that should no longer be in the collection
                     ...chunkedDeleteIds.map((chunk) =>
-                        transactionalEntityManager.createQueryBuilder().relation(Collection, `${entityName}s`).of(collection).remove(chunk),
+                        transactionalEntityManager.createQueryBuilder().relation(Collection, entityRelation).of(collection).remove(chunk),
                     ),
                     // Add entities that should be in the collection
                     ...chunkedAddIds.map((chunk) =>
-                        transactionalEntityManager.createQueryBuilder().relation(Collection, `${entityName}s`).of(collection).add(chunk),
+                        transactionalEntityManager.createQueryBuilder().relation(Collection, entityRelation).of(collection).add(chunk),
                     ),
                 ]);
             });
