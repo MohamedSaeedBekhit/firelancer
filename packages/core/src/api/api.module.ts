@@ -7,7 +7,7 @@ import { ServiceModule } from '../service/service.module';
 import { getConfig } from '../config/config-helpers';
 import { AdminAuthController } from './controllers/admin/auth.controller';
 import { ShopAuthController } from './controllers/shop/auth.controller';
-import { AuthGuard } from './middlewares/auth-guard';
+import { AuthGuard } from './middlewares/auth.guard';
 import { AdministratorController } from './controllers/admin/administrator.controller';
 import { HttpExceptionFilter } from './middlewares/http-exception.filter';
 import { ShopJobPostController } from './controllers/shop/job-post.controller';

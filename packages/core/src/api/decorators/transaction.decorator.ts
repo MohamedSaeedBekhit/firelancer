@@ -1,5 +1,5 @@
 import { applyDecorators, SetMetadata, UseInterceptors } from '@nestjs/common';
-import { TransactionInterceptor } from '../middlewares/transaction-interceptor';
+import { TransactionInterceptor } from '../middlewares/transaction.interceptor';
 
 export const TRANSACTION_MODE_METADATA_KEY = '__transaction_mode__';
 /**
