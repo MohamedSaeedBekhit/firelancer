@@ -1,4 +1,4 @@
-import { Allow, AssetService, CollectionService, Ctx, Permission, RequestContext } from '@firelancer/core';
+import { Allow, AssetService, CollectionService, Ctx, JobPost, Permission, RequestContext } from '@firelancer/core';
 import { Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -31,7 +31,7 @@ export class HelloWorldController {
     @Allow(Permission.Public)
     async collectionJobsById(@Ctx() ctx: RequestContext, @Param('id') id: number) {
         const collection = await this.collectionService.findOne(ctx, id);
-        return this.collectionService.getCollectionJobPostIds(collection, ctx);
+        return this.collectionService.getCollectionCollectableIds(collection, JobPost, ctx);
     }
 
     @Post('upload')

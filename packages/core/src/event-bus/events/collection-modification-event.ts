@@ -1,4 +1,4 @@
-import { ID, RequestContext } from '../../common';
+import { ID, RequestContext, Type } from '../../common';
 import { Collection } from '../../entity/collection/collection.entity';
 import { FirelancerEvent } from '../firelancer-event';
 
@@ -15,7 +15,8 @@ export class CollectionModificationEvent extends FirelancerEvent {
     constructor(
         public ctx: RequestContext,
         public collection: Collection,
-        public jobPostsIds: ID[],
+        public entityType: Type<any>,
+        public entityIds: ID[],
     ) {
         super();
     }
