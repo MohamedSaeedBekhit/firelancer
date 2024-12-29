@@ -1,7 +1,8 @@
-import { Column, DeepPartial, Entity, Index, ManyToOne } from 'typeorm';
-import { OrderableAsset } from '../asset/orderable-asset.entity';
-import { JobPost } from './job-post.entity';
+import { DeepPartial, Entity, Index, ManyToOne } from 'typeorm';
 import { ID } from '../../common';
+import { OrderableAsset } from '../asset/orderable-asset.entity';
+import { EntityId } from '../entity-id.decorator';
+import { JobPost } from './job-post.entity';
 
 @Entity()
 export class JobPostAsset extends OrderableAsset {
@@ -9,7 +10,7 @@ export class JobPostAsset extends OrderableAsset {
         super(input);
     }
 
-    @Column()
+    @EntityId()
     jobPostId: ID;
 
     @Index()

@@ -1,5 +1,6 @@
 import { Module, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { ConfigurableOperationDef } from '../common';
 import { InjectableStrategy } from '../common/injectable-strategy';
 import { Injector } from '../common/injector';
 import { resetConfig } from './config-helpers';
@@ -17,10 +18,12 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
 
     async onApplicationBootstrap() {
         await this.initInjectableStrategies();
+        await this.initConfigurableOperations();
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async onApplicationShutdown(signal?: string) {
         await this.destroyInjectableStrategies();
+        await this.destroyConfigurableOperations();
         /**
          * When the application shuts down, we reset the activeConfig to the default. Usually this is
          * redundant, as the app shutdown would normally coincide with the process ending. However, in some
@@ -48,6 +51,19 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
         }
     }
 
+    private async initConfigurableOperations() {
+        const injector = new Injector(this.moduleRef);
+        for (const operation of this.getConfigurableOperations()) {
+            await operation.init(injector);
+        }
+    }
+
+    private async destroyConfigurableOperations() {
+        for (const operation of this.getConfigurableOperations()) {
+            await operation.destroy();
+        }
+    }
+
     private getInjectableStrategies(): InjectableStrategy[] {
         const { assetNamingStrategy, assetPreviewStrategy, assetStorageStrategy } = this.configService.assetOptions;
         const { jobQueueStrategy, jobBufferStorageStrategy } = this.configService.jobQueueOptions;
@@ -59,6 +75,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
             passwordValidationStrategy,
         } = this.configService.authOptions;
         const { errorHandlers } = this.configService.systemOptions;
+        const { entityIdStrategy } = this.configService.entityOptions;
 
         return [
             assetNamingStrategy,
@@ -72,6 +89,12 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
             jobQueueStrategy,
             jobBufferStorageStrategy,
             ...errorHandlers,
+            entityIdStrategy,
         ];
+    }
+
+    private getConfigurableOperations(): Array<ConfigurableOperationDef<any>> {
+        const { collectionFilters } = this.configService.catalogOptions;
+        return [...collectionFilters];
     }
 }

@@ -1,4 +1,4 @@
-import { Column, DeepPartial, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
+import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany } from 'typeorm';
 import { Draftable, ID, SoftDeletable } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Collection } from '../collection/collection.entity';
@@ -16,7 +16,7 @@ export class JobPost extends FirelancerEntity implements SoftDeletable, Draftabl
         super(input);
     }
 
-    @Column({ type: Date, nullable: true })
+    @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null;
 
     @Column({ type: Date, nullable: true })

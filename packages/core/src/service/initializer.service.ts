@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { Logger } from '../config';
 import { TransactionalConnection } from '../connection/transactional-connection';
 import { Administrator } from '../entity/administrator/administrator.entity';
 import { EventBus } from '../event-bus/event-bus';
 import { InitializerEvent } from '../event-bus/events/initializer-event';
 import { AdministratorService } from './services/administrator.service';
 import { RoleService } from './services/role.service';
-import { Logger } from '../config';
 
 /**
  * @description

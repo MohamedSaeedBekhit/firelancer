@@ -19,6 +19,7 @@ import {
 } from 'class-validator';
 import { BalanceEntryType, CustomerType, ID, Permission } from '../../common/shared-types';
 import { Customer } from '../../entity';
+import { IsEntityId } from '../../common';
 
 export class CreateAdministratorInput {
     @ApiProperty()
@@ -43,13 +44,13 @@ export class CreateAdministratorInput {
     password: string;
 
     @ApiProperty({ isArray: true, type: 'number' })
-    @IsNumber({}, { each: true })
+    @IsEntityId({ each: true })
     roleIds: Array<ID>;
 }
 
 export class UpdateAdministratorInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiPropertyOptional()
@@ -73,7 +74,7 @@ export class UpdateAdministratorInput {
     password?: string;
 
     @ApiProperty({ isArray: true, type: 'number' })
-    @IsNumber({}, { each: true })
+    @IsEntityId({ each: true })
     @IsOptional()
     roleIds?: Array<ID>;
 }
@@ -102,7 +103,7 @@ export class UpdateActiveAdministratorInput {
 
 export class CurrentUser {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiProperty()
@@ -185,7 +186,7 @@ export class CreateCustomerInput {
 
 export class UpdateCustomerInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiPropertyOptional()
@@ -265,7 +266,7 @@ export class CreateRoleInput {
 
 export class UpdateRoleInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiPropertyOptional()
@@ -385,23 +386,23 @@ export class MutationUpdateActiveAdministratorArgs {
 
 export class MutationAssignRoleToAdministratorArgs {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     administratorId: ID;
 
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     roleId: ID;
 }
 
 export class MutationDeleteAdministratorArgs {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 }
 
 export class QueryAdministratorArgs {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 }
 
@@ -443,7 +444,7 @@ export class CoordinateInput {
 
 export class UpdateAssetInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @IsOptional()
@@ -467,7 +468,7 @@ export class UpdateAssetInput {
 
 export class CreateJobPostInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     customerId: ID;
 
     @ApiProperty()
@@ -487,12 +488,12 @@ export class CreateJobPostInput {
     private: boolean;
 
     @ApiPropertyOptional({ isArray: true, type: 'number' })
-    @IsNumber({}, { each: true })
+    @IsEntityId({ each: true })
     @IsOptional()
     assetIds?: ID[];
 
     @ApiPropertyOptional({ isArray: true, type: 'number' })
-    @IsNumber({}, { each: true })
+    @IsEntityId({ each: true })
     @IsOptional()
     facetValueIds?: ID[];
 }
@@ -511,7 +512,7 @@ export class MutationCreateJobPostArgs {
     private: boolean;
 
     @ApiPropertyOptional({ isArray: true, type: 'number' })
-    @IsNumber({}, { each: true })
+    @IsEntityId({ each: true })
     @IsOptional()
     facetValueIds?: Array<ID>;
 }
@@ -526,7 +527,7 @@ export class CreateFacetValueInput {
     name: string;
 
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     facetId: ID;
 }
 
@@ -542,7 +543,7 @@ export class CreateFacetValueWithFacetInput {
 
 export class UpdateFacetValueInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiPropertyOptional()
@@ -556,7 +557,7 @@ export class UpdateFacetValueInput {
     name?: string;
 
     @ApiPropertyOptional()
-    @IsNumber()
+    @IsEntityId()
     @IsOptional()
     facetId?: ID;
 }
@@ -580,7 +581,7 @@ export class CreateFacetInput {
 
 export class UpdateFacetInput {
     @ApiProperty()
-    @IsNumber()
+    @IsEntityId()
     id: ID;
 
     @ApiPropertyOptional()

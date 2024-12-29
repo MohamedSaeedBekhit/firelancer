@@ -1,6 +1,12 @@
-import { CreateDateColumn, DeepPartial, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { CreateDateColumn, DeepPartial, UpdateDateColumn } from 'typeorm';
 import { ID } from '../../common/shared-types';
+import { PrimaryGeneratedId } from '../entity-id.decorator';
 
+/**
+ * @description
+ * This is the base class from which all entities inherit. The type of
+ * the `id` property is defined by the EntityIdStrategy.
+ */
 export abstract class FirelancerEntity {
     protected constructor(input?: DeepPartial<FirelancerEntity>) {
         if (input) {
@@ -17,7 +23,7 @@ export abstract class FirelancerEntity {
         }
     }
 
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedId()
     id: ID;
 
     @CreateDateColumn()

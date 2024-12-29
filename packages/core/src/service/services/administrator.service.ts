@@ -198,7 +198,7 @@ export class AdministratorService {
 
         if (!superAdminUser) {
             // Case: No SuperAdmin user exists
-            const ctx = await this.requestContextService.create({ apiType: 'admin' });
+            const ctx = this.requestContextService.create({ apiType: 'admin' });
             const superAdminRole = await this.roleService.getSuperAdminRole();
             const administrator = new Administrator({
                 emailAddress: superadminCredentials.identifier,

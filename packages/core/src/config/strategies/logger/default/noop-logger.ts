@@ -1,4 +1,4 @@
-import { FirelancerLogger } from './firelancer-logger';
+import { FirelancerLogger } from '../firelancer-logger';
 
 /**
  * A logger that does not log.

@@ -186,7 +186,7 @@ export class Populator {
         const superAdminUser = await this.connection.rawConnection.getRepository(User).findOne({
             where: { identifier: superadminCredentials.identifier },
         });
-        const ctx = await this.requestContextService.create({
+        const ctx = this.requestContextService.create({
             user: superAdminUser ?? undefined,
             apiType: 'admin',
         });

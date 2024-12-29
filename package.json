@@ -1,29 +1,29 @@
 {
-  "name": "firelancer",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "lerna run build",
-    "watch": "lerna run watch",
-    "start": "lerna run start",
-    "lint": "lerna run lint",
-    "test": "lerna run test --stream --no-bail",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "engines": {
-    "node": ">=18"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "globals": "^15.13.0",
-    "lerna": "^8.1.9",
-    "nx": "19.6.5",
-    "prettier": "^3.3.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.0"
-  }
+    "name": "firelancer",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "lerna run build",
+        "watch": "lerna run watch",
+        "start": "lerna run start",
+        "lint": "lerna run lint",
+        "test": "lerna run test --stream --no-bail",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    },
+    "workspaces": [
+        "packages/*",
+        "apps/*"
+    ],
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.17.0",
+        "globals": "^15.13.0",
+        "lerna": "^8.1.9",
+        "nx": "19.6.5",
+        "prettier": "^3.3.3",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.2",
+        "typescript-eslint": "^8.18.0"
+    }
 }

@@ -14,7 +14,7 @@ import { WorkerHealthService } from './worker-health.service';
  * greatly increases startup time (about 4x in testing).
  */
 @Module({
-    imports: [ProcessContextModule, ConfigModule, PluginModule.forRoot(), ConnectionModule.forPlugin(), ServiceModule],
+    imports: [ProcessContextModule, ConfigModule, PluginModule.forRoot(), ConnectionModule.forRoot(), ServiceModule],
     providers: [WorkerHealthService],
 })
 export class WorkerModule implements OnApplicationShutdown {

@@ -3,6 +3,7 @@ import { ConfigurableOperation } from '../../api';
 import { DeepPartial, ID, Orderable } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { JobPost } from '../job-post/job-post.entity';
+import { EntityId } from '../entity-id.decorator';
 
 /**
  * @description
@@ -49,6 +50,6 @@ export class Collection extends FirelancerEntity implements Orderable {
     @TreeParent()
     parent: Collection;
 
-    @Column({ nullable: true })
+    @EntityId({ nullable: true })
     parentId: ID;
 }

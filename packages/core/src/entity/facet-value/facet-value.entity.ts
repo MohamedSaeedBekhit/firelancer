@@ -3,6 +3,7 @@ import { ID } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Facet } from '../facet/facet.entity';
 import { JobPost } from '../job-post/job-post.entity';
+import { EntityId } from '../entity-id.decorator';
 
 /**
  * @description
@@ -20,7 +21,7 @@ export class FacetValue extends FirelancerEntity {
     @Column({ type: 'varchar' })
     name: string;
 
-    @Column()
+    @EntityId()
     facetId: ID;
 
     @Index()

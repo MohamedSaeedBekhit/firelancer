@@ -15,6 +15,7 @@ import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
 import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
+import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
 
 /**
  * @description
@@ -398,6 +399,33 @@ export interface SystemOptions {
 
 /**
  * @description
+ * Options relating to the internal handling of entities.
+ *
+ * @since 1.3.0
+ * @docsCategory configuration
+ * @docsPage EntityOptions
+ * @docsWeight 0
+ */
+export interface EntityOptions {
+    /**
+     * @description
+     * Defines the strategy used for both storing the primary keys of entities
+     * in the database, and the encoding & decoding of those ids when exposing
+     * entities via the API. The default uses a simple auto-increment integer
+     * strategy.
+     *
+     * :::caution
+     * Note: changing from an integer-based strategy to a uuid-based strategy
+     * on an existing Vendure database will lead to problems with broken foreign-key
+     * references. To change primary key types like this, you'll need to start with
+     * a fresh database.
+     * :::
+     */
+    entityIdStrategy?: EntityIdStrategy<any>;
+}
+
+/**
+ * @description
  * These credentials will be used to create the Superadmin user & administrator
  * when firelancer first bootstraps.
  */
@@ -472,6 +500,16 @@ export interface FirelancerConfig {
      * @default DefaultLogger
      */
     logger?: FirelancerLogger;
+    /**
+     * @description
+     * Defines the strategy used for both storing the primary keys of entities
+     * in the database, and the encoding & decoding of those ids when exposing
+     * entities via the API. The default uses a simple auto-increment integer
+     * strategy.
+     *
+     * @default AutoIncrementIdStrategy
+     */
+    entityOptions?: EntityOptions;
 }
 
 /**
@@ -486,6 +524,7 @@ export interface RuntimeFirelancerConfig extends Required<FirelancerConfig> {
     jobQueueOptions: Required<JobQueueOptions>;
     catalogOptions: Required<CatalogOptions>;
     systemOptions: Required<SystemOptions>;
+    entityOptions: Required<EntityOptions>;
 }
 
 type DeepPartialSimple<T> = {

@@ -1,6 +1,6 @@
 import { Logger as TypeOrmLoggerInterface, QueryRunner } from 'typeorm';
 import { LoggerOptions } from 'typeorm/logger/LoggerOptions';
-import { Logger } from './firelancer-logger';
+import { Logger } from '../firelancer-logger';
 
 const context = 'TypeORM';
 

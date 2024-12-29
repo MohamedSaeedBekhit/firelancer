@@ -18,8 +18,7 @@ import {
 import { pick } from '../../common/utils/pick';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
-import { FirelancerEntity } from '../../entity';
-import { Collection } from '../../entity/collection/collection.entity';
+import { collectableEntities, Collection, FirelancerEntity } from '../../entity';
 import { EventBus } from '../../event-bus';
 import { CollectionEvent } from '../../event-bus/events/collection-event';
 import { CollectionModificationEvent } from '../../event-bus/events/collection-modification-event';
@@ -27,7 +26,6 @@ import { JobQueue, JobQueueService } from '../../job-queue';
 import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
 import { moveToIndex } from '../helpers/utils/move-to-index';
 import { patchEntity } from '../helpers/utils/patch-entity';
-import { collectableEntities } from 'entity/collection/collectable-entities';
 
 export type ApplyCollectionFiltersJobData = {
     ctx: SerializedRequestContext;

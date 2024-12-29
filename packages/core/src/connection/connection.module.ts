@@ -8,25 +8,34 @@ import { TransactionSubscriber } from './transaction-subscriber';
 import { TransactionWrapper } from './transaction-wrapper';
 import { TransactionalConnection } from './transactional-connection';
 
+let defaultTypeOrmModule: DynamicModule;
+
 @Module({
-    imports: [
-        TypeOrmModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => {
-                const { dbConnectionOptions } = configService;
-                const logger = ConnectionModule.getTypeOrmLogger(dbConnectionOptions);
-                return {
-                    ...dbConnectionOptions,
-                    logger,
-                };
-            },
-        }),
-    ],
     providers: [TransactionalConnection, TransactionWrapper, TransactionSubscriber],
     exports: [TransactionalConnection, TransactionWrapper, TransactionSubscriber],
 })
 export class ConnectionModule {
+    static forRoot(): DynamicModule {
+        if (!defaultTypeOrmModule) {
+            defaultTypeOrmModule = TypeOrmModule.forRootAsync({
+                imports: [ConfigModule],
+                useFactory: (configService: ConfigService) => {
+                    const { dbConnectionOptions } = configService;
+                    const logger = ConnectionModule.getTypeOrmLogger(dbConnectionOptions);
+                    return {
+                        ...dbConnectionOptions,
+                        logger,
+                    };
+                },
+                inject: [ConfigService],
+            });
+        }
+        return {
+            module: ConnectionModule,
+            imports: [defaultTypeOrmModule],
+        };
+    }
+
     static forPlugin(): DynamicModule {
         return {
             module: ConnectionModule,

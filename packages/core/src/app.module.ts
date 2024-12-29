@@ -12,7 +12,7 @@ import { ServiceModule } from './service/service.module';
 const cookieSession = require('cookie-session');
 
 @Module({
-    imports: [ProcessContextModule, PluginModule.forRoot(), ApiModule, ConfigModule, ServiceModule, ConnectionModule],
+    imports: [ProcessContextModule, ConfigModule, ApiModule, PluginModule.forRoot(), ServiceModule, ConnectionModule],
 })
 export class AppModule implements NestModule {
     constructor(private configService: ConfigService) {}

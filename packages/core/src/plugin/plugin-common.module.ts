@@ -22,23 +22,23 @@ import { ProcessContextModule } from '../process-context/process-context.module'
  */
 @Module({
     imports: [
-        ProcessContextModule,
         EventBusModule,
         ConfigModule,
         ConnectionModule.forPlugin(),
         ServiceModule,
-        CacheModule,
         JobQueueModule,
+        CacheModule,
+        ProcessContextModule,
         DataImportModule,
     ],
     exports: [
-        ProcessContextModule,
         EventBusModule,
         ConfigModule,
         ConnectionModule.forPlugin(),
         ServiceModule,
-        CacheModule,
         JobQueueModule,
+        CacheModule,
+        ProcessContextModule,
         DataImportModule,
     ],
 })

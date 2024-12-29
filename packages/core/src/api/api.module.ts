@@ -15,13 +15,23 @@ import { ShopJobPostController } from './controllers/shop/job-post.controller';
 const { apiOptions } = getConfig();
 
 @Module({
-    imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.adminApiPath, module: AdminModule }])],
+    imports: [
+        ConfigModule,
+        ServiceModule,
+        RouterModule.register([{ path: apiOptions.adminApiPath, module: AdminModule }]),
+        ConnectionModule.forRoot(),
+    ],
     controllers: [AdminAuthController, AdministratorController],
 })
 export class AdminModule {}
 
 @Module({
-    imports: [ConfigModule, ServiceModule, RouterModule.register([{ path: apiOptions.shopApiPath, module: ShopModule }])],
+    imports: [
+        ConfigModule,
+        ServiceModule,
+        RouterModule.register([{ path: apiOptions.shopApiPath, module: ShopModule }]),
+        ConnectionModule.forRoot(),
+    ],
     controllers: [ShopAuthController, ShopJobPostController],
 })
 export class ShopModule {}
@@ -30,9 +40,9 @@ export class ShopModule {}
     imports: [
         ConfigModule,
         ServiceModule,
-        ConnectionModule,
         AdminModule,
         ShopModule,
+        ConnectionModule.forRoot(),
         ...createDynamicRestModulesForPlugins('admin'),
         ...createDynamicRestModulesForPlugins('shop'),
     ],

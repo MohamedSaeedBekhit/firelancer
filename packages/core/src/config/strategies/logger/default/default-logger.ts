@@ -1,5 +1,5 @@
 import pc from 'picocolors';
-import { Logger, LogLevel, FirelancerLogger } from './firelancer-logger';
+import { Logger, LogLevel, FirelancerLogger } from '../firelancer-logger';
 
 const DEFAULT_CONTEXT = 'Firelancer Server';
 

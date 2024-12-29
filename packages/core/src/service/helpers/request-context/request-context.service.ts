@@ -24,7 +24,7 @@ export class RequestContextService {
      * with services outside the request-response cycle, for example in stand-alone scripts or in
      * worker jobs.
      */
-    async create(config: { req?: Request; apiType: ApiType; user?: User }): Promise<RequestContext> {
+    create(config: { req?: Request; apiType: ApiType; user?: User }): RequestContext {
         const { req, apiType, user } = config;
         let session: CachedSession | undefined;
         if (user) {
@@ -56,7 +56,7 @@ export class RequestContextService {
      * in the API layer by the AuthGuard, and creates the RequestContext which is then passed
      * to all resolvers & controllers.
      */
-    async fromRequest(req: Request, session?: CachedSession, requiredPermissions?: Permission[]): Promise<RequestContext> {
+    fromRequest(req: Request, session?: CachedSession, requiredPermissions?: Permission[]): RequestContext {
         const apiType = getApiType(req);
 
         const hasOwnerPermission = !!requiredPermissions && requiredPermissions.includes(Permission.Owner);

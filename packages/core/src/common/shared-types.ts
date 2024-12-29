@@ -53,7 +53,7 @@ export interface Middleware {
     route: string;
 }
 
-export type ID = number;
+export type ID = string | number;
 
 /**
  * @description

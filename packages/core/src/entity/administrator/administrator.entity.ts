@@ -1,4 +1,4 @@
-import { Column, DeepPartial, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, DeepPartial, DeleteDateColumn, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { SoftDeletable } from '../../common/shared-types';
 import { FirelancerEntity } from '../base/base.entity';
 import { User } from '../user/user.entity';
@@ -14,7 +14,7 @@ export class Administrator extends FirelancerEntity implements SoftDeletable {
         super(input);
     }
 
-    @Column({ type: Date, nullable: true })
+    @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null;
 
     @Column()

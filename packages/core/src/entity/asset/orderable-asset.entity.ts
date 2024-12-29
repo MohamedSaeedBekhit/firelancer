@@ -2,6 +2,7 @@ import { Column, DeepPartial, Index, ManyToOne } from 'typeorm';
 import { ID, Orderable } from '../../common';
 import { Asset } from '../asset/asset.entity';
 import { FirelancerEntity } from '../base/base.entity';
+import { EntityId } from '../entity-id.decorator';
 
 /**
  * @description
@@ -16,7 +17,7 @@ export abstract class OrderableAsset extends FirelancerEntity implements Orderab
         super(input);
     }
 
-    @Column()
+    @EntityId()
     assetId: ID;
 
     @Index()

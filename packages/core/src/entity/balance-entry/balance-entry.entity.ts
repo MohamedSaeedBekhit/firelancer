@@ -3,6 +3,7 @@ import { Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BalanceEntryStatus, BalanceEntryType, ID } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
+import { EntityId } from '../entity-id.decorator';
 
 /**
  * @description
@@ -20,7 +21,7 @@ export class BalanceEntry extends FirelancerEntity {
     @Column({ type: 'varchar', nullable: true })
     description: string | null;
 
-    @Column()
+    @EntityId()
     customerId: ID;
 
     @ManyToOne(() => Customer)
@@ -47,7 +48,7 @@ export class BalanceEntry extends FirelancerEntity {
     @Column({ type: Date, nullable: true })
     prevSettledAt: Date | null;
 
-    @Column({ nullable: true })
+    @EntityId({ nullable: true })
     parentId: ID | null;
 
     @ManyToOne(() => BalanceEntry, (entry) => entry.children, { nullable: true, onDelete: 'CASCADE' })

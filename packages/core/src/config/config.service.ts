@@ -6,6 +6,7 @@ import {
     AssetOptions,
     AuthOptions,
     CatalogOptions,
+    EntityOptions,
     FirelancerConfig,
     JobQueueOptions,
     RuntimeFirelancerConfig,
@@ -35,7 +36,7 @@ export class ConfigService implements FirelancerConfig {
     get dbConnectionOptions(): DataSourceOptions {
         return this.activeConfig.dbConnectionOptions;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     get plugins(): Array<DynamicModule | Type<any>> {
         return this.activeConfig.plugins;
     }
@@ -54,5 +55,9 @@ export class ConfigService implements FirelancerConfig {
 
     get systemOptions(): Required<SystemOptions> {
         return this.activeConfig.systemOptions;
+    }
+
+    get entityOptions(): Required<EntityOptions> {
+        return this.activeConfig.entityOptions;
     }
 }

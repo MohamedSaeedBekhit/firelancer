@@ -308,13 +308,7 @@ export class AssetService {
     }
 
     private getHostEntityIdProperty(entity: EntityWithAssets): string {
-        const entityName = entity.constructor.name;
-        switch (entityName) {
-            case 'JobPost':
-                return 'jobPostId';
-            default:
-                return `${camelCase(entityName)}Id`;
-        }
+        return `${camelCase(entity.constructor.name)}Id`;
     }
 
     private getOrderableAssetType(ctx: RequestContext, entity: EntityWithAssets): Type<OrderableAsset> {

@@ -11,7 +11,8 @@ import { DefaultPasswordValidationStrategy } from './strategies/authentication/d
 import { NativeAuthenticationStrategy } from './strategies/authentication/default/native-authentication-strategy';
 import { defaultCollectionFilters } from './strategies/catalog/default/default-collection-filters';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
-import { DefaultLogger } from './strategies/logger/default-logger';
+import { DefaultLogger } from './strategies/logger/default/default-logger';
+import { AutoIncrementIdStrategy } from './strategies/entity/defaults/auto-increment-id-strategy';
 
 /**
  * @description
@@ -32,7 +33,7 @@ export const defaultConfig: RuntimeFirelancerConfig = {
     },
     dbConnectionOptions: {
         type: 'postgres',
-        synchronize: true,
+        synchronize: false,
     },
     authOptions: {
         disableAuth: false,
@@ -79,4 +80,7 @@ export const defaultConfig: RuntimeFirelancerConfig = {
         errorHandlers: [],
     },
     plugins: [],
+    entityOptions: {
+        entityIdStrategy: new AutoIncrementIdStrategy(),
+    },
 };

@@ -10,9 +10,9 @@ import { DEFAULT_COOKIE_NAME } from './common/constants';
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
-import { DefaultLogger } from './config/strategies/logger/default-logger';
+import { DefaultLogger } from './config/strategies/logger/default/default-logger';
 import { Logger } from './config/strategies/logger/firelancer-logger';
-import { Administrator } from './entity';
+import { Administrator, setEntityIdStrategy } from './entity';
 import { coreEntitiesMap } from './entity/core-entities';
 import { getPluginStartupMessages } from './plugin';
 import { getCompatibility, getConfigurationFunction, getEntitiesFromPlugins } from './plugin/plugin-metadata';
@@ -164,6 +164,7 @@ export async function preBootstrapConfig(userConfig: Partial<FirelancerConfig> =
     // logger (which may depend on config coming from a plugin) being set.
     Logger.useLogger(config.logger);
     config = await runPluginConfigurations(config);
+    setEntityIdStrategy(config.entityOptions.entityIdStrategy, entities);
     setExposedHeaders(config);
     return config;
 }

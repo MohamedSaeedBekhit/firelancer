@@ -90,9 +90,7 @@ export class JobQueue<Data extends JobData<Data> = object> {
             const bufferedJob = new Job({
                 ...job,
                 data: job.data,
-                // fix
-                id: 999,
-                // id: 'buffered',
+                id: 'buffered',
             });
             return new SubscribableJob(bufferedJob, this.jobQueueStrategy);
         }

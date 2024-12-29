@@ -1,4 +1,4 @@
-import { Column, DeepPartial, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, DeepPartial, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { InternalServerError } from '../../common/error/errors';
 import { SoftDeletable } from '../../common/shared-types';
 import { AuthenticationMethod } from '../authentication-method/authentication-method.entity';
@@ -17,10 +17,10 @@ export class User extends FirelancerEntity implements SoftDeletable {
         super(input);
     }
 
-    @Column({ type: Date, nullable: true })
+    @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null;
 
-    @Column()
+    @Column({ unique: true })
     identifier: string;
 
     @OneToMany(() => AuthenticationMethod, (method) => method.user)
