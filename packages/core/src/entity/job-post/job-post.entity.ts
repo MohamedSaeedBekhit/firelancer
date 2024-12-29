@@ -19,7 +19,7 @@ export class JobPost extends FirelancerEntity implements SoftDeletable, Draftabl
     @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null;
 
-    @Column({ type: Date, nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     publishedAt: Date | null;
 
     @Column()

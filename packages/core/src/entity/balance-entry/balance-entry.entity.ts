@@ -1,15 +1,19 @@
 import date from 'date-fns';
-import { Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { BalanceEntryStatus, BalanceEntryType, ID } from '../../common';
+import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
 import { EntityId } from '../entity-id.decorator';
+import { Money } from '../money.decorator';
 
 /**
  * @description
  * BalanceEntry
  */
 @Entity()
+@Check('"balance" = COALESCE("prevBalance", 0) + "credit" - "debit"')
+@Check('"prevSettledAt" < "settledAt"')
+@Check('("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)')
 export class BalanceEntry extends FirelancerEntity {
     constructor(input?: DeepPartial<BalanceEntry>) {
         super(input);
@@ -27,25 +31,31 @@ export class BalanceEntry extends FirelancerEntity {
     @ManyToOne(() => Customer)
     customer: Customer;
 
-    @Column({ type: 'int', nullable: true })
+    @Column('varchar')
+    currencyCode: CurrencyCode;
+
+    @Money({ nullable: true })
     balance: number | null;
 
-    @Column({ default: 0 })
+    @Money({ default: 0 })
     credit: number;
 
-    @Column({ default: 0 })
+    @Money({ default: 0 })
     debit: number;
 
     @Column({ default: 0 })
     reviewDays: number;
 
-    @Column({ type: Date, nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     settledAt: Date | null;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
+    rejectedAt: Date | null;
+
+    @Money({ nullable: true })
     prevBalance: number | null;
 
-    @Column({ type: Date, nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     prevSettledAt: Date | null;
 
     @EntityId({ nullable: true })
@@ -58,20 +68,28 @@ export class BalanceEntry extends FirelancerEntity {
     children: BalanceEntry[];
 
     @Column('simple-json', { nullable: true })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata: any;
 
-    get status(): BalanceEntryStatus {
-        const settled = this.settledAt !== null && this.balance !== null;
-        const reviewDate = date.addDays(this.createdAt, this.reviewDays);
-        const settleable = this.reviewDays === 0 || date.isBefore(reviewDate, new Date());
-        if (settled) {
+    getStatus(): BalanceEntryStatus {
+        if (this.balance !== null && this.settledAt !== null) {
             return BalanceEntryStatus.SETTLED;
-        } else if (settleable) {
-            return BalanceEntryStatus.SETTELABLE;
-        } else {
+        }
+
+        if (this.balance === null && this.settledAt === null) {
             return BalanceEntryStatus.PENDING;
         }
+
+        if (this.rejectedAt !== null) {
+            return BalanceEntryStatus.REJECTED;
+        }
+
+        throw Error("Cannot determine balance entry's status. please review entry fields for invalid values");
+    }
+
+    isEligibleForSettlement() {
+        const reviewExpiryDate = date.addDays(this.createdAt, this.reviewDays);
+        const hasReviewPeriodElapsed = this.reviewDays === 0 || date.isBefore(reviewExpiryDate, new Date());
+        return this.getStatus() === BalanceEntryStatus.PENDING && hasReviewPeriodElapsed;
     }
 
     validate() {

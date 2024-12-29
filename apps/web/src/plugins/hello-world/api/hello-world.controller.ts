@@ -1,4 +1,17 @@
-import { Allow, AssetService, CollectionService, Ctx, JobPost, Permission, RequestContext } from '@firelancer/core';
+import {
+    Allow,
+    AssetService,
+    BalanceEntryType,
+    BalanceService,
+    CollectionService,
+    Ctx,
+    CurrencyCode,
+    CustomerService,
+    EntityNotFoundError,
+    JobPost,
+    Permission,
+    RequestContext,
+} from '@firelancer/core';
 import { Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -7,6 +20,8 @@ export class HelloWorldController {
     constructor(
         private readonly assetService: AssetService,
         private readonly collectionService: CollectionService,
+        private readonly balanceService: BalanceService,
+        private readonly customerService: CustomerService,
     ) {}
 
     @Get()
@@ -31,6 +46,9 @@ export class HelloWorldController {
     @Allow(Permission.Public)
     async collectionJobsById(@Ctx() ctx: RequestContext, @Param('id') id: number) {
         const collection = await this.collectionService.findOne(ctx, id);
+        if (!collection) {
+            throw new EntityNotFoundError('Collection', id);
+        }
         return this.collectionService.getCollectionCollectableIds(collection, JobPost, ctx);
     }
 
@@ -39,5 +57,24 @@ export class HelloWorldController {
     uploadFile(@Ctx() ctx: RequestContext, @UploadedFile() file: Express.Multer.File) {
         file.filename = file.originalname;
         return this.assetService.create(ctx, { file });
+    }
+
+    @Post('/balance')
+    @Allow(Permission.Public)
+    async balance(@Ctx() ctx: RequestContext) {
+        try {
+            const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+            return this.balanceService.create(ctx, {
+                type: BalanceEntryType.PAYMENT,
+                currencyCode: CurrencyCode.USD,
+                credit: 0,
+                debit: 20_00,
+                customer,
+                description: 'test payment 2',
+                reviewDays: 0,
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

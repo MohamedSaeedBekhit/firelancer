@@ -21,18 +21,18 @@ export class BalanceService {
             entry.validate();
             await this.connection.getRepository(ctx, BalanceEntry).save(entry);
             // immediatly settle balance if entry does not require review
-            return this.settle(ctx, entry.id);
+            return this.trySettleBalance(ctx, entry.id);
         });
     }
 
-    async settle(ctx: RequestContext, entryId: ID): Promise<BalanceEntry> {
+    async trySettleBalance(ctx: RequestContext, entryId: ID): Promise<BalanceEntry> {
         return this.connection.withTransaction(ctx, async (ctx) => {
             const entry = await this.connection.getEntityOrThrow(ctx, BalanceEntry, entryId);
-            if (entry.status === BalanceEntryStatus.SETTELABLE) {
+            if (entry.isEligibleForSettlement()) {
                 const latestSettledEntry = await this.getLatestSettledEntry(ctx, entry.customer);
                 entry.prevSettledAt = latestSettledEntry?.settledAt ?? null;
-                entry.prevBalance = latestSettledEntry?.balance ?? 0;
-                entry.balance = entry.prevBalance + entry.credit - entry.debit;
+                entry.prevBalance = latestSettledEntry?.balance ?? null;
+                entry.balance = (entry.prevBalance ?? 0) + entry.credit - entry.debit;
                 entry.settledAt = new Date();
                 await this.connection.getRepository(ctx, BalanceEntry).update({ id: entry.id }, entry);
             }

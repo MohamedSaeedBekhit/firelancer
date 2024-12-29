@@ -17,7 +17,7 @@ import {
     IsString,
     ValidateNested,
 } from 'class-validator';
-import { BalanceEntryType, CustomerType, ID, Permission } from '../../common/shared-types';
+import { BalanceEntryType, CurrencyCode, CustomerType, ID, Permission } from '../../common/shared-types';
 import { Customer } from '../../entity';
 import { IsEntityId } from '../../common';
 
@@ -605,6 +605,9 @@ export class CreateBalanceEntryInput {
     @IsPositive()
     @IsOptional()
     reviewDays?: number;
+
+    @IsEnum(CurrencyCode)
+    currencyCode: CurrencyCode;
 
     @IsInt()
     @IsPositive()

@@ -12,7 +12,8 @@ import { NativeAuthenticationStrategy } from './strategies/authentication/defaul
 import { defaultCollectionFilters } from './strategies/catalog/default/default-collection-filters';
 import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
 import { DefaultLogger } from './strategies/logger/default/default-logger';
-import { AutoIncrementIdStrategy } from './strategies/entity/defaults/auto-increment-id-strategy';
+import { AutoIncrementIdStrategy } from './strategies/entity/default/auto-increment-id-strategy';
+import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-strategy';
 
 /**
  * @description
@@ -82,5 +83,6 @@ export const defaultConfig: RuntimeFirelancerConfig = {
     plugins: [],
     entityOptions: {
         entityIdStrategy: new AutoIncrementIdStrategy(),
+        moneyStrategy: new DefaultMoneyStrategy(),
     },
 };

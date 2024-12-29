@@ -131,6 +131,9 @@ export class CollectionService implements OnModuleInit {
             .getRepository(ctx, Collection)
             .findOne({
                 where: { id: collectionId },
+                relations: {
+                    jobPosts: true,
+                },
             })
             .then((result) => result ?? undefined);
     }
@@ -286,8 +289,8 @@ export class CollectionService implements OnModuleInit {
                     { ctx },
                 );
             } else {
-                const affectedCollectableIds = await this.getCollectionCollectableIds(collection, EntityType);
-                await this.eventBus.publish(new CollectionModificationEvent(ctx, collection, EntityType, affectedCollectableIds));
+                const affectedCollectableIds = await this.getCollectionCollectableIds(updatedCollection, EntityType);
+                await this.eventBus.publish(new CollectionModificationEvent(ctx, updatedCollection, EntityType, affectedCollectableIds));
             }
         }
 
@@ -492,7 +495,7 @@ export class CollectionService implements OnModuleInit {
         ctx?: RequestContext,
     ): Promise<ID[]> {
         const relationName = this.getRelationName(entityType);
-        if (collection[relationName]) {
+        if (collection.hasOwnProperty(relationName)) {
             return (collection[relationName] as unknown as Array<Entity>).map((entity) => entity.id);
         } else {
             const entities = await this.connection

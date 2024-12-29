@@ -33,7 +33,7 @@ export class User extends FirelancerEntity implements SoftDeletable {
     @JoinTable()
     roles: Role[];
 
-    @Column({ type: Date, nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     lastLogin: Date | null;
 
     @OneToMany(() => AuthenticatedSession, (session) => session.user)

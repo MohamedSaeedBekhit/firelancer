@@ -18,9 +18,12 @@ export * from './strategies/authentication/default/native-authentication-strateg
 export * from './strategies/catalog/collection-filter';
 export * from './strategies/catalog/default/default-collection-filters';
 export * from './strategies/entity/entity-id-strategy';
-export * from './strategies/entity/defaults/auto-increment-id-strategy';
-export * from './strategies/entity/defaults/base64-id-strategy';
-export * from './strategies/entity/defaults/uuid-id-strategy';
+export * from './strategies/entity/money-strategy';
+export * from './strategies/entity/default/auto-increment-id-strategy';
+export * from './strategies/entity/default/base64-id-strategy';
+export * from './strategies/entity/default/uuid-id-strategy';
+export * from './strategies/entity/default/default-money-strategy';
+export * from './strategies/entity/default/bigint-money-strategy';
 export * from './strategies/job-queue/inspectable-job-queue-strategy';
 export * from './strategies/job-queue/job-queue-strategy';
 export * from './strategies/logger/default/default-logger';

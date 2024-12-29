@@ -16,6 +16,7 @@ import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
 import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
+import { MoneyStrategy } from './strategies/entity/money-strategy';
 
 /**
  * @description
@@ -417,6 +418,13 @@ export interface EntityOptions {
      * :::
      */
     entityIdStrategy?: EntityIdStrategy<any>;
+    /**
+     * @description
+     * Defines the strategy used to store and round monetary values.
+     *
+     * @default DefaultMoneyStrategy
+     */
+    moneyStrategy?: MoneyStrategy;
 }
 
 /**
