@@ -400,11 +400,6 @@ export interface SystemOptions {
 /**
  * @description
  * Options relating to the internal handling of entities.
- *
- * @since 1.3.0
- * @docsCategory configuration
- * @docsPage EntityOptions
- * @docsWeight 0
  */
 export interface EntityOptions {
     /**
@@ -416,7 +411,7 @@ export interface EntityOptions {
      *
      * :::caution
      * Note: changing from an integer-based strategy to a uuid-based strategy
-     * on an existing Vendure database will lead to problems with broken foreign-key
+     * on an existing Firelancer database will lead to problems with broken foreign-key
      * references. To change primary key types like this, you'll need to start with
      * a fresh database.
      * :::
