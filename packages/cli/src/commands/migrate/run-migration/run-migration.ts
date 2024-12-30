@@ -1,8 +1,8 @@
 import { log, spinner } from '@clack/prompts';
 import { runMigrations } from '@firelancer/core';
-import { CliCommand, CliCommandReturnVal } from '../../shared/cli-command';
-import { analyzeProject } from '../../shared/shared-prompts';
-import { FirelancerConfigRef } from '../../shared/firelancer-config-ref';
+import { CliCommand, CliCommandReturnVal } from '../../../shared/cli-command';
+import { analyzeProject } from '../../../shared/shared-prompts';
+import { FirelancerConfigRef } from '../../../shared/firelancer-config-ref';
 import { loadFirelancerConfigFile } from '../load-firelancer-config-file';
 
 const cancelledMessage = 'Run migrations cancelled';

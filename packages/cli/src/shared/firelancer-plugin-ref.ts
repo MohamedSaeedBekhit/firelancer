@@ -1,5 +1,5 @@
 import { ClassDeclaration, InterfaceDeclaration, Node, PropertyAssignment, SyntaxKind, VariableDeclaration } from 'ts-morph';
-import { AdminUiExtensionTypeName } from '../../constants';
+import { AdminUiExtensionTypeName } from '../constants';
 import { EntityRef } from './entity-ref';
 
 export class FirelancerPluginRef {

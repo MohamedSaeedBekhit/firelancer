@@ -2,7 +2,7 @@ import { cancel, isCancel, log, select } from '@clack/prompts';
 import fs from 'fs-extra';
 import path from 'node:path';
 import { Directory, Node, Project, ProjectOptions, ScriptKind, SourceFile } from 'ts-morph';
-import { defaultManipulationSettings } from '../../constants';
+import { defaultManipulationSettings } from '../constants';
 import { EntityRef } from '../shared/entity-ref';
 
 export async function selectTsConfigFile() {

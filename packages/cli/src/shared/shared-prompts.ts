@@ -1,6 +1,6 @@
 import { cancel, isCancel, multiselect, select, spinner } from '@clack/prompts';
 import { ClassDeclaration, Project } from 'ts-morph';
-import { Messages } from '../../constants';
+import { Messages } from '../constants';
 import { getPluginClasses, getTsMorphProject, selectTsConfigFile } from '../utilities/ast-utils';
 import { pauseForPromptDisplay } from '../utilities/utils';
 import { EntityRef } from './entity-ref';

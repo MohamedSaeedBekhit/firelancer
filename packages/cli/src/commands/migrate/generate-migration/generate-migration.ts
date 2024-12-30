@@ -2,9 +2,9 @@ import { cancel, isCancel, log, select, spinner, text } from '@clack/prompts';
 import { unique } from '@firelancer/common/lib/unique';
 import { FirelancerConfig, generateMigration } from '@firelancer/core';
 import path from 'path';
-import { CliCommand, CliCommandReturnVal } from '../../shared/cli-command';
-import { FirelancerConfigRef } from '../../shared/firelancer-config-ref';
-import { analyzeProject } from '../../shared/shared-prompts';
+import { CliCommand, CliCommandReturnVal } from '../../../shared/cli-command';
+import { FirelancerConfigRef } from '../../../shared/firelancer-config-ref';
+import { analyzeProject } from '../../../shared/shared-prompts';
 import { loadFirelancerConfigFile } from '../load-firelancer-config-file';
 
 const cancelledMessage = 'Generate migration cancelled';
