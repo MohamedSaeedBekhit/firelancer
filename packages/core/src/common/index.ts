@@ -1,5 +1,4 @@
 export * from './error/errors';
-export * from './utils';
 export * from './configurable-operation';
 export * from './constants';
 export * from './entity-id-validator';

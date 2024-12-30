@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ID, isClassInstance, JobState } from '@firelancer/common';
 import { isObject } from 'class-validator';
-import { ID, isClassInstance, JobState } from '../common';
-import { JobConfig, JobData } from './types';
 import { Logger } from '../config';
+import { JobConfig, JobData } from './types';
 
 /**
  * @description

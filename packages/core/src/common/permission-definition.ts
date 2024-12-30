@@ -1,4 +1,4 @@
-import { Permission } from './shared-types';
+import { Permission } from '@firelancer/common';
 
 /**
  * @description

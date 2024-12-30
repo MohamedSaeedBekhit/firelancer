@@ -1,4 +1,4 @@
-import { Type } from '../../common';
+import { Type } from '@firelancer/common';
 import { FirelancerEvent, JobPostEvent } from '../../event-bus';
 import { FirelancerEntity } from '../base/base.entity';
 import { JobPost } from '../job-post/job-post.entity';

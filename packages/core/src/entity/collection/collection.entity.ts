@@ -1,9 +1,10 @@
+import { DeepPartial, ID } from '@firelancer/common';
 import { Column, Entity, JoinTable, ManyToMany, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { ConfigurableOperation } from '../../api';
-import { DeepPartial, ID, Orderable } from '../../common';
+import { Orderable } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
-import { JobPost } from '../job-post/job-post.entity';
 import { EntityId } from '../entity-id.decorator';
+import { JobPost } from '../job-post/job-post.entity';
 
 /**
  * @description

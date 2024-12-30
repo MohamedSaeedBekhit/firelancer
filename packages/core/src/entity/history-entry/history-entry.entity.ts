@@ -1,5 +1,5 @@
+import { HistoryEntryType } from '@firelancer/common';
 import { Column, Entity, Index, ManyToOne, TableInheritance } from 'typeorm';
-import { HistoryEntryType } from '../../common/shared-types';
 import { Administrator } from '../administrator/administrator.entity';
 import { FirelancerEntity } from '../base/base.entity';
 

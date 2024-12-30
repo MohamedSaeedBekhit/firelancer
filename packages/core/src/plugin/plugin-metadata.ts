@@ -1,6 +1,6 @@
-import { DynamicModule, Type } from '@nestjs/common';
+import { notNullOrUndefined, Type } from '@firelancer/common';
+import { DynamicModule } from '@nestjs/common';
 import { MODULE_METADATA } from '@nestjs/common/constants';
-import { notNullOrUndefined } from '../common/utils';
 import { APIExtensionDefinition, PluginConfigurationFn } from './firelancer-plugin';
 
 export const PLUGIN_METADATA = {

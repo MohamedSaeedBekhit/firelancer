@@ -1,4 +1,4 @@
-import { AssetType } from '../shared-types';
+import { AssetType } from './shared-types';
 
 /**
  * Returns the AssetType based on the mime type.

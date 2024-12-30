@@ -1,5 +1,5 @@
+import { ID, Permission } from '@firelancer/common';
 import { InjectableStrategy } from '../../../common/injectable-strategy';
-import { ID, Permission } from '../../../common/shared-types';
 
 /**
  * @description

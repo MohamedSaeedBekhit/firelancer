@@ -1,3 +1,13 @@
+import { Type } from '@firelancer/common';
+import {
+    AssetStorageStrategy,
+    FirelancerPlugin,
+    Logger,
+    PluginCommonModule,
+    ProcessContext,
+    registerPluginStartupMessage,
+    RuntimeFirelancerConfig,
+} from '@firelancer/core';
 import { MiddlewareConsumer, NestModule, OnApplicationBootstrap } from '@nestjs/common';
 import { createHash } from 'crypto';
 import express, { NextFunction, Request, Response } from 'express';
@@ -10,16 +20,6 @@ import { HashedAssetNamingStrategy } from './hashed-asset-naming-strategy';
 import { SharpAssetPreviewStrategy } from './sharp-asset-preview-strategy';
 import { transformImage } from './transform-image';
 import { AssetServerOptions, ImageTransformPreset } from './types';
-import {
-    AssetStorageStrategy,
-    FirelancerPlugin,
-    PluginCommonModule,
-    registerPluginStartupMessage,
-    RuntimeFirelancerConfig,
-    Logger,
-    Type,
-    ProcessContext,
-} from '@firelancer/core';
 
 async function getFileType(buffer: Buffer) {
     const { fileTypeFromBuffer } = await import('file-type');

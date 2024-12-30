@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any*/
-import { ID, JobState, JsonCompatible, RequestContext } from '../common';
+import { ID, JobState, JsonCompatible } from '@firelancer/common';
+import { RequestContext } from '../common';
 import { Job } from './job';
 
 /**

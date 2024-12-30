@@ -1,4 +1,4 @@
-import { ID } from '../../../common';
+import { ID } from '@firelancer/common';
 import { Job } from '../../../job-queue';
 import { JobQueueStrategy } from './job-queue-strategy';
 

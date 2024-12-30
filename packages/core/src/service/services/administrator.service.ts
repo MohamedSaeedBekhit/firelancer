@@ -1,10 +1,9 @@
+import { assertFound, ID, normalizeEmailAddress } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 import { CreateAdministratorInput, UpdateAdministratorInput } from '../../api/schema';
 import { EntityNotFoundError } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
-import { ID } from '../../common/shared-types';
-import { assertFound, normalizeEmailAddress } from '../../common/utils';
 import { ConfigService } from '../../config/config.service';
 import { TransactionalConnection } from '../../connection/transactional-connection';
 import { NativeAuthenticationMethod, User } from '../../entity';

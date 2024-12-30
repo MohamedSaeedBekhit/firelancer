@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { Permission } from '@firelancer/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
 import { CreateJobPostInput, MutationCreateJobPostArgs } from '../../../api/schema';
-import { Permission, RequestContext } from '../../../common';
+import { RequestContext } from '../../../common';
 import { AssetService, CustomerService } from '../../../service';
 import { JobPostService } from '../../../service/services/job-post.service';
 

@@ -1,17 +1,17 @@
+import { Permission } from '@firelancer/common';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';
+import { ForbiddenError } from '../../common/error/errors';
 import { extractSessionToken } from '../../common/extract-session-token';
 import { parseContext } from '../../common/parse-context';
 import { internal_setRequestContext } from '../../common/request-context';
 import { setSessionToken } from '../../common/set-session-token';
-import { Permission } from '../../common/shared-types';
 import { ConfigService } from '../../config/config.service';
 import { AuthOptions } from '../../config/firelancer-config';
 import { CachedSession } from '../../config/strategies/session-cache/session-cache-strategy';
 import { RequestContextService } from '../../service/helpers/request-context/request-context.service';
 import { SessionService } from '../../service/services/session.service';
-import { ForbiddenError } from '../../common/error/errors';
 import { PERMISSIONS_METADATA_KEY } from '../decorators/allow.decorator';
 
 /**

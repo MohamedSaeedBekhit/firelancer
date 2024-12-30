@@ -1,6 +1,6 @@
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '../../common';
+import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '@firelancer/common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
 import { EntityId } from '../entity-id.decorator';

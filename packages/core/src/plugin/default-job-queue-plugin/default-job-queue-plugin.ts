@@ -1,12 +1,12 @@
-import { Type } from '../../common';
+import { Type } from '@firelancer/common';
 import { Job } from '../../job-queue/job';
 import { BackoffStrategy } from '../../job-queue/polling-job-queue-strategy';
 import { FirelancerPlugin } from '../../plugin';
 import { PluginCommonModule } from '../plugin-common.module';
-import { JobRecordBuffer } from './entity/job-record-buffer.entity';
-import { JobRecord } from './entity/job-record.entity';
 import { SqlJobBufferStorageStrategy } from './config/strategies/sql-job-buffer-storage-strategy';
 import { SqlJobQueueStrategy } from './config/strategies/sql-job-queue-strategy';
+import { JobRecordBuffer } from './entity/job-record-buffer.entity';
+import { JobRecord } from './entity/job-record.entity';
 
 /**
  * @description

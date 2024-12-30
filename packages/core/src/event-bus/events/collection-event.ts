@@ -1,5 +1,6 @@
+import { ID } from '@firelancer/common';
 import { CreateCollectionInput, UpdateCollectionInput } from '../../api';
-import { ID, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { Collection } from '../../entity/collection/collection.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

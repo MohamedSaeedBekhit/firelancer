@@ -1,6 +1,7 @@
+import { AssetType, getAssetType } from '@firelancer/common';
+import { AssetPreviewStrategy, Logger, RequestContext } from '@firelancer/core';
 import path from 'path';
 import sharp from 'sharp';
-import { AssetPreviewStrategy, AssetType, getAssetType, Logger, RequestContext } from '@firelancer/core';
 
 /**
  * @description
@@ -93,7 +94,6 @@ export class SharpAssetPreviewStrategy implements AssetPreviewStrategy {
 
     async generatePreviewImage(ctx: RequestContext, mimeType: string, data: Buffer): Promise<Buffer> {
         const assetType = getAssetType(mimeType);
-
         const { maxWidth, maxHeight } = this.config;
 
         if (assetType === AssetType.IMAGE) {

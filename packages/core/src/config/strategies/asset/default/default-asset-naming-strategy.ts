@@ -1,6 +1,6 @@
+import { normalizeString } from '@firelancer/common';
 import path from 'path';
 import { RequestContext } from '../../../../common';
-import { normalizeString } from '../../../../common/utils/normalize-string';
 import { AssetNamingStrategy } from '../asset-naming-strategy';
 
 /**

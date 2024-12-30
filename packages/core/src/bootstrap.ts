@@ -1,3 +1,4 @@
+import { DEFAULT_COOKIE_NAME } from '@firelancer/common';
 import { INestApplication, INestApplicationContext, NestApplicationOptions, Type } from '@nestjs/common';
 import { NestApplicationContextOptions } from '@nestjs/common/interfaces/nest-application-context-options.interface';
 import { NestFactory } from '@nestjs/core';
@@ -5,8 +6,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { satisfies } from 'semver';
 import { Connection, DataSourceOptions } from 'typeorm';
-import { FirelancerWorker } from './worker';
-import { DEFAULT_COOKIE_NAME } from './common/constants';
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
@@ -18,6 +17,7 @@ import { getPluginStartupMessages } from './plugin';
 import { getCompatibility, getConfigurationFunction, getEntitiesFromPlugins } from './plugin/plugin-metadata';
 import { setProcessContext } from './process-context/process-context';
 import { FIRELANCER_VERSION } from './version';
+import { FirelancerWorker } from './worker';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 const cookieSession = require('cookie-session');

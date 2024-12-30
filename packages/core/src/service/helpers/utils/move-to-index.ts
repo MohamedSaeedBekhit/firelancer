@@ -1,5 +1,5 @@
+import { idsAreEqual } from '@firelancer/common';
 import { Orderable } from '../../../common';
-import { idsAreEqual } from '../../../common/utils';
 import { FirelancerEntity } from '../../../entity';
 
 /**

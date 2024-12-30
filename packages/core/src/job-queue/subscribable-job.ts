@@ -1,7 +1,7 @@
+import { JobState, notNullOrUndefined, pick } from '@firelancer/common';
 import { interval, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap, takeWhile, tap } from 'rxjs/operators';
-import { InternalServerError, JobState, notNullOrUndefined } from '../common';
-import { pick } from '../common/utils/pick';
+import { InternalServerError } from '../common';
 import { isInspectableJobQueueStrategy } from '../config/strategies/job-queue/inspectable-job-queue-strategy';
 import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
 import { Job } from './job';

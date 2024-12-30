@@ -1,0 +1,12 @@
+{
+    "extends": "@firelancer/typescript-config/base.json",
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "declaration": true,
+        "removeComments": true,
+        "strictPropertyInitialization": false,
+        "sourceMap": true,
+        "allowJs": true
+    }
+}

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { Permission } from '../../common/shared-types';
+import { Permission } from '@firelancer/common';
 
 export const PERMISSIONS_METADATA_KEY = '__permissions__';
 

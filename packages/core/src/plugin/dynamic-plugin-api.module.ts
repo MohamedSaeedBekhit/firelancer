@@ -1,6 +1,6 @@
-import { DynamicModule, Type } from '@nestjs/common';
+import { notNullOrUndefined, Type } from '@firelancer/common';
+import { DynamicModule } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
-import { notNullOrUndefined } from '../common/utils';
 import { getConfig } from '../config/config-helpers';
 import { getModuleMetadata, isDynamicModule, restControllersFor } from './plugin-metadata';
 

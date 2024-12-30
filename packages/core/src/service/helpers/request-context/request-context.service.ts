@@ -1,9 +1,8 @@
+import { Permission, intersect } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiType, getApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
-import { Permission } from '../../../common/shared-types';
-import intersect from '../../../common/utils/intersect';
 import { ConfigService } from '../../../config/config.service';
 import { CachedSession, CachedSessionUser } from '../../../config/strategies/session-cache/session-cache-strategy';
 import { User } from '../../../entity';

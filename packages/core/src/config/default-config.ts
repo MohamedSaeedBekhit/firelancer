@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import { DEFAULT_AUTH_TOKEN_HEADER_KEY, SUPER_ADMIN_USER_IDENTIFIER, SUPER_ADMIN_USER_PASSWORD } from '../common/constants';
+import { DEFAULT_AUTH_TOKEN_HEADER_KEY, SUPER_ADMIN_USER_IDENTIFIER, SUPER_ADMIN_USER_PASSWORD } from '@firelancer/common';
 import { InMemoryJobBufferStorageStrategy } from '../job-queue';
 import { InMemoryJobQueueStrategy } from '../job-queue/in-memory-job-queue-strategy';
 import { RuntimeFirelancerConfig } from './firelancer-config';

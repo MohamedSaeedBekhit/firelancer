@@ -1,9 +1,9 @@
-import { Column, DeepPartial, Entity, Index, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
-import { ID } from '../../common';
+import { ID } from '@firelancer/common';
+import { Column, DeepPartial, Entity, Index, ManyToMany, ManyToOne } from 'typeorm';
 import { FirelancerEntity } from '../base/base.entity';
+import { EntityId } from '../entity-id.decorator';
 import { Facet } from '../facet/facet.entity';
 import { JobPost } from '../job-post/job-post.entity';
-import { EntityId } from '../entity-id.decorator';
 
 /**
  * @description

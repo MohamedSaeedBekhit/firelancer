@@ -1,5 +1,5 @@
+import { DeepPartial } from '@firelancer/common';
 import { Column, Entity } from 'typeorm';
-import { DeepPartial } from '../../../common';
 import { FirelancerEntity } from '../../../entity/base/base.entity';
 import { JobConfig } from '../../../job-queue/types';
 

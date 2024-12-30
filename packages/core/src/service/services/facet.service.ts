@@ -1,7 +1,8 @@
+import { assertFound, ID, idsAreEqual } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
 import { CreateFacetInput, UpdateFacetInput } from '../../api';
-import { assertFound, ID, idsAreEqual, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Facet } from '../../entity/facet/facet.entity';
 import { EventBus } from '../../event-bus';

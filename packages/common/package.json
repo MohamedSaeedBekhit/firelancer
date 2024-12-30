@@ -1,0 +1,19 @@
+{
+    "name": "@firelancer/common",
+    "version": "1.0.0",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*"
+    ],
+    "scripts": {
+        "watch": "tsc -p ./tsconfig.build.json -w",
+        "build": "rimraf lib && tsc -p ./tsconfig.build.json",
+        "lint": "eslint --fix .",
+        "ci": "npm run build"
+    },
+    "devDependencies": {
+        "rimraf": "^6.0.1",
+        "typescript": "^5.7.2"
+    }
+}

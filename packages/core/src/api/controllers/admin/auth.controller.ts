@@ -1,3 +1,4 @@
+import { Permission } from '@firelancer/common';
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { Allow } from '../../../api/decorators/allow.decorator';
@@ -6,7 +7,6 @@ import { Transaction } from '../../../api/decorators/transaction.decorator';
 import { MutationAuthenticateArgs, MutationLoginArgs } from '../../../api/schema';
 import { NativeAuthStrategyError } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
-import { Permission } from '../../../common/shared-types';
 import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';

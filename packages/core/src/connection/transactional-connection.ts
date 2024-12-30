@@ -5,7 +5,8 @@ import { TransactionIsolationLevel } from '../api/decorators/transaction.decorat
 import { TRANSACTION_MANAGER_KEY } from '../common/constants';
 import { EntityNotFoundError } from '../common/error/errors';
 import { RequestContext } from '../common/request-context';
-import { ID, SoftDeletable } from '../common/shared-types';
+import { SoftDeletable } from '../common/shared-types';
+import { ID } from '@firelancer/common';
 import { FirelancerEntity } from '../entity';
 import { TransactionWrapper } from './transaction-wrapper';
 

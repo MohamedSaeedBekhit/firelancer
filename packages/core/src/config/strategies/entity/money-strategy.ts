@@ -8,7 +8,7 @@ import { InjectableStrategy } from '../../../common';
  *
  * @example
  * ```ts
- * const config: VendureConfig = {
+ * const config: FirelancerConfig = {
  *   entityOptions: {
  *     moneyStrategy: new MyCustomMoneyStrategy(),
  *   }

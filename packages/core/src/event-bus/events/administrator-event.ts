@@ -1,6 +1,6 @@
+import { ID } from '@firelancer/common';
 import { CreateAdministratorInput, UpdateAdministratorInput } from '../../api/schema';
 import { RequestContext } from '../../common/request-context';
-import { ID } from '../../common/shared-types';
 import { Administrator } from '../../entity/administrator/administrator.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

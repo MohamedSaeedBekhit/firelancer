@@ -1,5 +1,6 @@
+import { ID } from '@firelancer/common';
 import { CreateFacetValueInput, UpdateFacetValueInput } from '../../api';
-import { ID, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { FacetValue } from '../../entity/facet-value/facet-value.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

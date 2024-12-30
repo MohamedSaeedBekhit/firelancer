@@ -1,4 +1,4 @@
-import { Permission } from '../common';
+import { Permission } from '@firelancer/common';
 
 export interface CountryDefinition {
     code: string;

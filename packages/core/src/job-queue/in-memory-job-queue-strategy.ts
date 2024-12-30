@@ -1,4 +1,5 @@
-import { ID, Injector, JobState, notNullOrUndefined } from '../common';
+import { ID, JobState, notNullOrUndefined } from '@firelancer/common';
+import { Injector } from '../common';
 import { Logger } from '../config';
 import { InspectableJobQueueStrategy } from '../config/strategies/job-queue/inspectable-job-queue-strategy';
 import { ProcessContext } from '../process-context';

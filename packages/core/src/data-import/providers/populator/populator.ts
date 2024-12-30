@@ -1,7 +1,7 @@
+import { ID, normalizeString, notNullOrUndefined } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigurableOperation } from '../../../api';
-import { ID, notNullOrUndefined, RequestContext } from '../../../common';
-import { normalizeString } from '../../../common/utils/normalize-string';
+import { RequestContext } from '../../../common';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { User } from '../../../entity';

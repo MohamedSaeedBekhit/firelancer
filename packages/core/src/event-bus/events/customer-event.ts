@@ -1,6 +1,6 @@
+import { CustomerType, ID } from '@firelancer/common';
 import { CreateCustomerInput, UpdateCustomerInput } from '../../api/schema';
 import { RequestContext } from '../../common/request-context';
-import { CustomerType, ID } from '../../common/shared-types';
 import { Customer } from '../../entity/customer/customer.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { alphabet, generateRandomString } from '../../../common/utils/random';
+import { alphabet, generateRandomString } from '@firelancer/common';
+
 import { ConfigService } from '../../../config/config.service';
 /* eslint-disable-next-line @typescript-eslint/no-require-imports */
 const ms = require('ms');

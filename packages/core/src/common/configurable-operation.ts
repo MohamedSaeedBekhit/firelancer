@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ConfigArgType, ID, assertNever } from '@firelancer/common';
 import { ConfigArg } from '../api';
+import { InternalServerError } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
-import { ConfigArgType, ID } from './shared-types';
-import { InternalServerError } from './error/errors';
-import { assertNever } from './utils';
 
 export interface ConfigArgCommonDef<T extends ConfigArgType> {
     type: T;

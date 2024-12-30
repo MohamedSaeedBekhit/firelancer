@@ -1,3 +1,4 @@
+import { BalanceEntryType, CurrencyCode, CustomerType, ID, Permission } from '@firelancer/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Buffer } from 'buffer';
 import { Type } from 'class-transformer';
@@ -17,9 +18,8 @@ import {
     IsString,
     ValidateNested,
 } from 'class-validator';
-import { BalanceEntryType, CurrencyCode, CustomerType, ID, Permission } from '../../common/shared-types';
-import { Customer } from '../../entity';
 import { IsEntityId } from '../../common';
+import { Customer } from '../../entity';
 
 export class CreateAdministratorInput {
     @ApiProperty()

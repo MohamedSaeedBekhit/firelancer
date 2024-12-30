@@ -1,19 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { CreateRoleInput, UpdateRoleInput } from '../../api/schema';
 import {
     BUYER_ROLE_CODE,
     BUYER_ROLE_DESCRIPTION,
-    getAllPermissionsMetadata,
+    ID,
+    Permission,
     SELLER_ROLE_CODE,
     SELLER_ROLE_DESCRIPTION,
     SUPER_ADMIN_ROLE_CODE,
     SUPER_ADMIN_ROLE_DESCRIPTION,
-} from '../../common/constants';
+    assertFound,
+    unique,
+} from '@firelancer/common';
+import { Injectable } from '@nestjs/common';
+import { CreateRoleInput, UpdateRoleInput } from '../../api/schema';
+import { getAllPermissionsMetadata } from '../../common/constants';
 import { EntityNotFoundError, InternalServerError, UserInputError } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
-import { ID, Permission } from '../../common/shared-types';
-import { assertFound } from '../../common/utils';
-import { unique } from '../../common/utils/unique';
 import { ConfigService } from '../../config/config.service';
 import { TransactionalConnection } from '../../connection/transactional-connection';
 import { Role } from '../../entity/role/role.entity';

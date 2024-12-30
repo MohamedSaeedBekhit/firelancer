@@ -1,4 +1,5 @@
-import { ID, RequestContext, Type } from '../../common';
+import { ID, Type } from '@firelancer/common';
+import { RequestContext } from '../../common';
 import { Collection } from '../../entity/collection/collection.entity';
 import { FirelancerEvent } from '../firelancer-event';
 

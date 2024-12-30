@@ -1,4 +1,4 @@
-import { Type } from '../common';
+import { Type } from '@firelancer/common';
 
 interface MoneyColumnOptions {
     default?: number;

@@ -1,4 +1,4 @@
-import { ID } from '../shared-types';
+import { ID } from './shared-types';
 
 /**
  * Compare ID values for equality, taking into account the fact that they may not be of matching types

@@ -1,6 +1,6 @@
+import { ID } from '@firelancer/common';
 import { Injector } from '../../../../common/injector';
 import { RequestContext } from '../../../../common/request-context';
-import { ID } from '../../../../common/shared-types';
 import { TransactionalConnection } from '../../../../connection/transactional-connection';
 import { NativeAuthenticationMethod, User } from '../../../../entity';
 import { AuthenticationStrategy } from '../authentication-strategy';

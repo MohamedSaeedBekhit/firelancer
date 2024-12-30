@@ -1,6 +1,5 @@
 import { internal_getRequestContext } from '@firelancer/core';
 import { Request } from 'express';
-
 import { AssetServerOptions, ImageTransformFormat } from './types';
 
 export function getAssetUrlPrefixFn(options: AssetServerOptions) {

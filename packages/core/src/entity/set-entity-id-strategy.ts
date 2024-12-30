@@ -1,5 +1,5 @@
+import { Type } from '@firelancer/common';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
-import { Type } from '../common';
 import { EntityIdStrategy } from '../config';
 import { getIdColumnsFor, getPrimaryGeneratedIdColumn } from './entity-id.decorator';
 

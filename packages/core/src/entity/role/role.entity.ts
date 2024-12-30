@@ -1,5 +1,5 @@
+import { Permission } from '@firelancer/common';
 import { Column, DeepPartial, Entity } from 'typeorm';
-import { Permission } from '../../common/shared-types';
 import { FirelancerEntity } from '../base/base.entity';
 
 /**

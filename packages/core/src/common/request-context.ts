@@ -1,12 +1,10 @@
+import { ID, JsonCompatible, Permission, intersect, isObject } from '@firelancer/common';
 import { ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 import { EntityManager } from 'typeorm';
 import { CachedSession } from '../config/strategies/session-cache/session-cache-strategy';
 import { REQUEST_CONTEXT_KEY, REQUEST_CONTEXT_MAP_KEY, TRANSACTION_MANAGER_KEY } from './constants';
 import { ApiType } from './get-api-type';
-import { ID, JsonCompatible, Permission } from './shared-types';
-import { isObject } from './utils';
-import intersect from './utils/intersect';
 
 export type SerializedRequestContext = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

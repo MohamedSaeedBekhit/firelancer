@@ -1,12 +1,12 @@
+import { notNullOrUndefined } from '@firelancer/common';
 import { Injectable, OnModuleDestroy, Type } from '@nestjs/common';
 import { filter, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
 import { EntityManager } from 'typeorm';
 import { TRANSACTION_MANAGER_KEY } from '../common/constants';
 import { RequestContext } from '../common/request-context';
-import { notNullOrUndefined } from '../common/utils';
+import { Logger } from '../config';
 import { TransactionSubscriber, TransactionSubscriberError } from '../connection/transaction-subscriber';
 import { FirelancerEvent } from './firelancer-event';
-import { Logger } from '../config';
 
 /**
  * @description

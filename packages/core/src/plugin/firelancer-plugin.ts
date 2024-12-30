@@ -1,8 +1,8 @@
+import { pick, Type } from '@firelancer/common';
 import { Module, Type as NestType, Provider } from '@nestjs/common';
 import { MODULE_METADATA } from '@nestjs/common/constants';
-import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import { ModuleMetadata } from '@nestjs/common/interfaces';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { pick } from '../common/utils/pick';
 import { RuntimeFirelancerConfig } from '../config/firelancer-config';
 import { PLUGIN_METADATA } from './plugin-metadata';
 

@@ -1,6 +1,6 @@
+import { DeepPartial, JobState } from '@firelancer/common';
 import { Column, Entity } from 'typeorm';
 import { FirelancerEntity } from '../../../entity/base/base.entity';
-import { DeepPartial, JobState } from '../../../common';
 
 @Entity()
 export class JobRecord extends FirelancerEntity {

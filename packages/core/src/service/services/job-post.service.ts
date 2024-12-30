@@ -1,6 +1,7 @@
+import { assertFound, ID } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { CreateJobPostInput } from '../../api';
-import { assertFound, ID, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { JobPost } from '../../entity';
 import { EventBus } from '../../event-bus';

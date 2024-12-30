@@ -1,5 +1,5 @@
+import { ID } from '@firelancer/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ID } from '../shared-types';
 
 /**
  * @description

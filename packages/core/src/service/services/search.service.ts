@@ -1,7 +1,8 @@
+import { JobState } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
-import { Job } from '../../job-queue/job';
-import { JobState, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { Logger } from '../../config';
+import { Job } from '../../job-queue/job';
 
 /**
  * @description

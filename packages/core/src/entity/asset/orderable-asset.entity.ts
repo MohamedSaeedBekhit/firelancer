@@ -1,5 +1,6 @@
+import { ID } from '@firelancer/common';
 import { Column, DeepPartial, Index, ManyToOne } from 'typeorm';
-import { ID, Orderable } from '../../common';
+import { Orderable } from '../../common';
 import { Asset } from '../asset/asset.entity';
 import { FirelancerEntity } from '../base/base.entity';
 import { EntityId } from '../entity-id.decorator';

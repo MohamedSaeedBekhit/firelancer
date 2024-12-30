@@ -1,7 +1,8 @@
+import { ID } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
 import { CreateBalanceEntryInput } from '../../api';
-import { BalanceEntryStatus, ID, RequestContext } from '../../common';
+import { RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Customer } from '../../entity';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';

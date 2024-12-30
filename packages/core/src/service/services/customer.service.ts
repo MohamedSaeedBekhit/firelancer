@@ -1,3 +1,4 @@
+import { assertFound, CustomerType, HistoryEntryType, ID, normalizeEmailAddress } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 import { CreateCustomerInput, RegisterCustomerInput, UpdateCustomerInput } from '../../api/schema';
@@ -9,8 +10,6 @@ import {
     UnauthorizedError,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
-import { CustomerType, HistoryEntryType, ID } from '../../common/shared-types';
-import { assertFound, normalizeEmailAddress } from '../../common/utils';
 import { ConfigService } from '../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../config/strategies/authentication/default/native-authentication-strategy';
 import { TransactionalConnection } from '../../connection/transactional-connection';

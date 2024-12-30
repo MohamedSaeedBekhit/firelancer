@@ -1,4 +1,4 @@
-import { TypedArray } from './types';
+import { TypedArray } from './shared-types';
 
 export function byteToBinary(byte: number): string {
     return byte.toString(2).padStart(8, '0');

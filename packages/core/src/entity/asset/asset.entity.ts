@@ -1,5 +1,5 @@
+import { AssetType } from '@firelancer/common';
 import { Column, DeepPartial, Entity } from 'typeorm';
-import { AssetType } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 
 /**
