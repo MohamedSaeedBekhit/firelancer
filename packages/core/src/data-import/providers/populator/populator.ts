@@ -122,7 +122,7 @@ export class Populator {
             const collection = await this.collectionService.create(ctx, {
                 name: collectionDef.name,
                 description: collectionDef.description || '',
-                slug: collectionDef.slug ?? collectionDef.name,
+                slug: collectionDef.slug ?? normalizeString(collectionDef.name, '-'),
                 isPrivate: collectionDef.private || false,
                 parentId,
                 filters,

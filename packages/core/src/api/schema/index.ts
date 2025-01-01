@@ -636,27 +636,110 @@ export class ConfigurableOperation {
 }
 
 export class CreateCollectionInput {
+    @ApiProperty()
+    @IsString()
     name: string;
+
+    @ApiProperty()
+    @IsString()
     description: string;
+
+    @ApiProperty()
+    @IsString()
     slug: string;
+
+    @ApiPropertyOptional()
+    @IsEntityId()
+    @IsOptional()
+    featuredAssetId?: ID;
+
+    @ApiPropertyOptional({ isArray: true, type: 'number' })
+    @IsEntityId({ each: true })
+    @IsOptional()
+    assetIds?: Array<ID>;
+
+    @ApiProperty()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ConfigurableOperation)
     filters: Array<ConfigurableOperation>;
+
+    @ApiPropertyOptional()
+    @IsBoolean()
+    @IsOptional()
     inheritFilters?: boolean;
+
+    @ApiPropertyOptional()
+    @IsBoolean()
+    @IsOptional()
     isPrivate?: boolean;
+
+    @ApiPropertyOptional()
+    @IsEntityId()
+    @IsOptional()
     parentId?: ID;
 }
 
 export class MutationCreateCollectionArgs {
+    @ApiProperty()
+    @IsDefined()
+    @IsNotEmptyObject()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CreateCollectionInput)
     input: CreateCollectionInput;
 }
 
 export class UpdateCollectionInput {
+    @ApiProperty()
+    @IsEntityId()
     id: ID;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
     name?: string;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
     description?: string;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
     slug?: string;
+
+    @ApiPropertyOptional()
+    @IsEntityId()
+    @IsOptional()
+    featuredAssetId?: ID;
+
+    @ApiPropertyOptional({ isArray: true, type: 'number' })
+    @IsEntityId({ each: true })
+    @IsOptional()
+    assetIds?: Array<ID>;
+
+    @ApiPropertyOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ConfigurableOperation)
+    @IsOptional()
     filters?: Array<ConfigurableOperation>;
+
+    @ApiPropertyOptional()
+    @IsBoolean()
+    @IsOptional()
     inheritFilters?: boolean;
+
+    @ApiPropertyOptional()
+    @IsBoolean()
+    @IsOptional()
     isPrivate?: boolean;
+
+    @ApiPropertyOptional()
+    @IsEntityId()
+    @IsOptional()
     parentId?: ID;
 }
 

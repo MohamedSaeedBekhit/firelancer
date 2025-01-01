@@ -4,7 +4,7 @@ import { imageSize } from 'image-size';
 import mime from 'mime-types';
 import path from 'path';
 import { Readable, Stream } from 'stream';
-import { In, IsNull } from 'typeorm';
+import { FindOneOptions, In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
 import { CreateAssetInput, UpdateAssetInput } from '../../api/schema';
 import { InternalServerError, RequestContext } from '../../common';
@@ -16,10 +16,12 @@ import { AssetEvent } from '../../event-bus/events/asset-event';
 import { patchEntity } from '../helpers/utils/patch-entity';
 
 export interface EntityWithAssets extends FirelancerEntity {
+    featuredAsset?: Asset | null;
     assets: OrderableAsset[];
 }
 
 export interface EntityAssetInput {
+    featuredAssetId?: ID | null;
     assetIds?: ID[] | null;
 }
 
@@ -39,6 +41,103 @@ export class AssetService {
                 const [type, subtype] = val.split('/');
                 return { type, subtype };
             });
+    }
+
+    async findOne(ctx: RequestContext, id: ID): Promise<Asset | undefined> {
+        return this.connection
+            .getRepository(ctx, Asset)
+            .findOne({
+                where: {
+                    id,
+                },
+            })
+            .then((result) => result ?? undefined);
+    }
+
+    async findAll(ctx: RequestContext): Promise<Asset[]> {
+        return this.connection.getRepository(ctx, Asset).find();
+    }
+
+    async getFeaturedAsset<T extends Omit<EntityWithAssets, 'assets'>>(ctx: RequestContext, entity: T): Promise<Asset | undefined> {
+        const entityType: Type<T> = Object.getPrototypeOf(entity).constructor;
+        let entityWithFeaturedAsset: T | undefined;
+
+        entityWithFeaturedAsset = await this.connection
+            .getRepository(ctx, entityType)
+            .findOne({
+                where: { id: entity.id },
+                relations: {
+                    featuredAsset: true,
+                },
+                loadEagerRelations: false,
+                // TODO: satisfies
+            } as FindOneOptions<T>)
+            .then((result) => result ?? undefined);
+        return (entityWithFeaturedAsset && entityWithFeaturedAsset.featuredAsset) || undefined;
+    }
+
+    /**
+     * @description
+     * Returns the Assets of an entity which has a well-ordered list of Assets, such as JobPost, Collection.
+     */
+    async getEntityAssets<T extends EntityWithAssets>(ctx: RequestContext, entity: T): Promise<Asset[] | undefined> {
+        let orderableAssets = entity.assets;
+        if (!orderableAssets) {
+            const entityType: Type<EntityWithAssets> = Object.getPrototypeOf(entity).constructor;
+            const entityWithAssets = await this.connection.getRepository(ctx, entityType).findOne({
+                where: {
+                    id: entity.id,
+                },
+                relations: {
+                    assets: { asset: true },
+                },
+            });
+
+            orderableAssets = entityWithAssets?.assets ?? [];
+        }
+
+        return orderableAssets.sort((a, b) => a.position - b.position).map((a) => a.asset);
+    }
+
+    async updateFeaturedAsset<T extends EntityWithAssets>(ctx: RequestContext, entity: T, input: EntityAssetInput): Promise<T> {
+        const { assetIds, featuredAssetId } = input;
+        if (featuredAssetId === null || (assetIds && assetIds.length === 0)) {
+            entity.featuredAsset = null;
+            return entity;
+        }
+        if (featuredAssetId === undefined) {
+            return entity;
+        }
+        const featuredAsset = await this.findOne(ctx, featuredAssetId);
+        if (featuredAsset) {
+            entity.featuredAsset = featuredAsset;
+        }
+        return entity;
+    }
+
+    /**
+     * @description
+     * Updates the assets of an entity, ensuring that only valid assetIds are used.
+     */
+    async updateEntityAssets<T extends EntityWithAssets>(ctx: RequestContext, entity: T, input: EntityAssetInput): Promise<T> {
+        if (!entity.id) {
+            throw new InternalServerError('error.entity-must-have-an-id');
+        }
+        const { assetIds } = input;
+
+        if (assetIds && assetIds.length) {
+            const assets = await this.connection.getRepository(ctx, Asset).find({
+                where: {
+                    id: In(assetIds),
+                },
+            });
+            const sortedAssets = assetIds.map((id) => assets.find((a) => idsAreEqual(a.id, id))).filter(notNullOrUndefined);
+            await this.removeExistingOrderableAssets(ctx, entity);
+            entity.assets = await this.createOrderableAssets(ctx, entity, sortedAssets);
+        } else if (assetIds && assetIds.length === 0) {
+            await this.removeExistingOrderableAssets(ctx, entity);
+        }
+        return entity;
     }
 
     /**
@@ -111,55 +210,6 @@ export class AssetService {
         const updatedAsset = await this.connection.getRepository(ctx, Asset).save(asset);
         await this.eventBus.publish(new AssetEvent(ctx, updatedAsset, 'updated', input));
         return updatedAsset;
-    }
-
-    /**
-     * @description
-     * Updates the assets of an entity, ensuring that only valid assetIds are used.
-     */
-    async updateEntityAssets<T extends EntityWithAssets>(ctx: RequestContext, entity: T, input: EntityAssetInput): Promise<T> {
-        if (!entity.id) {
-            throw new InternalServerError('error.entity-must-have-an-id');
-        }
-        const { assetIds } = input;
-        if (assetIds && assetIds.length) {
-            const assets = await this.connection.getRepository(ctx, Asset).find({
-                where: {
-                    id: In(assetIds),
-                },
-            });
-
-            const sortedAssets = assetIds.map((id) => assets.find((a) => idsAreEqual(a.id, id))).filter(notNullOrUndefined);
-
-            await this.removeExistingOrderableAssets(ctx, entity);
-            entity.assets = await this.createOrderableAssets(ctx, entity, sortedAssets);
-        } else if (assetIds && assetIds.length === 0) {
-            await this.removeExistingOrderableAssets(ctx, entity);
-        }
-        return entity;
-    }
-
-    /**
-     * @description
-     * Returns the Assets of an entity which has a well-ordered list of Assets, such as JobPost.
-     */
-    async getEntityAssets<T extends EntityWithAssets>(ctx: RequestContext, entity: T): Promise<Asset[] | undefined> {
-        let orderableAssets = entity.assets;
-        if (!orderableAssets) {
-            const entityType: Type<EntityWithAssets> = Object.getPrototypeOf(entity).constructor;
-            const entityWithAssets = await this.connection.getRepository(ctx, entityType).findOne({
-                where: {
-                    id: entity.id,
-                },
-                relations: {
-                    assets: { asset: true },
-                },
-            });
-
-            orderableAssets = entityWithAssets?.assets ?? [];
-        }
-
-        return orderableAssets.sort((a, b) => a.position - b.position).map((a) => a.asset);
     }
 
     private async createAssetInternal(ctx: RequestContext, stream: Stream, filename: string, mimetype: string): Promise<Asset> {

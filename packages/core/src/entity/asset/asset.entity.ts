@@ -1,6 +1,7 @@
 import { AssetType } from '@firelancer/common';
-import { Column, DeepPartial, Entity } from 'typeorm';
+import { Column, DeepPartial, Entity, OneToMany } from 'typeorm';
 import { FirelancerEntity } from '../base/base.entity';
+import { Collection } from '../collection/collection.entity';
 
 /**
  * @description
@@ -39,4 +40,7 @@ export class Asset extends FirelancerEntity {
 
     @Column('simple-json', { nullable: true })
     focalPoint: { x: number; y: number } | null;
+
+    @OneToMany(() => Collection, (collection) => collection.featuredAsset)
+    featuredInCollections?: Collection[];
 }

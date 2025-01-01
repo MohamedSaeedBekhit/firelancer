@@ -1,10 +1,12 @@
 import { DeepPartial, ID } from '@firelancer/common';
-import { Column, Entity, JoinTable, ManyToMany, Tree, TreeChildren, TreeParent } from 'typeorm';
+import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent } from 'typeorm';
 import { ConfigurableOperation } from '../../api';
 import { Orderable } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { EntityId } from '../entity-id.decorator';
 import { JobPost } from '../job-post/job-post.entity';
+import { Asset } from '../asset/asset.entity';
+import { CollectionAsset } from './collection-asset.entity';
 
 /**
  * @description
@@ -53,4 +55,11 @@ export class Collection extends FirelancerEntity implements Orderable {
 
     @EntityId({ nullable: true })
     parentId: ID;
+
+    @Index()
+    @ManyToOne(() => Asset, (asset) => asset.featuredInCollections, { onDelete: 'SET NULL' })
+    featuredAsset: Asset;
+
+    @OneToMany((type) => CollectionAsset, (collectionAsset) => collectionAsset.collection)
+    assets: CollectionAsset[];
 }

@@ -15,6 +15,7 @@ import { JobQueue, JobQueueService } from '../../job-queue';
 import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
 import { moveToIndex } from '../helpers/utils/move-to-index';
 import { patchEntity } from '../helpers/utils/patch-entity';
+import { AssetService } from './asset.service';
 
 export type ApplyCollectionFiltersJobData = {
     ctx: SerializedRequestContext;
@@ -38,6 +39,7 @@ export class CollectionService implements OnModuleInit {
         private eventBus: EventBus,
         private configService: ConfigService,
         private jobQueueService: JobQueueService,
+        private assetService: AssetService,
     ) {}
 
     async onModuleInit() {
@@ -241,7 +243,10 @@ export class CollectionService implements OnModuleInit {
         }
         collection.position = await this.getNextPositionInParent(ctx, input.parentId || undefined);
         collection.filters = this.getCollectionFiltersFromInput(input);
+
         await this.connection.getRepository(ctx, Collection).save(collection);
+        await this.assetService.updateFeaturedAsset(ctx, collection, input);
+        await this.assetService.updateEntityAssets(ctx, collection, input);
 
         for (const { EntityType } of collectableEntities) {
             await this.applyFiltersQueue.add(
@@ -259,12 +264,15 @@ export class CollectionService implements OnModuleInit {
     }
 
     async update(ctx: RequestContext, input: UpdateCollectionInput): Promise<Collection> {
-        const collection = await this.findOne(ctx, input.id);
-        if (!collection) {
+        const coll = await this.findOne(ctx, input.id);
+        if (!coll) {
             throw new EntityNotFoundError('Collection', input.id);
         }
-        const updatedCollection = patchEntity(collection, input);
-        await this.connection.getRepository(ctx, Collection).save(updatedCollection, { reload: false });
+
+        const collection = patchEntity(coll, input);
+        await this.connection.getRepository(ctx, Collection).save(collection, { reload: false });
+        await this.assetService.updateFeaturedAsset(ctx, collection, input);
+        await this.assetService.updateEntityAssets(ctx, collection, input);
 
         for (const { EntityType } of collectableEntities) {
             if (input.filters) {
@@ -278,12 +286,12 @@ export class CollectionService implements OnModuleInit {
                     { ctx },
                 );
             } else {
-                const affectedCollectableIds = await this.getCollectionCollectableIds(updatedCollection, EntityType);
-                await this.eventBus.publish(new CollectionModificationEvent(ctx, updatedCollection, EntityType, affectedCollectableIds));
+                const affectedCollectableIds = await this.getCollectionCollectableIds(collection, EntityType);
+                await this.eventBus.publish(new CollectionModificationEvent(ctx, collection, EntityType, affectedCollectableIds));
             }
         }
 
-        await this.eventBus.publish(new CollectionEvent(ctx, updatedCollection, 'updated', input));
+        await this.eventBus.publish(new CollectionEvent(ctx, collection, 'updated', input));
         return assertFound(this.findOne(ctx, collection.id));
     }
 

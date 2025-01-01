@@ -5,6 +5,7 @@ import { AuthenticationMethod } from './authentication-method/authentication-met
 import { ExternalAuthenticationMethod } from './authentication-method/external-authentication-method.entity';
 import { NativeAuthenticationMethod } from './authentication-method/native-authentication-method.entity';
 import { BalanceEntry } from './balance-entry/balance-entry.entity';
+import { CollectionAsset } from './collection/collection-asset.entity';
 import { Collection } from './collection/collection.entity';
 import { Customer } from './customer/customer.entity';
 import { FacetValue } from './facet-value/facet-value.entity';
@@ -30,6 +31,7 @@ export const coreEntitiesMap = {
     AnonymousSession,
     BalanceEntry,
     Collection,
+    CollectionAsset,
     Customer,
     CustomerHistoryEntry,
     Session,
