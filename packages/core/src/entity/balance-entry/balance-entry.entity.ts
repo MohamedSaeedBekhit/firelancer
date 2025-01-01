@@ -8,12 +8,13 @@ import { Money } from '../money.decorator';
 
 /**
  * @description
- * BalanceEntry
+ * Balance Entry
  */
 @Entity()
 @Check('"balance" = COALESCE("prevBalance", 0) + "credit" - "debit"')
 @Check('"prevSettledAt" < "settledAt"')
 @Check('("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)')
+@Check('"settledAt" IS NOT NULL AND "rejectedAt" IS NOT NULL')
 export class BalanceEntry extends FirelancerEntity {
     constructor(input?: DeepPartial<BalanceEntry>) {
         super(input);
