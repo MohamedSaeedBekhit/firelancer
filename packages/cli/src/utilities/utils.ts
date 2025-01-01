@@ -3,7 +3,7 @@
  * chance to be displayed unless we give a small async pause.
  */
 export async function pauseForPromptDisplay() {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 }
 
 export function isRunningInTsNode(): boolean {

@@ -11,6 +11,7 @@ import { Facet } from '../../../entity/facet/facet.entity';
 import { CollectionService, FacetService, FacetValueService, RequestContextService, RoleService } from '../../../service';
 import { SearchService } from '../../../service/services/search.service';
 import { CollectionDefinition, CollectionFilterDefinition, FacetDefinition, InitialData, RoleDefinition } from '../../types';
+import { AssetImporter } from '../asset-importer/asset-importer';
 
 /**
  * @description
@@ -32,6 +33,7 @@ export class Populator {
         private facetService: FacetService,
         private facetValueService: FacetValueService,
         private searchService: SearchService,
+        private assetImporter: AssetImporter,
     ) {}
 
     async populateInitialData(data: InitialData) {
@@ -44,7 +46,7 @@ export class Populator {
         }
 
         try {
-            await this.populateFaces(ctx, data.facets);
+            await this.populateFactes(ctx, data.facets);
         } catch (e: any) {
             Logger.error('Could not populate facets');
             Logger.error(e, 'populator', e.stack);
@@ -58,7 +60,7 @@ export class Populator {
         }
     }
 
-    protected async populateFaces(ctx: RequestContext, facets: FacetDefinition[]): Promise<ID[]> {
+    private async populateFactes(ctx: RequestContext, facets: FacetDefinition[]): Promise<ID[]> {
         const facetValueIds: ID[] = [];
         for (const facetDef of facets) {
             const [facetName, valueName] = facetDef.split(':');
@@ -113,18 +115,23 @@ export class Populator {
         for (const collectionDef of collections) {
             const parent = collectionDef.parentName && collectionMap.get(collectionDef.parentName);
             const parentId = parent ? parent.id : undefined;
+            const { assets } = await this.assetImporter.getAssets(collectionDef.assetPaths || [], ctx);
+
             let filters: ConfigurableOperation[] = [];
             try {
                 filters = (collectionDef.filters || []).map((filter) => this.processFilterDefinition(filter, allFacetValues));
             } catch (e: any) {
                 Logger.error(e.message);
             }
+
             const collection = await this.collectionService.create(ctx, {
                 name: collectionDef.name,
                 description: collectionDef.description || '',
                 slug: collectionDef.slug ?? normalizeString(collectionDef.name, '-'),
                 isPrivate: collectionDef.private || false,
                 parentId,
+                assetIds: assets.map((a) => a.id.toString()),
+                featuredAssetId: assets.length ? assets[0].id.toString() : undefined,
                 filters,
                 inheritFilters: collectionDef.inheritFilters ?? true,
             });

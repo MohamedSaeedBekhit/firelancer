@@ -14,6 +14,9 @@ import { Asset, FirelancerEntity, JobPost, OrderableAsset } from '../../entity';
 import { EventBus } from '../../event-bus';
 import { AssetEvent } from '../../event-bus/events/asset-event';
 import { patchEntity } from '../helpers/utils/patch-entity';
+import { ReadStream as FSReadStream } from 'fs';
+import { ReadStream } from 'fs-extra';
+import { IncomingMessage } from 'http';
 
 export interface EntityWithAssets extends FirelancerEntity {
     featuredAsset?: Asset | null;
@@ -299,6 +302,44 @@ export class AssetService {
             }
         }
         return false;
+    }
+
+    /**
+     * @description
+     * Create an Asset from a file stream, for example to create an Asset during data import.
+     */
+    async createFromFileStream(stream: ReadStream, ctx?: RequestContext): Promise<Asset>;
+    async createFromFileStream(stream: Readable, filePath: string, ctx?: RequestContext): Promise<Asset>;
+    async createFromFileStream(
+        stream: ReadStream | Readable,
+        maybeFilePathOrCtx?: string | RequestContext,
+        maybeCtx?: RequestContext,
+    ): Promise<Asset> {
+        const filePathFromArgs = maybeFilePathOrCtx instanceof RequestContext ? undefined : maybeFilePathOrCtx;
+        const filePath = stream instanceof ReadStream || stream instanceof FSReadStream ? stream.path : filePathFromArgs;
+        if (typeof filePath === 'string') {
+            const filename = path.basename(filePath).split('?')[0];
+            const mimetype = this.getMimeType(stream, filename);
+            const ctx =
+                maybeFilePathOrCtx instanceof RequestContext
+                    ? maybeFilePathOrCtx
+                    : maybeCtx instanceof RequestContext
+                      ? maybeCtx
+                      : RequestContext.empty();
+            return this.createAssetInternal(ctx, stream, filename, mimetype);
+        } else {
+            throw new InternalServerError('error.path-should-be-a-string-got-buffer');
+        }
+    }
+
+    private getMimeType(stream: Readable, filename: string): string {
+        if (stream instanceof IncomingMessage) {
+            const contentType = stream.headers['content-type'];
+            if (contentType) {
+                return contentType;
+            }
+        }
+        return mime.lookup(filename) || 'application/octet-stream';
     }
 
     /**

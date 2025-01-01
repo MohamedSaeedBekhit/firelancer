@@ -14,6 +14,7 @@ import { InMemorySessionCacheStrategy } from './strategies/session-cache/default
 import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { AutoIncrementIdStrategy } from './strategies/entity/default/auto-increment-id-strategy';
 import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-strategy';
+import { DefaultAssetImportStrategy } from './strategies/asset-import/default/default-asset-import-strategy';
 
 /**
  * @description
@@ -84,5 +85,9 @@ export const defaultConfig: RuntimeFirelancerConfig = {
     entityOptions: {
         entityIdStrategy: new AutoIncrementIdStrategy(),
         moneyStrategy: new DefaultMoneyStrategy(),
+    },
+    importExportOptions: {
+        importAssetsDir: __dirname,
+        assetImportStrategy: new DefaultAssetImportStrategy(),
     },
 };

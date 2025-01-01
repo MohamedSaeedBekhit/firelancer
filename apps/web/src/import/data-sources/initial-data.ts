@@ -82,6 +82,7 @@ export const initialData: InitialData = {
                 },
             ],
             inheritFilters: false,
+            assetPaths: ['web-mobile-software-development.png'],
         },
         {
             parentName: 'Web, Mobile, & Software Development',
@@ -166,6 +167,7 @@ export const initialData: InitialData = {
                 },
             ],
             inheritFilters: false,
+            assetPaths: ['translation.png'],
         },
         {
             parentName: 'Translation',

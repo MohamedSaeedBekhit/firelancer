@@ -9,6 +9,8 @@ export * from './strategies/asset/asset-storage-strategy';
 export * from './strategies/asset/default/default-asset-naming-strategy';
 export * from './strategies/asset/default/no-asset-preview-strategy';
 export * from './strategies/asset/default/no-asset-storage-strategy';
+export * from './strategies/asset-import/asset-import-strategy';
+export * from './strategies/asset-import/default/default-asset-import-strategy';
 export * from './strategies/authentication/password-hashing-strategy';
 export * from './strategies/authentication/authentication-strategy';
 export * from './strategies/authentication/password-validation-strategy';

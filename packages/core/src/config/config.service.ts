@@ -8,6 +8,7 @@ import {
     CatalogOptions,
     EntityOptions,
     FirelancerConfig,
+    ImportExportOptions,
     JobQueueOptions,
     RuntimeFirelancerConfig,
     SystemOptions,
@@ -59,5 +60,9 @@ export class ConfigService implements FirelancerConfig {
 
     get entityOptions(): Required<EntityOptions> {
         return this.activeConfig.entityOptions;
+    }
+
+    get importExportOptions(): Required<ImportExportOptions> {
+        return this.activeConfig.importExportOptions;
     }
 }

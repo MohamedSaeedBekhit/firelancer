@@ -17,6 +17,7 @@ import { SessionCacheStrategy } from './strategies/session-cache/session-cache-s
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
 import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
 import { MoneyStrategy } from './strategies/entity/money-strategy';
+import { AssetImportStrategy } from './strategies/asset-import/asset-import-strategy';
 
 /**
  * @description
@@ -429,6 +430,26 @@ export interface EntityOptions {
 
 /**
  * @description
+ * Options related to importing & exporting data.
+ */
+export interface ImportExportOptions {
+    /**
+     * @description
+     * The directory in which assets to be imported are located.
+     *
+     * @default __dirname
+     */
+    importAssetsDir?: string;
+    /**
+     * @description
+     * This strategy determines how asset files get imported based on the path given in the
+     * import CSV or via the {@link AssetImporter} `getAssets()` method.
+     */
+    assetImportStrategy?: AssetImportStrategy;
+}
+
+/**
+ * @description
  * These credentials will be used to create the Superadmin user & administrator
  * when firelancer first bootstraps.
  */
@@ -513,6 +534,11 @@ export interface FirelancerConfig {
      * @default AutoIncrementIdStrategy
      */
     entityOptions?: EntityOptions;
+    /**
+     * @description
+     * Configuration settings for data import and export.
+     */
+    importExportOptions?: ImportExportOptions;
 }
 
 /**
@@ -528,6 +554,7 @@ export interface RuntimeFirelancerConfig extends Required<FirelancerConfig> {
     catalogOptions: Required<CatalogOptions>;
     systemOptions: Required<SystemOptions>;
     entityOptions: Required<EntityOptions>;
+    importExportOptions: Required<ImportExportOptions>;
 }
 
 type DeepPartialSimple<T> = {

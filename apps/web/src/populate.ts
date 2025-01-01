@@ -1,6 +1,6 @@
 import { bootstrap, JobQueueService } from '@firelancer/core';
 import { populate } from '@firelancer/core/cli';
-import { initialData } from './data-sources/initial-data';
+import { initialData } from './import/data-sources/initial-data';
 import { config } from './firelancer-config';
 
 const bootstrapFn = async () => {

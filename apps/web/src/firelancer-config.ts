@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
 import { AutoIncrementIdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger, UuidIdStrategy } from '@firelancer/core';
 import { NextFunction, Request, Response } from 'express';
-import { join } from 'path';
+import * as path from 'path';
 import { HelloWorldPlugin } from './plugins/hello-world/plugin';
 
 export const config: FirelancerConfig = {
@@ -36,7 +36,7 @@ export const config: FirelancerConfig = {
         password: process.env.POSTGRES_CONNECTION_PASSWORD!,
         database: process.env.POSTGRES_DATABASE!,
         synchronize: false,
-        migrations: [join(__dirname, './migrations/*.+(js|ts)')],
+        migrations: [path.join(__dirname, './migrations/*.+(js|ts)')],
     },
     authOptions: {
         tokenMethod: ['cookie', 'bearer'],
@@ -50,7 +50,7 @@ export const config: FirelancerConfig = {
     plugins: [
         AssetServerPlugin.init({
             route: 'assets',
-            assetUploadDir: join(__dirname, '../static/assets'),
+            assetUploadDir: path.join(__dirname, '../static/assets'),
             assetUrlPrefix: process.env.IS_DEV ? undefined : 'https://www.my-shop.com/assets/',
         }),
         DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
@@ -58,5 +58,8 @@ export const config: FirelancerConfig = {
     ],
     entityOptions: {
         entityIdStrategy: new AutoIncrementIdStrategy(),
+    },
+    importExportOptions: {
+        importAssetsDir: path.join(__dirname, './import/assets'),
     },
 };

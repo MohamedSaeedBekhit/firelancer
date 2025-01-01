@@ -76,6 +76,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
         } = this.configService.authOptions;
         const { errorHandlers } = this.configService.systemOptions;
         const { entityIdStrategy } = this.configService.entityOptions;
+        const { assetImportStrategy } = this.configService.importExportOptions;
 
         return [
             assetNamingStrategy,
@@ -90,6 +91,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
             jobBufferStorageStrategy,
             ...errorHandlers,
             entityIdStrategy,
+            assetImportStrategy,
         ];
     }
 
