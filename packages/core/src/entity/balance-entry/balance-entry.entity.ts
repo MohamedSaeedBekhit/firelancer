@@ -11,6 +11,7 @@ import { Money } from '../money.decorator';
  * @description
  * Balance Entry
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 @Entity()
 @Check('"balance" = COALESCE("prevBalance", 0) + "credit" - "debit"')
 @Check('"prevSettledAt" < "settledAt"')
@@ -70,7 +71,6 @@ export class BalanceEntry extends FirelancerEntity {
     children: BalanceEntry[];
 
     @Column('simple-json', { nullable: true })
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     metadata: any;
 
     @Calculated()

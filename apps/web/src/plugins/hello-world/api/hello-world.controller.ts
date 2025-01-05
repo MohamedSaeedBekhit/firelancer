@@ -9,7 +9,6 @@ import {
     CustomerService,
     EntityNotFoundError,
     JobPost,
-    LogicalOperator,
     Permission,
     RequestContext,
     Transaction,
@@ -80,15 +79,20 @@ export class HelloWorldController {
     @Post('/balance')
     @Allow(Permission.Public)
     async balance(@Ctx() ctx: RequestContext) {
-        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-        return this.balanceService.create(ctx, {
-            type: BalanceEntryType.PAYMENT,
-            currencyCode: CurrencyCode.USD,
-            credit: 0,
-            debit: 40_00,
-            customer,
-            description: 'test payment 2',
-            reviewDays: 0,
-        });
+        try {
+            const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+            return await this.balanceService.create(ctx, {
+                type: BalanceEntryType.PAYMENT,
+                currencyCode: CurrencyCode.USD,
+                credit: 100_00,
+                debit: 0,
+                customer,
+                description: 'test payment 2',
+                reviewDays: 0,
+            });
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
     }
 }

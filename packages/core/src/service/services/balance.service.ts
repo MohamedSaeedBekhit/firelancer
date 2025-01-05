@@ -57,7 +57,7 @@ export class BalanceService {
                 entry.prevBalance = latestSettledEntry?.balance ?? null;
                 entry.balance = (entry.prevBalance ?? 0) + entry.credit - entry.debit;
                 entry.settledAt = new Date();
-                await this.connection.getRepository(ctx, BalanceEntry).update({ id: entry.id }, entry);
+                await this.connection.getRepository(ctx, BalanceEntry).save(entry);
             }
             return entry;
         });

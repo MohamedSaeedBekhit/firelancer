@@ -9,7 +9,8 @@
         "build": "tsc",
         "start:server": "node ./dist/index.js",
         "start:worker": "node ./dist/index-worker.js",
-        "start": "concurrently npm:start:*"
+        "start": "concurrently npm:start:*",
+        "populate": "node ./dist/populate.js"
     },
     "dependencies": {
         "@firelancer/asset-server-plugin": "^1.0.0",
