@@ -1,6 +1,6 @@
 import { Module, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { ConfigurableOperationDef } from '../common';
+import { ConfigArgs, ConfigurableOperationDef } from '../common';
 import { InjectableStrategy } from '../common/injectable-strategy';
 import { Injector } from '../common/injector';
 import { resetConfig } from './config-helpers';
@@ -95,7 +95,7 @@ export class ConfigModule implements OnApplicationBootstrap, OnApplicationShutdo
         ];
     }
 
-    private getConfigurableOperations(): Array<ConfigurableOperationDef<any>> {
+    private getConfigurableOperations(): Array<ConfigurableOperationDef<ConfigArgs>> {
         const { collectionFilters } = this.configService.catalogOptions;
         return [...collectionFilters];
     }

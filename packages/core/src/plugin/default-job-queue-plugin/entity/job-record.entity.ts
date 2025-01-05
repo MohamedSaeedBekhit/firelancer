@@ -12,6 +12,7 @@ export class JobRecord extends FirelancerEntity {
     queueName: string;
 
     @Column('simple-json', { nullable: true })
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     data: any;
 
     @Column('varchar')
@@ -21,6 +22,7 @@ export class JobRecord extends FirelancerEntity {
     progress: number;
 
     @Column('simple-json', { nullable: true })
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     result: any;
 
     @Column({ nullable: true })

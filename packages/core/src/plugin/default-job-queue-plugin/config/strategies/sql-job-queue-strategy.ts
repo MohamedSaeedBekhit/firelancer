@@ -77,28 +77,20 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         const connectionType = this.rawConnection.options.type;
         const isSQLite = connectionType === 'sqlite' || connectionType === 'sqljs' || connectionType === 'better-sqlite3';
 
-        return new Promise(async (resolve, reject) => {
-            if (isSQLite) {
-                try {
-                    // SQLite driver does not support concurrent transactions. See https://github.com/typeorm/typeorm/issues/1884
-                    const result = await this.getNextAndSetAsRunning(connection.manager, queueName, false);
-                    resolve(result);
-                } catch (e: any) {
-                    reject(e);
-                }
-            } else {
-                // Selecting the next job is wrapped in a transaction so that we can
-                // set a lock on that row and immediately update the status to "RUNNING".
-                // This prevents multiple worker processes from taking the same job when
-                // running concurrent workers.
-                connection
-                    .transaction(async (transactionManager) => {
-                        const result = await this.getNextAndSetAsRunning(transactionManager, queueName, true);
-                        resolve(result);
-                    })
-                    .catch((err) => reject(err));
-            }
-        });
+        if (isSQLite) {
+            // SQLite driver does not support concurrent transactions. See https://github.com/typeorm/typeorm/issues/1884
+            /* eslint-disable @typescript-eslint/no-unused-vars */
+            const result = await this.getNextAndSetAsRunning(connection.manager, queueName, false);
+            return;
+        } else {
+            // Selecting the next job is wrapped in a transaction so that we can
+            // set a lock on that row and immediately update the status to "RUNNING".
+            // This prevents multiple worker processes from taking the same job when
+            // running concurrent workers.
+            return connection.transaction(async (transactionManager) => {
+                return await this.getNextAndSetAsRunning(transactionManager, queueName, true);
+            });
+        }
     }
 
     private async getNextAndSetAsRunning(
@@ -146,7 +138,7 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         }
     }
 
-    async update(job: Job<any>): Promise<void> {
+    async update<Data extends JobData<Data>>(job: Job<Data>): Promise<void> {
         if (!this.connectionAvailable(this.rawConnection)) {
             throw new Error('Connection not available');
         }
@@ -199,6 +191,7 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
             isSettled: true,
             settledAt: LessThan(olderThan || new Date()),
         };
+
         const toDelete = await this.rawConnection.getRepository(JobRecord).find({ where: findOptions });
         const deleteCount = await this.rawConnection.getRepository(JobRecord).count({ where: findOptions });
         await this.rawConnection.getRepository(JobRecord).delete(findOptions);
@@ -209,7 +202,7 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         return !!this.rawConnection && this.rawConnection.isInitialized;
     }
 
-    private toRecord(job: Job<any>, data?: any, retries?: number): JobRecord {
+    private toRecord<Data extends JobData<Data>>(job: Job<Data>, data?: Data, retries?: number): JobRecord {
         return new JobRecord({
             id: job.id || undefined,
             queueName: job.queueName,
@@ -226,7 +219,7 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         });
     }
 
-    private fromRecord(this: void, jobRecord: JobRecord): Job<any> {
-        return new Job<any>(jobRecord);
+    private fromRecord<Data extends JobData<Data>>(this: void, jobRecord: JobRecord): Job<Data> {
+        return new Job<Data>(jobRecord);
     }
 }

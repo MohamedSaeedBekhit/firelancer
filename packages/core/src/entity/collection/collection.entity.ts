@@ -60,6 +60,6 @@ export class Collection extends FirelancerEntity implements Orderable {
     @ManyToOne(() => Asset, (asset) => asset.featuredInCollections, { onDelete: 'SET NULL' })
     featuredAsset: Asset;
 
-    @OneToMany((type) => CollectionAsset, (collectionAsset) => collectionAsset.collection)
+    @OneToMany(() => CollectionAsset, (collectionAsset) => collectionAsset.collection)
     assets: CollectionAsset[];
 }

@@ -1,6 +1,6 @@
-import { ID, LogicalOperator, Type, unique } from '@firelancer/common';
+import { LogicalOperator, Type, unique } from '@firelancer/common';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { Brackets, FindOneOptions, FindOptionsWhere, Repository, SelectQueryBuilder, WhereExpressionBuilder } from 'typeorm';
+import { Brackets, FindOneOptions, FindOptionsWhere, Repository, SelectQueryBuilder, WhereExpressionBuilder, ObjectLiteral } from 'typeorm';
 import { BetterSqlite3Driver } from 'typeorm/driver/better-sqlite3/BetterSqlite3Driver';
 import { SqljsDriver } from 'typeorm/driver/sqljs/SqljsDriver';
 import { ApiType, FilterParameter, ListQueryOptions, NullOptionals, RequestContext, UserInputError } from '../../../common';
@@ -125,7 +125,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
     ) {}
 
     /** @internal */
-    onApplicationBootstrap(): any {
+    onApplicationBootstrap() {
         this.registerSQLiteRegexpFunction();
     }
 
@@ -263,6 +263,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
         }
     }
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     private parseTakeSkipParams(
         apiType: ApiType,
         options: ListQueryOptions<any>,
@@ -339,6 +340,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
      *
      * This method mutates the customPropertyMap object.
      */
+
     private normalizeCustomPropertyMap(
         customPropertyMap: { [name: string]: string },
         options: ListQueryOptions<any>,
@@ -412,7 +414,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
                     }
                 }
                 if (typeof instruction.query === 'function') {
-                    instruction.query(qb);
+                    instruction.query(qb as SelectQueryBuilder<ObjectLiteral>);
                 }
             }
         }

@@ -31,7 +31,7 @@ export class PackageJson {
 
     async installPackages(requiredPackages: PackageToInstall[]) {
         const packageJson = this.getPackageJsonContent();
-        const packagesToInstall = requiredPackages.filter(({ pkg, version, isDevDependency }) => {
+        const packagesToInstall = requiredPackages.filter(({ pkg, isDevDependency }) => {
             const hasDependency = isDevDependency ? packageJson.devDependencies[pkg] : packageJson.dependencies[pkg];
             return !hasDependency;
         });
@@ -167,7 +167,7 @@ export class PackageJson {
                 }
             }
             const child = spawn(command, args, { stdio: 'ignore' });
-            child.on('close', (code: any) => {
+            child.on('close', (code) => {
                 if (code !== 0) {
                     const message = 'An error occurred when installing dependencies.';
                     reject({

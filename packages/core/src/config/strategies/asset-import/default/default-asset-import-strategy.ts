@@ -79,12 +79,7 @@ export class DefaultAssetImportStrategy implements AssetImportStrategy {
         if (fs.existsSync(filename)) {
             const fileStat = fs.statSync(filename);
             if (fileStat.isFile()) {
-                try {
-                    const stream = fs.createReadStream(filename);
-                    return stream;
-                } catch (err) {
-                    throw err;
-                }
+                return fs.createReadStream(filename);
             } else {
                 throw new Error(`Could not find file "${filename}"`);
             }

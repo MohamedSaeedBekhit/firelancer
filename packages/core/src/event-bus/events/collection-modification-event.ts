@@ -16,7 +16,7 @@ export class CollectionModificationEvent extends FirelancerEvent {
     constructor(
         public ctx: RequestContext,
         public collection: Collection,
-        public entityType: Type<any>,
+        public entityType: Type<unknown>,
         public entityIds: ID[],
     ) {
         super();

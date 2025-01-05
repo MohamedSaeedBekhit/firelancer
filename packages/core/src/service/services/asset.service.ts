@@ -73,9 +73,7 @@ export class AssetService {
 
     async getFeaturedAsset<T extends Omit<EntityWithAssets, 'assets'>>(ctx: RequestContext, entity: T): Promise<Asset | undefined> {
         const entityType: Type<T> = Object.getPrototypeOf(entity).constructor;
-        let entityWithFeaturedAsset: T | undefined;
-
-        entityWithFeaturedAsset = await this.connection
+        const entityWithFeaturedAsset = await this.connection
             .getRepository(ctx, entityType)
             .findOne({
                 where: { id: entity.id },

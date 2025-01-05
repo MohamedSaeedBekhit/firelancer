@@ -144,23 +144,23 @@ export class Logger implements LoggerService {
         Logger._logger = logger;
     }
 
-    error(message: any, trace?: string, context?: string): any {
+    error(message: string, trace?: string, context?: string) {
         this.instance.error(message, context, trace);
     }
 
-    warn(message: any, context?: string): any {
+    warn(message: string, context?: string) {
         this.instance.warn(message, context);
     }
 
-    log(message: any, context?: string): any {
+    log(message: string, context?: string) {
         this.instance.info(message, context);
     }
 
-    verbose(message: any, context?: string): any {
+    verbose(message: string, context?: string) {
         this.instance.verbose(message, context);
     }
 
-    debug(message: any, context?: string): any {
+    debug(message: string, context?: string) {
         this.instance.debug(message, context);
     }
 

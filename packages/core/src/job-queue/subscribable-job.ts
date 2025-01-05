@@ -74,7 +74,6 @@ export class SubscribableJob<T extends JobData<T> = any> extends Job<T> {
                 `The configured JobQueueStrategy (${strategy.constructor.name}) is not inspectable, so Job updates cannot be subscribed to`,
             );
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return interval(pollInterval).pipe(
                 tap((i) => {
                     if (timeoutMs < i * pollInterval) {

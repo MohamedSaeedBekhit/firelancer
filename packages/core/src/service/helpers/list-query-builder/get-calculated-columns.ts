@@ -5,10 +5,10 @@ import { CalculatedColumnDefinition, CALCULATED_PROPERTIES } from '../../../comm
  * @description
  * Returns calculated columns definitions for the given entity type.
  */
-export function getCalculatedColumns(entity: Type<any>) {
+export function getCalculatedColumns<T>(entity: Type<T>) {
     const calculatedColumns: CalculatedColumnDefinition[] = [];
     const prototype = entity.prototype;
-    if (prototype.hasOwnProperty(CALCULATED_PROPERTIES)) {
+    if (Object.prototype.hasOwnProperty.call(prototype, CALCULATED_PROPERTIES)) {
         for (const property of prototype[CALCULATED_PROPERTIES]) {
             calculatedColumns.push(property);
         }

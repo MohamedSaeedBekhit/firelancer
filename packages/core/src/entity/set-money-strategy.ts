@@ -3,7 +3,7 @@ import { Column } from 'typeorm';
 import { MoneyStrategy } from '../config';
 import { getMoneyColumnsFor } from './money.decorator';
 
-export function setMoneyStrategy(moneyStrategy: MoneyStrategy, entities: Array<Type<any>>) {
+export function setMoneyStrategy(moneyStrategy: MoneyStrategy, entities: Array<Type<unknown>>) {
     for (const EntityCtor of entities) {
         const columnConfig = getMoneyColumnsFor(EntityCtor);
         for (const { name, options, entity } of columnConfig) {
@@ -11,7 +11,7 @@ export function setMoneyStrategy(moneyStrategy: MoneyStrategy, entities: Array<T
                 ...moneyStrategy.moneyColumnOptions,
                 nullable: options?.nullable ?? false,
                 default: options?.default,
-            })(entity, name);
+            })(entity as object, name);
         }
     }
 }

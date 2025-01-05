@@ -124,7 +124,7 @@ export class DefaultLogger implements FirelancerLogger {
         }
     }
 
-    private ensureString(message: string | object | any[]): string {
+    private ensureString(message: string | object | unknown[]): string {
         return typeof message === 'string' ? message : JSON.stringify(message, null, 2);
     }
 }

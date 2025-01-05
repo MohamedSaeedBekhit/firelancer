@@ -7,6 +7,6 @@ export async function pauseForPromptDisplay() {
 }
 
 export function isRunningInTsNode(): boolean {
-    // @ts-ignore
+    // @ts-expect-error: ts-node specific property
     return process[Symbol.for('ts-node.register.instance')] != null;
 }

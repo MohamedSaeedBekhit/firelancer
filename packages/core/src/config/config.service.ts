@@ -38,7 +38,7 @@ export class ConfigService implements FirelancerConfig {
         return this.activeConfig.dbConnectionOptions;
     }
 
-    get plugins(): Array<DynamicModule | Type<any>> {
+    get plugins(): Array<DynamicModule | Type<unknown>> {
         return this.activeConfig.plugins;
     }
 

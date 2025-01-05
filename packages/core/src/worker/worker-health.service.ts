@@ -58,7 +58,7 @@ export class WorkerHealthService implements OnModuleDestroy {
         });
     }
 
-    onModuleDestroy(): any {
+    onModuleDestroy() {
         return new Promise<void>((resolve) => {
             if (this.server) {
                 this.server.close(() => resolve());

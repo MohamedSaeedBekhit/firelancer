@@ -101,7 +101,6 @@ class ActiveQueue<Data extends JobData<Data> = object> {
                         nextJob.on('progress', onProgress);
                         const cancellationSub = interval(this.pollInterval * 5)
                             .pipe(
-                                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                                 switchMap(() => this.jobQueueStrategy.findOne(nextJob.id!)),
                                 filter((job) => job?.state === JobState.CANCELLED),
                                 take(1),

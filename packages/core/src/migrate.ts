@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import fs from 'fs-extra';
 import path from 'path';
 import pc from 'picocolors';
@@ -43,9 +42,9 @@ export async function runMigrations(userConfig: Partial<FirelancerConfig>): Prom
             log(pc.green(`Successfully ran migration: ${migration.name}`));
             migrationsRan.push(migration.name);
         }
-    } catch (e: any) {
+    } catch (e: unknown) {
         log(pc.red('An error occurred when running migrations:'));
-        log(e.message);
+        log(e instanceof Error ? e.message : 'Unknown error');
         if (isRunningFromFirelancerCli()) {
             throw e;
         } else {
@@ -84,9 +83,9 @@ export async function revertLastMigration(userConfig: Partial<FirelancerConfig>)
     await connection.initialize();
     try {
         await disableForeignKeysForSqLite(connection, () => connection.undoLastMigration({ transaction: 'each' }));
-    } catch (e: any) {
+    } catch (e) {
         log(pc.red('An error occurred when reverting migration:'));
-        log(e.message);
+        log(e instanceof Error ? e.message : 'Unknown error');
         if (isRunningFromFirelancerCli()) {
             throw e;
         } else {
@@ -163,7 +162,7 @@ export async function generateMigration(userConfig: Partial<FirelancerConfig>, o
             const timestamp = new Date().getTime();
             const filename = timestamp.toString() + '-' + options.name + '.ts';
             const directory = options.outputDir;
-            const fileContent = getTemplate(options.name as any, timestamp, upSqls, downSqls.reverse());
+            const fileContent = getTemplate(options.name, timestamp, upSqls, downSqls.reverse());
             const outputPath = directory ? path.join(directory, filename) : path.join(process.cwd(), filename);
             await fs.ensureFile(outputPath);
             fs.writeFileSync(outputPath, fileContent);

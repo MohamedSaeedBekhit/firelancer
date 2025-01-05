@@ -121,7 +121,7 @@ export class ShopAuthController extends BaseAuthController {
             ctx,
             // We know that there is a user, since the Customer
             // was found with the .getCustomerByUserId() method.
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
             customer.user!,
             NATIVE_AUTH_STRATEGY_NAME,
         );

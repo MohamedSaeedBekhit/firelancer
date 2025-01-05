@@ -3,12 +3,12 @@ import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityIdStrategy } from '../config';
 import { getIdColumnsFor, getPrimaryGeneratedIdColumn } from './entity-id.decorator';
 
-export function setEntityIdStrategy(entityIdStrategy: EntityIdStrategy<any>, entities: Array<Type<any>>) {
+export function setEntityIdStrategy(entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>, entities: Array<Type<unknown>>) {
     setBaseEntityIdType(entityIdStrategy);
     setEntityIdColumnTypes(entityIdStrategy, entities);
 }
 
-function setEntityIdColumnTypes(entityIdStrategy: EntityIdStrategy<any>, entities: Array<Type<any>>) {
+function setEntityIdColumnTypes(entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>, entities: Array<Type<unknown>>) {
     const columnDataType = entityIdStrategy.primaryKeyType === 'increment' ? 'int' : 'varchar';
     for (const EntityCtor of entities) {
         const columnConfig = getIdColumnsFor(EntityCtor);
@@ -17,12 +17,13 @@ function setEntityIdColumnTypes(entityIdStrategy: EntityIdStrategy<any>, entitie
                 type: columnDataType,
                 nullable: (options && options.nullable) || false,
                 primary: (options && options.primary) || false,
-            })(entity, name);
+            })(entity as object, name);
         }
     }
 }
 
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function setBaseEntityIdType(entityIdStrategy: EntityIdStrategy<any>) {
     const { entity, name } = getPrimaryGeneratedIdColumn();
-    PrimaryGeneratedColumn(entityIdStrategy.primaryKeyType)(entity, name);
+    PrimaryGeneratedColumn(entityIdStrategy.primaryKeyType)(entity as object, name);
 }

@@ -70,6 +70,7 @@ export class BalanceEntry extends FirelancerEntity {
     children: BalanceEntry[];
 
     @Column('simple-json', { nullable: true })
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     metadata: any;
 
     @Calculated()

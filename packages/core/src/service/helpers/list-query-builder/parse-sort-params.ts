@@ -1,7 +1,6 @@
-import { Type, unique } from '@firelancer/common';
+import { Type } from '@firelancer/common';
 import { OrderByCondition } from 'typeorm';
 import { DataSource } from 'typeorm/data-source/DataSource';
-import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { NullOptionals, SortParameter } from '../../../common';
 import { UserInputError } from '../../../common/error/errors';
 import { FirelancerEntity } from '../../../entity';
@@ -36,14 +35,14 @@ export function parseSortParams<T extends FirelancerEntity>(
         const calculatedColumnDef = calculatedColumns.find((c) => c.name === key);
         const matchingColumn = columns.find((c) => c.propertyName === key);
         if (matchingColumn) {
-            output[`${alias}.${matchingColumn.propertyPath}`] = order as any;
+            output[`${alias}.${matchingColumn.propertyPath}`] = order as 'ASC' | 'DESC';
         } else if (calculatedColumnDef) {
             const instruction = calculatedColumnDef.listQuery;
             if (instruction && instruction.expression) {
-                output[escapeCalculatedColumnExpression(connection, instruction.expression)] = order as any;
+                output[escapeCalculatedColumnExpression(connection, instruction.expression)] = order as 'ASC' | 'DESC';
             }
         } else if (customPropertyMap?.[key]) {
-            output[customPropertyMap[key]] = order as any;
+            output[customPropertyMap[key]] = order as 'ASC' | 'DESC';
         } else {
             throw new UserInputError('error.invalid-sort-field');
         }

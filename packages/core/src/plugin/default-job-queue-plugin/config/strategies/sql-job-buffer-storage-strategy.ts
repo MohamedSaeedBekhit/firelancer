@@ -1,3 +1,4 @@
+import { JsonCompatible } from '@firelancer/common';
 import { Injector } from '../../../../common/injector';
 import { TransactionalConnection } from '../../../../connection/transactional-connection';
 import { Job } from '../../../../job-queue/job';
@@ -68,7 +69,7 @@ export class SqlJobBufferStorageStrategy implements JobBufferStorageStrategy {
         return result;
     }
 
-    private toJobConfig(job: Job<any>): JobConfig<any> {
+    private toJobConfig<T extends JsonCompatible<T>>(job: Job<T>): JobConfig<T> {
         return {
             ...job,
             data: job.data,

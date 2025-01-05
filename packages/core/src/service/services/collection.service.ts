@@ -1,7 +1,7 @@
 import { assertFound, ID, idsAreEqual, JobState, PaginatedList, pick, Type } from '@firelancer/common';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
-import { In } from 'typeorm';
+import { In, SelectQueryBuilder, ObjectLiteral, ObjectType } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
 import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, RelationPaths, UpdateCollectionInput } from '../../api';
 import {
@@ -15,7 +15,7 @@ import {
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { collectableEntities, Collection, FirelancerEntity } from '../../entity';
-import { CollectionEvent, CollectionModificationEvent, EventBus } from '../../event-bus';
+import { CollectionEvent, CollectionModificationEvent, EventBus, FirelancerEntityEvent } from '../../event-bus';
 import { JobQueue, JobQueueService } from '../../job-queue';
 import { ListQueryBuilder } from '../../service';
 import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
@@ -57,12 +57,12 @@ export class CollectionService implements OnModuleInit {
                     const collections = await this.connection.rawConnection.getRepository(Collection).find({ select: { id: true } });
                     await this.applyFiltersQueue.add(
                         {
-                            ctx: event.ctx.serialize(),
+                            ctx: (event as FirelancerEntityEvent<unknown, unknown>).ctx.serialize(),
                             collectionIds: collections.map((c) => c.id),
                             applyToChangedEntitiesOnly: true,
                             entityName: EntityType.name,
                         },
-                        { ctx: event.ctx },
+                        { ctx: (event as FirelancerEntityEvent<unknown, unknown>).ctx },
                     );
                 });
         }
@@ -83,7 +83,7 @@ export class CollectionService implements OnModuleInit {
                             retries: 5,
                             retryDelay: 50,
                         });
-                    } catch (err) {
+                    } catch {
                         Logger.warn(`Could not find Collection with id ${collectionId}, skipping`);
                     }
                     completed++;
@@ -408,7 +408,7 @@ export class CollectionService implements OnModuleInit {
 
     private async applyCollectionFiltersInternal(
         collection: Collection,
-        entityType: Type<any>,
+        entityType: Type<unknown>,
         applyToChangedEntitiesOnly = true,
     ): Promise<ID[]> {
         const masterConnection = this.connection.rawConnection.createQueryRunner('master').connection;
@@ -434,7 +434,7 @@ export class CollectionService implements OnModuleInit {
                 const filtersOfType = filters.filter((f) => f.code === filterType.code);
                 if (filtersOfType.length) {
                     for (const filter of filtersOfType) {
-                        filteredQb = filterType.apply(filteredQb, filter.args);
+                        filteredQb = filterType.apply(filteredQb as SelectQueryBuilder<ObjectType<ObjectLiteral>>, filter.args);
                     }
                 }
             }
@@ -519,7 +519,7 @@ export class CollectionService implements OnModuleInit {
         ctx?: RequestContext,
     ): Promise<ID[]> {
         const relationName = this.getRelationName(entityType);
-        if (collection.hasOwnProperty(relationName)) {
+        if (Object.prototype.hasOwnProperty.call(collection, relationName)) {
             return (collection[relationName] as unknown as Array<Entity>).map((entity) => entity.id);
         } else {
             const entities = await this.connection
@@ -613,7 +613,7 @@ export class CollectionService implements OnModuleInit {
         return this.rootCollection;
     }
 
-    public getRelationName(entityType: Type<any>): keyof Collection {
+    public getRelationName(entityType: Type<unknown>): keyof Collection {
         const relationName = `${camelCase(entityType.name)}s` as keyof Collection;
         const relation = this.connection.rawConnection
             .getRepository(Collection)

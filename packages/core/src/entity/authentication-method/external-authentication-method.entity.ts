@@ -6,6 +6,7 @@ import { AuthenticationMethod } from './authentication-method.entity';
  * This method is used when an external authentication service is used to authenticate Firelancer Users.
  * Examples of external auth include social logins or corporate identity servers.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 @ChildEntity()
 export class ExternalAuthenticationMethod extends AuthenticationMethod {
     constructor(input: DeepPartial<ExternalAuthenticationMethod>) {
@@ -19,6 +20,5 @@ export class ExternalAuthenticationMethod extends AuthenticationMethod {
     externalIdentifier: string;
 
     @Column('simple-json')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata: any;
 }

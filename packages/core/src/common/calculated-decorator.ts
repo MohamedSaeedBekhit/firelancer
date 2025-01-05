@@ -1,4 +1,4 @@
-import { OrderByCondition, SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder, ObjectLiteral } from 'typeorm';
 
 /**
  * The property name we use to store the CalculatedColumnDefinitions to the
@@ -19,7 +19,7 @@ export interface CalculatedColumnQueryInstruction {
      * up the quantities of each `OrderLine`), then those relations should be defined here.
      */
     relations?: string[];
-    query?: (qb: SelectQueryBuilder<any>) => void;
+    query?: (qb: SelectQueryBuilder<ObjectLiteral>) => void;
     expression?: string;
 }
 
@@ -35,7 +35,7 @@ export interface CalculatedColumnDefinition {
  * to transfer the getter function from the prototype to the entity instance.
  */
 export function Calculated(queryInstruction?: CalculatedColumnQueryInstruction): MethodDecorator {
-    return (target: object & { [key: string]: any }, propertyKey: string | symbol) => {
+    return (target: ObjectLiteral, propertyKey: string | symbol) => {
         const definition: CalculatedColumnDefinition = {
             name: propertyKey,
             listQuery: queryInstruction,

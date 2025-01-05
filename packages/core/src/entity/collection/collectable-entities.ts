@@ -8,7 +8,7 @@ export type CollectableEntity<Entity extends FirelancerEntity, Event extends Fir
     EntityEvent: Type<Event>;
 };
 
-export const collectableEntities: CollectableEntity<any, any>[] = [
+export const collectableEntities: CollectableEntity<FirelancerEntity, FirelancerEvent>[] = [
     {
         EntityType: JobPost,
         EntityEvent: JobPostEvent,

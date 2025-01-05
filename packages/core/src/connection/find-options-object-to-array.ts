@@ -5,16 +5,14 @@ import { FindOptionsRelationByString } from 'typeorm/find-options/FindOptionsRel
  * Some internal APIs depend on the TypeORM FindOptions `relations` property being a string array.
  * This function converts the new-style FindOptionsRelations object to a string array.
  */
-export function findOptionsObjectToArray<T>(
-    input: NonNullable<FindOneOptions['relations']>,
-    parentKey?: string,
-): FindOptionsRelationByString {
+export function findOptionsObjectToArray(input: NonNullable<FindOneOptions['relations']>, parentKey?: string): FindOptionsRelationByString {
     if (Array.isArray(input)) {
         return input;
     }
     const keys = Object.keys(input);
 
     return keys.reduce((acc: string[], key: string) => {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const value = input[key as any];
         const path = parentKey ? `${parentKey}.${key}` : key;
 

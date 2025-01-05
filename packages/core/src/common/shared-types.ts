@@ -1,16 +1,8 @@
-import {
-    BooleanOperators,
-    DateOperators,
-    ID,
-    IdOperators,
-    LogicalOperator,
-    NumberOperators,
-    StringOperators,
-    Type,
-} from '@firelancer/common';
+import { BooleanOperators, DateOperators, LogicalOperator, NumberOperators, StringOperators, Type } from '@firelancer/common';
 import { FirelancerEntity } from '../entity';
+import { Request, Response } from 'express';
 
-export type MiddlewareHandler = Type<any> | Function;
+export type MiddlewareHandler = Type<unknown> | ((req: Request, res: Response, next: () => void) => void);
 
 export interface Middleware {
     /**
@@ -142,12 +134,11 @@ export type PathsToStringProps2<T extends FirelancerEntity> = T extends string
 export type TripleDotPath = `${string}.${string}.${string}`;
 
 // Based on https://stackoverflow.com/a/47058976/772859
-export type Join<T extends Array<string | any>, D extends string> = T extends []
+export type Join<T extends Array<string | unknown>, D extends string> = T extends []
     ? never
     : T extends [infer F]
       ? F
-      : // eslint-disable-next-line no-shadow,@typescript-eslint/no-shadow
-        T extends [infer F, ...infer R]
+      : T extends [infer F, ...infer R]
         ? F extends string
             ? `${F}${D}${Join<Extract<R, string[]>, D>}`
             : never

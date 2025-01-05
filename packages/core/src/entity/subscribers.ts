@@ -10,11 +10,11 @@ interface EntityPrototype {
  */
 @EventSubscriber()
 export class CalculatedPropertySubscriber implements EntitySubscriberInterface {
-    afterLoad(event: any) {
+    afterLoad(event: unknown) {
         this.moveCalculatedGettersToInstance(event);
     }
 
-    afterInsert(event: InsertEvent<any>): Promise<any> | void {
+    afterInsert(event: InsertEvent<unknown>): Promise<unknown> | void {
         this.moveCalculatedGettersToInstance(event.entity);
     }
 
@@ -23,15 +23,14 @@ export class CalculatedPropertySubscriber implements EntitySubscriberInterface {
      * the getter from the entity prototype to the entity instance, so that it can be
      * correctly enumerated and serialized in the API response.
      */
-    private moveCalculatedGettersToInstance(entity: any) {
+    private moveCalculatedGettersToInstance(entity: unknown) {
         if (entity) {
             const prototype: EntityPrototype = Object.getPrototypeOf(entity);
-            if (prototype.hasOwnProperty(CALCULATED_PROPERTIES)) {
+            if (Object.prototype.hasOwnProperty.call(prototype, CALCULATED_PROPERTIES)) {
                 for (const calculatedPropertyDef of prototype[CALCULATED_PROPERTIES]) {
                     const getterDescriptor = Object.getOwnPropertyDescriptor(prototype, calculatedPropertyDef.name);
-                    // eslint-disable-next-line @typescript-eslint/unbound-method
                     const getFn = getterDescriptor && getterDescriptor.get;
-                    if (getFn && !entity.hasOwnProperty(calculatedPropertyDef.name)) {
+                    if (getFn && !Object.prototype.hasOwnProperty.call(entity, calculatedPropertyDef.name)) {
                         const boundGetFn = getFn.bind(entity);
                         Object.defineProperties(entity, {
                             [calculatedPropertyDef.name]: {

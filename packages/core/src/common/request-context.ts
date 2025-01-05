@@ -237,18 +237,17 @@ export class RequestContext {
      * @private
      */
     private shallowCloneRequestObject(req: Request) {
-        function copySimpleFieldsToDepth(target: any, maxDepth: number, depth: number = 0) {
-            const result: any = {};
-            // eslint-disable-next-line guard-for-in
+        function copySimpleFieldsToDepth(target: Record<string, unknown>, maxDepth: number, depth: number = 0) {
+            const result: Record<string, unknown> = {};
             for (const key in target) {
                 if (key === 'host' && depth === 0) {
                     // avoid Express "deprecated: req.host" warning
                     continue;
                 }
-                let val: any;
+                let val: unknown;
                 try {
                     val = target[key];
-                } catch (e: any) {
+                } catch (e: unknown) {
                     val = String(e);
                 }
 
@@ -266,13 +265,13 @@ export class RequestContext {
                     result[key] = val;
                 } else if (depth < maxDepth) {
                     depth++;
-                    result[key] = copySimpleFieldsToDepth(val, maxDepth, depth);
+                    result[key] = copySimpleFieldsToDepth(val as Record<string, unknown>, maxDepth, depth);
                     depth--;
                 }
             }
             return result;
         }
-        return copySimpleFieldsToDepth(req, 1);
+        return copySimpleFieldsToDepth(req as unknown as Record<string, unknown>, 1);
     }
 
     /**

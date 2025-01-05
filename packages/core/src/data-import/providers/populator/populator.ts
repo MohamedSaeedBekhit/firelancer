@@ -40,23 +40,29 @@ export class Populator {
         const ctx = await this.createRequestContext();
         try {
             await this.populateRoles(ctx, data.roles);
-        } catch (e: any) {
-            Logger.error('Could not populate roles');
-            Logger.error(e, 'populator', e.stack);
+        } catch (e) {
+            if (e && e instanceof Error) {
+                Logger.error('Could not populate roles');
+                Logger.error(e.message, 'populator', e.stack);
+            }
         }
 
         try {
             await this.populateFactes(ctx, data.facets);
-        } catch (e: any) {
-            Logger.error('Could not populate facets');
-            Logger.error(e, 'populator', e.stack);
+        } catch (e) {
+            if (e && e instanceof Error) {
+                Logger.error('Could not populate facets');
+                Logger.error(e.message, 'populator', e.stack);
+            }
         }
 
         try {
             await this.populateCollections(ctx, data.collections);
-        } catch (e: any) {
-            Logger.error('Could not populate collections');
-            Logger.error(e, 'populator', e.stack);
+        } catch (e) {
+            if (e && e instanceof Error) {
+                Logger.error('Could not populate collections');
+                Logger.error(e.message, 'populator', e.stack);
+            }
         }
     }
 
@@ -120,8 +126,10 @@ export class Populator {
             let filters: ConfigurableOperation[] = [];
             try {
                 filters = (collectionDef.filters || []).map((filter) => this.processFilterDefinition(filter, allFacetValues));
-            } catch (e: any) {
-                Logger.error(e.message);
+            } catch (e) {
+                if (e && e instanceof Error) {
+                    Logger.error(e.message);
+                }
             }
 
             const collection = await this.collectionService.create(ctx, {
@@ -153,7 +161,7 @@ export class Populator {
 
     private processFilterDefinition(filter: CollectionFilterDefinition, allFacetValues: FacetValue[]): ConfigurableOperation {
         switch (filter.code) {
-            case 'job-post-facet-value-filter':
+            case 'job-post-facet-value-filter': {
                 const facetValueIds = filter.args.facetValueNames
                     .map((name) =>
                         allFacetValues.find((fv) => {
@@ -183,6 +191,7 @@ export class Populator {
                         },
                     ],
                 };
+            }
             default:
                 throw new Error(`Filter with code "${filter.code as string}" is not recognized.`);
         }

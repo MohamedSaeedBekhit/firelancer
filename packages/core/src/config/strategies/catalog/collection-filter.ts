@@ -7,12 +7,12 @@ import {
     ConfigurableOperationDefOptions,
 } from '../../../common/configurable-operation';
 
-export type ApplyCollectionFilterFn<T extends ConfigArgs, Entity extends ObjectLiteral = any> = (
+export type ApplyCollectionFilterFn<T extends ConfigArgs, Entity extends ObjectLiteral = ObjectLiteral> = (
     qb: SelectQueryBuilder<ObjectType<Entity>>,
     args: ConfigArgValues<T>,
 ) => SelectQueryBuilder<ObjectType<Entity>>;
 
-export interface CollectionFilterConfig<T extends ConfigArgs, Entity extends ObjectLiteral = any>
+export interface CollectionFilterConfig<T extends ConfigArgs, Entity extends ObjectLiteral = ObjectLiteral>
     extends ConfigurableOperationDefOptions<T> {
     apply: ApplyCollectionFilterFn<T, Entity>;
 }
@@ -22,7 +22,10 @@ export interface CollectionFilterConfig<T extends ConfigArgs, Entity extends Obj
  * The filtering is done by defining the `apply()` function, which receives a TypeORM
  * [`QueryBuilder`](https://typeorm.io/#/select-query-builder) object to which clauses may be added.
  */
-export class CollectionFilter<T extends ConfigArgs = ConfigArgs, Entity extends ObjectLiteral = any> extends ConfigurableOperationDef<T> {
+export class CollectionFilter<
+    T extends ConfigArgs = ConfigArgs,
+    Entity extends ObjectLiteral = ObjectLiteral,
+> extends ConfigurableOperationDef<T> {
     public readonly entityType: ObjectType<Entity>;
     private readonly applyFn: ApplyCollectionFilterFn<T, Entity>;
 

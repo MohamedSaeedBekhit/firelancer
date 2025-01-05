@@ -43,8 +43,12 @@ export class AssetImporter {
                         this.assetMap.set(assetPath, asset as Asset);
                         assets.push(asset as Asset);
                     }
-                } catch (e: any) {
-                    errors.push(e.message);
+                } catch (e: unknown) {
+                    if (e instanceof Error) {
+                        errors.push(e.message);
+                    } else {
+                        errors.push(String(e));
+                    }
                 }
             }
         }

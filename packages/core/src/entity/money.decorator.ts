@@ -1,4 +1,5 @@
 import { Type } from '@firelancer/common';
+import { FirelancerEntity } from './base/base.entity';
 
 interface MoneyColumnOptions {
     default?: number;
@@ -8,11 +9,11 @@ interface MoneyColumnOptions {
 
 interface MoneyColumnConfig {
     name: string;
-    entity: any;
+    entity: unknown;
     options?: MoneyColumnOptions;
 }
 
-const moneyColumnRegistry = new Map<any, MoneyColumnConfig[]>();
+const moneyColumnRegistry = new Map<unknown, MoneyColumnConfig[]>();
 
 /**
  * @description
@@ -20,7 +21,7 @@ const moneyColumnRegistry = new Map<any, MoneyColumnConfig[]>();
  * This allows the column type to be defined by the configured MoneyStrategy.
  */
 export function Money(options?: MoneyColumnOptions) {
-    return (entity: any, propertyName: string) => {
+    return (entity: unknown, propertyName: string) => {
         const idColumns = moneyColumnRegistry.get(entity);
         const entry = { name: propertyName, entity, options };
         if (idColumns) {
@@ -36,7 +37,9 @@ export function Money(options?: MoneyColumnOptions) {
  * Returns any columns on the entity which have been decorated with the EntityId
  * decorator.
  */
-export function getMoneyColumnsFor(entityType: Type<any>): MoneyColumnConfig[] {
-    const match = Array.from(moneyColumnRegistry.entries()).find(([entity, columns]) => entity.constructor === entityType);
+export function getMoneyColumnsFor(entityType: Type<unknown>): MoneyColumnConfig[] {
+    const match = Array.from(moneyColumnRegistry.entries()).find(
+        ([entity]) => entity instanceof FirelancerEntity && entity.constructor === entityType,
+    );
     return match ? match[1] : [];
 }

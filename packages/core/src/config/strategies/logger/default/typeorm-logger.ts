@@ -11,10 +11,12 @@ const defaultLoggerOptions: LoggerOptions = ['error', 'warn', 'schema', 'migrati
 /**
  * A custom logger for TypeORM which delegates to the Firelancer Logger service.
  */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export class TypeOrmLogger implements TypeOrmLoggerInterface {
     constructor(private options: LoggerOptions = defaultLoggerOptions) {}
 
-    log(level: 'log' | 'info' | 'warn', message: any, queryRunner?: QueryRunner): any {
+    log(level: 'log' | 'info' | 'warn', message: string, queryRunner?: QueryRunner) {
         switch (level) {
             case 'info':
                 if (this.shouldDisplay('info')) {
@@ -34,18 +36,18 @@ export class TypeOrmLogger implements TypeOrmLoggerInterface {
         }
     }
 
-    logMigration(message: string, queryRunner?: QueryRunner): any {
+    logMigration(message: string, queryRunner?: QueryRunner) {
         Logger.info(message, context);
     }
 
-    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQuery(query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
         if (this.shouldDisplay('query')) {
             const sql = this.formatQueryWithParams(query, parameters);
             Logger.debug(`Query: ${sql}`, context);
         }
     }
 
-    logQueryError(error: string, query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQueryError(error: string, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
         if (this.shouldDisplay('error')) {
             const sql = this.formatQueryWithParams(query, parameters);
             Logger.error(`Query error: ${sql}`, context);
@@ -53,13 +55,13 @@ export class TypeOrmLogger implements TypeOrmLoggerInterface {
         }
     }
 
-    logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner): any {
+    logQuerySlow(time: number, query: string, parameters?: unknown[], queryRunner?: QueryRunner) {
         const sql = this.formatQueryWithParams(query, parameters);
         Logger.warn('Query is slow: ' + sql);
         Logger.warn('Execution time: ' + time.toString());
     }
 
-    logSchemaBuild(message: string, queryRunner?: QueryRunner): any {
+    logSchemaBuild(message: string, queryRunner?: QueryRunner) {
         if (this.shouldDisplay('schema')) {
             Logger.info(message, context);
         }
@@ -69,7 +71,7 @@ export class TypeOrmLogger implements TypeOrmLoggerInterface {
         return this.options === 'all' || this.options === true || (Array.isArray(this.options) && this.options.includes(logType));
     }
 
-    private formatQueryWithParams(query: string, parameters?: any[]) {
+    private formatQueryWithParams(query: string, parameters?: unknown[]) {
         return query + (parameters?.length ? ' -- PARAMETERS: ' + this.stringifyParams(parameters).toString() : '');
     }
 
@@ -77,7 +79,7 @@ export class TypeOrmLogger implements TypeOrmLoggerInterface {
      * Converts parameters to a string.
      * Sometimes parameters can have circular objects and therefor we are handle this case too.
      */
-    private stringifyParams(parameters: any[]) {
+    private stringifyParams(parameters: unknown[]) {
         try {
             return JSON.stringify(parameters);
         } catch (error) {

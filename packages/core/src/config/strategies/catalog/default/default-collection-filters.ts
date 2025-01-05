@@ -1,6 +1,8 @@
 import { ConfigArgDef } from '../../../../common/configurable-operation';
 import { JobPost } from '../../../../entity';
 import { CollectionFilter } from '../collection-filter';
+
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { customAlphabet } = require('nanoid');
 
 /**

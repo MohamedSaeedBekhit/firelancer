@@ -29,6 +29,7 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
     protected jobs = new Map<ID, Job>();
     protected unsettledJobs: { [queueName: string]: Array<{ job: Job; updatedAt: Date }> } = {};
     private processContext: ProcessContext;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     private timer: any;
     private evictJobsAfterMs = 1000 * 60 * 60 * 2; // 2 hours
     private processContextChecked = false;
@@ -53,7 +54,7 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (job as any).retries = this.setRetries(job.queueName, job);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
         this.jobs.set(job.id!, job);
         if (!this.unsettledJobs[job.queueName]) {
             this.unsettledJobs[job.queueName] = [];
@@ -100,7 +101,7 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
         if (job.state === JobState.RETRYING || job.state === JobState.PENDING) {
             this.unsettledJobs[job.queueName].unshift({ job, updatedAt: new Date() });
         }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
         this.jobs.set(job.id!, job);
     }
 
@@ -113,12 +114,10 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
             if (job.isSettled) {
                 if (olderThan) {
                     if (job.settledAt && job.settledAt < olderThan) {
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                         this.jobs.delete(job.id!);
                         removed++;
                     }
                 } else {
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                     this.jobs.delete(job.id!);
                     removed++;
                 }

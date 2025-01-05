@@ -7,11 +7,11 @@ import { EntityIdStrategy } from '../entity-id-strategy';
  */
 export class AutoIncrementIdStrategy implements EntityIdStrategy<'increment'> {
     readonly primaryKeyType = 'increment';
-    decodeId(id: string): number {
+    decodeId(id: string | number): number {
         const asNumber = +id;
         return Number.isNaN(asNumber) ? -1 : asNumber;
     }
-    encodeId(primaryKey: number): string {
+    encodeId(primaryKey: string | number): string {
         return primaryKey.toString();
     }
 }

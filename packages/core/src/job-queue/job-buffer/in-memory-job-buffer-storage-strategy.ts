@@ -1,5 +1,4 @@
 import { Job } from '../job';
-
 import { JobBufferStorageStrategy } from './job-buffer-storage-strategy';
 
 /**

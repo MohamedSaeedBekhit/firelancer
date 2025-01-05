@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 declare const File: any;
@@ -6,7 +8,7 @@ declare const File: any;
  * Type-safe omit function - returns a new object which omits the specified keys.
  */
 export function omit<T extends object, K extends keyof T>(obj: T, keysToOmit: K[]): Omit<T, K>;
-export function omit<T extends object | any[], K extends keyof T>(obj: T, keysToOmit: string[], recursive: boolean): T;
+export function omit<T extends object | any[]>(obj: T, keysToOmit: string[], recursive: boolean): T;
 export function omit<T, K extends keyof T>(obj: T, keysToOmit: string[], recursive: boolean = false): T {
     if ((recursive && !isObject(obj)) || isFileObject(obj)) {
         return obj;

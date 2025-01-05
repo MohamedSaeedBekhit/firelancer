@@ -17,7 +17,7 @@ export async function populate<T extends INestApplicationContext>(
     const { Logger } = await import('@firelancer/core');
 
     const initialData: import('@firelancer/core').InitialData =
-        typeof initialDataPathOrObject === 'string' ? require(initialDataPathOrObject) : initialDataPathOrObject;
+        typeof initialDataPathOrObject === 'string' ? await import(initialDataPathOrObject) : initialDataPathOrObject;
 
     await populateInitialData(app, initialData);
     Logger.info('Done!', loggerCtx);
@@ -30,7 +30,11 @@ export async function populateInitialData(app: INestApplicationContext, initialD
     try {
         await populator.populateInitialData(initialData);
         Logger.info('Populated initial data', loggerCtx);
-    } catch (err: any) {
-        Logger.error(err.message, loggerCtx);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            Logger.error(err.message, loggerCtx);
+        } else {
+            Logger.error(String(err), loggerCtx);
+        }
     }
 }

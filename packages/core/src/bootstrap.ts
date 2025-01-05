@@ -5,7 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { satisfies } from 'semver';
-import { Connection, DataSourceOptions, EntitySubscriberInterface } from 'typeorm';
+import { DataSourceOptions, EntitySubscriberInterface } from 'typeorm';
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
@@ -70,10 +70,10 @@ export async function bootstrap(userConfig?: Partial<FirelancerConfig>, options?
 
     // The AppModule *must* be loaded only after the entities have been set in the
     // config, so that they are available when the AppModule decorator is evaluated.
-    // eslint-disable-next-line
+
     const { AppModule } = await import('./app.module.js');
     setProcessContext('server');
-    const { hostname, port, cors, middlewares } = config.apiOptions;
+    const { hostname, port, cors } = config.apiOptions;
 
     DefaultLogger.hideNestBoostrapLogs();
     const app = await NestFactory.create(AppModule, {
@@ -203,37 +203,36 @@ function disableSynchronize(userConfig: Readonly<RuntimeFirelancerConfig>): Read
  * @param worker
  */
 async function validateDbTablesForWorker(worker: INestApplicationContext) {
-    const connection: Connection = worker.get(getConnectionToken());
-    await new Promise<void>(async (resolve, reject) => {
-        const checkForTables = async (): Promise<boolean> => {
-            try {
-                const adminCount = await connection.getRepository(Administrator).count();
-                return 0 < adminCount;
-            } catch (e: any) {
-                return false;
-            }
-        };
+    const connection = worker.get(getConnectionToken());
 
-        const pollIntervalMs = 5000;
-        let attempts = 0;
-        const maxAttempts = 10;
-        let validTableStructure = false;
-        Logger.verbose('Checking for expected DB table structure...');
-        while (!validTableStructure && attempts < maxAttempts) {
-            attempts++;
-            validTableStructure = await checkForTables();
-            if (validTableStructure) {
-                Logger.verbose('Table structure verified');
-                resolve();
-                return;
-            }
-            Logger.verbose(
-                `Table structure could not be verified, trying again after ${pollIntervalMs}ms (attempt ${attempts} of ${maxAttempts})`,
-            );
-            await new Promise((resolve1) => setTimeout(resolve1, pollIntervalMs));
+    const checkForTables = async (): Promise<boolean> => {
+        try {
+            const adminCount = await connection.getRepository(Administrator).count();
+            return 0 < adminCount;
+        } catch {
+            return false;
         }
-        reject('Could not validate DB table structure. Aborting bootstrap.');
-    });
+    };
+
+    const pollIntervalMs = 5000;
+    let attempts = 0;
+    const maxAttempts = 10;
+    let validTableStructure = false;
+    Logger.verbose('Checking for expected DB table structure...');
+    while (!validTableStructure && attempts < maxAttempts) {
+        attempts++;
+        validTableStructure = await checkForTables();
+        if (validTableStructure) {
+            Logger.verbose('Table structure verified');
+
+            return;
+        }
+        Logger.verbose(
+            `Table structure could not be verified, trying again after ${pollIntervalMs}ms (attempt ${attempts} of ${maxAttempts})`,
+        );
+        await new Promise((resolve1) => setTimeout(resolve1, pollIntervalMs));
+    }
+    throw new Error('Could not validate DB table structure. Aborting bootstrap.');
 }
 
 /**

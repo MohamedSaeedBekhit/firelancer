@@ -1,6 +1,7 @@
 import 'dotenv/config';
+
 import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
-import { AutoIncrementIdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger, UuidIdStrategy } from '@firelancer/core';
+import { AutoIncrementIdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
 import { NextFunction, Request, Response } from 'express';
 import * as path from 'path';
 import { HelloWorldPlugin } from './plugins/hello-world/plugin';

@@ -1,4 +1,4 @@
-import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
+import { JobQueueStrategy } from '../config';
 import { Job } from './job';
 import { JobBufferService } from './job-buffer/job-buffer.service';
 import { SubscribableJob } from './subscribable-job';

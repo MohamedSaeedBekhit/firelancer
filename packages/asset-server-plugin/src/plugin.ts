@@ -288,9 +288,10 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
                         res.setHeader('content-security-policy', "default-src 'self'");
                         res.send(imageBuffer);
                         return;
-                        // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
-                    } catch (e: any) {
-                        Logger.error(e.message, loggerCtx, e.stack);
+                    } catch (e) {
+                        if (e instanceof Error) {
+                            Logger.error(e.message, loggerCtx, e.stack);
+                        }
                         res.status(500).send('An error occurred when generating the image');
                         return;
                     }
@@ -302,7 +303,6 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
 
     private getFileNameFromRequest(req: Request): string {
         const { w, h, mode, preset, fpx, fpy, format, q } = req.query;
-        /* eslint-disable @typescript-eslint/restrict-template-expressions */
         const focalPoint = fpx && fpy ? `_fpx${fpx}_fpy${fpy}` : '';
         const quality = q ? `_q${q}` : '';
         const imageFormat = getValidFormat(format);
@@ -343,9 +343,10 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
         let decodedPath: string;
         try {
             decodedPath = decodeURIComponent(filePath);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-explicit-any
-        } catch (e: any) {
-            Logger.error((e.message as string) + ': ' + filePath, loggerCtx);
+        } catch (e) {
+            if (e instanceof Error) {
+                Logger.error(e.message + ': ' + filePath, loggerCtx);
+            }
             return '';
         }
         return path.normalize(decodedPath).replace(/(\.\.[/\\])+/, '');

@@ -7,6 +7,7 @@ import { FirelancerEntity } from '../base/base.entity';
  * @description
  * An abstract entity representing an entry in the history of an Order (OrderHistoryEntry) or a Customer (CustomerHistoryEntry).
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'discriminator' } })
 export abstract class HistoryEntry extends FirelancerEntity {
@@ -21,6 +22,5 @@ export abstract class HistoryEntry extends FirelancerEntity {
     isPublic: boolean;
 
     @Column('simple-json')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
 }

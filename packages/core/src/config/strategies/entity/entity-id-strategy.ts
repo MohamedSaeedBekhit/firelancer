@@ -1,6 +1,6 @@
 import { InjectableStrategy } from '../../../common';
 
-export type PrimaryKeyType<T> = T extends 'uuid' ? string : T extends 'increment' ? number : any;
+export type PrimaryKeyType<T> = T extends 'uuid' ? string : T extends 'increment' ? number : never;
 
 /**
  * @description

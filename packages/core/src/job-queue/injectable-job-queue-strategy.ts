@@ -25,6 +25,7 @@ export abstract class InjectableJobQueueStrategy {
     protected started = new Map<string, ProcessFunc<any>>();
     protected hasInitialized = false;
 
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     init(injector: Injector) {
         this.hasInitialized = true;
         for (const [queueName, process] of this.started) {

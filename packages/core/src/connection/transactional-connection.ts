@@ -54,14 +54,11 @@ export class TransactionalConnection {
         if (ctxOrTarget instanceof RequestContext) {
             const transactionManager = this.getTransactionManager(ctxOrTarget);
             if (transactionManager) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 return transactionManager.getRepository(maybeTarget!);
             } else {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 return this.rawConnection.getRepository(maybeTarget!);
             }
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.rawConnection.getRepository(ctxOrTarget ?? maybeTarget!);
         }
     }
@@ -83,14 +80,11 @@ export class TransactionalConnection {
         if (ctxOrTarget instanceof RequestContext) {
             const transactionManager = this.getTransactionManager(ctxOrTarget);
             if (transactionManager) {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 return transactionManager.getTreeRepository(maybeTarget!);
             } else {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 return this.rawConnection.getTreeRepository(maybeTarget!);
             }
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return this.rawConnection.getTreeRepository(ctxOrTarget ?? maybeTarget!);
         }
     }
