@@ -53,7 +53,7 @@ interface SharpAssetPreviewConfig {
 
 /**
  * @description
- * This AssetPreviewStrategy uses the [Sharp library](https://sharp.pixelplumbing.com/) to generate
+ * This {@link AssetPreviewStrategy} uses the [Sharp library](https://sharp.pixelplumbing.com/) to generate
  * preview images of uploaded binary files. For non-image binaries, a generic "file" icon with the mime type
  * overlay will be generated.
  *

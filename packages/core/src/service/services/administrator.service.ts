@@ -1,16 +1,14 @@
-import { assertFound, ID, normalizeEmailAddress } from '@firelancer/common';
+import { assertFound, ID, normalizeEmailAddress, PaginatedList } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
-import { CreateAdministratorInput, UpdateAdministratorInput } from '../../api/schema';
-import { EntityNotFoundError } from '../../common/error/errors';
-import { RequestContext } from '../../common/request-context';
-import { ConfigService } from '../../config/config.service';
-import { TransactionalConnection } from '../../connection/transactional-connection';
-import { NativeAuthenticationMethod, User } from '../../entity';
-import { Administrator } from '../../entity/administrator/administrator.entity';
-import { EventBus } from '../../event-bus/event-bus';
-import { AdministratorEvent } from '../../event-bus/events/administrator-event';
-import { RoleChangeEvent } from '../../event-bus/events/role-change-event';
+import { CreateAdministratorInput, RelationPaths, UpdateAdministratorInput } from '../../api';
+import { EntityNotFoundError, ListQueryOptions, RequestContext } from '../../common';
+import { ConfigService } from '../../config';
+import { TransactionalConnection } from '../../connection';
+import { Administrator, NativeAuthenticationMethod, User } from '../../entity';
+import { AdministratorEvent, EventBus, RoleChangeEvent } from '../../event-bus';
+import { ProcessContext } from '../../process-context';
+import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { PasswordCipher } from '../helpers/password-cipher/password-cipher';
 import { RequestContextService } from '../helpers/request-context/request-context.service';
 import { patchEntity } from '../helpers/utils/patch-entity';
@@ -31,6 +29,8 @@ export class AdministratorService {
         private roleService: RoleService,
         private requestContextService: RequestContextService,
         private eventBus: EventBus,
+        private processContext: ProcessContext,
+        private listQueryBuilder: ListQueryBuilder,
     ) {}
 
     async initAdministrators() {
@@ -41,8 +41,22 @@ export class AdministratorService {
      * @description
      * Get a paginated list of Administrators.
      */
-    async findAll(ctx: RequestContext): Promise<Administrator[]> {
-        return this.connection.getRepository(ctx, Administrator).find();
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<Administrator>,
+        relations?: RelationPaths<Administrator>,
+    ): Promise<PaginatedList<Administrator>> {
+        return this.listQueryBuilder
+            .build(Administrator, options, {
+                relations: relations ?? ['user', 'user.roles'],
+                where: { deletedAt: IsNull() },
+                ctx,
+            })
+            .getManyAndCount()
+            .then(([items, totalItems]) => ({
+                items,
+                totalItems,
+            }));
     }
 
     /**
@@ -185,8 +199,10 @@ export class AdministratorService {
      * - Ensures the SuperAdmin user has the SuperAdmin role.
      */
     private async ensureSuperAdminExists() {
+        if (this.processContext.isWorker) {
+            return;
+        }
         const { superadminCredentials } = this.configService.authOptions;
-
         const superAdminUser = await this.connection.rawConnection.getRepository(User).findOne({
             where: { identifier: superadminCredentials.identifier },
             relations: {

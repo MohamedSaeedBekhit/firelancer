@@ -1,22 +1,22 @@
-import { AssetType, getAssetType, ID, idsAreEqual, notNullOrUndefined, Type } from '@firelancer/common';
+import { AssetType, getAssetType, ID, idsAreEqual, notNullOrUndefined, PaginatedList, Type } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
+import { ReadStream as FSReadStream } from 'fs';
+import { ReadStream } from 'fs-extra';
+import { IncomingMessage } from 'http';
 import { imageSize } from 'image-size';
 import mime from 'mime-types';
 import path from 'path';
 import { Readable, Stream } from 'stream';
 import { FindOneOptions, In, IsNull } from 'typeorm';
-import { camelCase } from 'typeorm/util/StringUtils.js';
-import { CreateAssetInput, UpdateAssetInput } from '../../api/schema';
-import { InternalServerError, RequestContext } from '../../common';
+import { camelCase } from 'typeorm/util/StringUtils';
+import { CreateAssetInput, RelationPaths, UpdateAssetInput } from '../../api';
+import { InternalServerError, ListQueryOptions, RequestContext } from '../../common';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Asset, FirelancerEntity, JobPost, OrderableAsset } from '../../entity';
-import { EventBus } from '../../event-bus';
-import { AssetEvent } from '../../event-bus/events/asset-event';
+import { AssetEvent, EventBus } from '../../event-bus';
+import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { patchEntity } from '../helpers/utils/patch-entity';
-import { ReadStream as FSReadStream } from 'fs';
-import { ReadStream } from 'fs-extra';
-import { IncomingMessage } from 'http';
 
 export interface EntityWithAssets extends FirelancerEntity {
     featuredAsset?: Asset | null;
@@ -36,6 +36,7 @@ export class AssetService {
         private connection: TransactionalConnection,
         private configService: ConfigService,
         private eventBus: EventBus,
+        private listQueryBuilder: ListQueryBuilder,
     ) {
         this.permittedMimeTypes = this.configService.assetOptions.permittedFileTypes
             .map((val) => (/\.[\w]+/.test(val) ? mime.lookup(val) || undefined : val))
@@ -57,8 +58,17 @@ export class AssetService {
             .then((result) => result ?? undefined);
     }
 
-    async findAll(ctx: RequestContext): Promise<Asset[]> {
-        return this.connection.getRepository(ctx, Asset).find();
+    async findAll(ctx: RequestContext, options?: ListQueryOptions<Asset>, relations?: RelationPaths<Asset>): Promise<PaginatedList<Asset>> {
+        return this.listQueryBuilder
+            .build(Asset, options, {
+                ctx,
+                relations: relations ?? [],
+            })
+            .getManyAndCount()
+            .then(([items, totalItems]) => ({
+                items,
+                totalItems,
+            }));
     }
 
     async getFeaturedAsset<T extends Omit<EntityWithAssets, 'assets'>>(ctx: RequestContext, entity: T): Promise<Asset | undefined> {

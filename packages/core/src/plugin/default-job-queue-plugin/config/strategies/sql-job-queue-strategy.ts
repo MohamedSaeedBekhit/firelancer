@@ -1,6 +1,5 @@
 import { ID, JobState } from '@firelancer/common';
-import { Brackets, EntityManager, FindOptionsWhere, In, LessThan } from 'typeorm';
-import { DataSource } from 'typeorm/browser';
+import { Brackets, DataSource, EntityManager, FindOptionsWhere, In, LessThan } from 'typeorm';
 import { Injector } from '../../../../common/injector';
 import { Logger } from '../../../../config';
 import { InspectableJobQueueStrategy } from '../../../../config/strategies/job-queue/inspectable-job-queue-strategy';

@@ -4,7 +4,7 @@ import { LocalAssetStorageStrategy } from './local-asset-storage-strategy';
 import { AssetServerOptions } from './types';
 
 /**
- * By default the AssetServerPlugin will configure and use the LocalStorageStrategy to persist Assets.
+ * By default the AssetServerPlugin will configure and use the {@link LocalStorageStrategy} to persist Assets.
  */
 export function defaultAssetStorageStrategyFactory(options: AssetServerOptions) {
     const { assetUploadDir } = options;

@@ -27,6 +27,8 @@ export const defaultConfig: RuntimeFirelancerConfig = {
         hostname: 'localhost',
         adminApiPath: 'admin-api',
         shopApiPath: 'shop-api',
+        shopListQueryLimit: 100,
+        adminListQueryLimit: 1000,
         cors: {
             origin: true,
             credentials: true,

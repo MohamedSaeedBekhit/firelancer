@@ -1,13 +1,11 @@
 import { HistoryEntryType, ID } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
-import { UpdateCustomerInput } from '../../api/schema';
-import { RequestContext } from '../../common/request-context';
-import { TransactionalConnection } from '../../connection/transactional-connection';
-import { Administrator } from '../../entity/administrator/administrator.entity';
-import { CustomerHistoryEntry } from '../../entity/history-entry/customer-history-entry.entity';
-import { EventBus } from '../../event-bus/event-bus';
-import { HistoryEntryEvent } from '../../event-bus/events/history-entry-event';
-import { AdministratorService } from './administrator.service';
+import { UpdateCustomerInput } from '../../api';
+import { RequestContext } from '../../common';
+import { TransactionalConnection } from '../../connection';
+import { Administrator, CustomerHistoryEntry } from '../../entity';
+import { EventBus, HistoryEntryEvent } from '../../event-bus';
+import { AdministratorService } from '../../service';
 
 export interface CustomerHistoryEntryData {
     [HistoryEntryType.CUSTOMER_REGISTERED]: { strategy: string };

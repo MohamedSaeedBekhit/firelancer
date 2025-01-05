@@ -5,7 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { satisfies } from 'semver';
-import { Connection, DataSourceOptions } from 'typeorm';
+import { Connection, DataSourceOptions, EntitySubscriberInterface } from 'typeorm';
 import { InternalServerError } from './common/error/errors';
 import { getConfig, setConfig } from './config/config-helpers';
 import { FirelancerConfig, RuntimeFirelancerConfig } from './config/firelancer-config';
@@ -157,7 +157,16 @@ export async function preBootstrapConfig(userConfig: Partial<FirelancerConfig> =
     }
 
     const entities = getAllEntities(userConfig);
-    await setConfig({ dbConnectionOptions: { entities } });
+    const { coreSubscribersMap } = await import('./entity/subscribers.js');
+    await setConfig({
+        dbConnectionOptions: {
+            entities,
+            subscribers: [
+                ...((userConfig.dbConnectionOptions?.subscribers ?? []) as Array<Type<EntitySubscriberInterface>>),
+                ...(Object.values(coreSubscribersMap) as Array<Type<EntitySubscriberInterface>>),
+            ],
+        },
+    });
 
     let config = getConfig();
     // The logger is set here so that we are able to log any messages prior to the final

@@ -1,11 +1,13 @@
-import { ID } from '@firelancer/common';
+import { ID, PaginatedList } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
 import { CreateBalanceEntryInput } from '../../api';
-import { RequestContext } from '../../common';
+import { RelationPaths } from '../../api/decorators/relations.decorator';
+import { ListQueryOptions, RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Customer } from '../../entity';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
+import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 
 /**
  * @description
@@ -13,7 +15,27 @@ import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';
  */
 @Injectable()
 export class BalanceService {
-    constructor(private connection: TransactionalConnection) {}
+    constructor(
+        private connection: TransactionalConnection,
+        private listQueryBuilder: ListQueryBuilder,
+    ) {}
+
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<BalanceEntry>,
+        relations?: RelationPaths<BalanceEntry>,
+    ): Promise<PaginatedList<BalanceEntry>> {
+        return this.listQueryBuilder
+            .build(BalanceEntry, options, {
+                ctx,
+                relations: relations ?? [],
+            })
+            .getMany()
+            .then((items) => ({
+                items,
+                totalItems: items.length,
+            }));
+    }
 
     async create(ctx: RequestContext, input: CreateBalanceEntryInput): Promise<BalanceEntry> {
         return this.connection.withTransaction(ctx, async (ctx) => {

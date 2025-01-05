@@ -2,6 +2,7 @@ import {
     BUYER_ROLE_CODE,
     BUYER_ROLE_DESCRIPTION,
     ID,
+    PaginatedList,
     Permission,
     SELLER_ROLE_CODE,
     SELLER_ROLE_DESCRIPTION,
@@ -11,15 +12,16 @@ import {
     unique,
 } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
-import { CreateRoleInput, UpdateRoleInput } from '../../api/schema';
+import { CreateRoleInput, RelationPaths, UpdateRoleInput } from '../../api';
+import { RequestContextCacheService } from '../../cache';
+import { EntityNotFoundError, InternalServerError, ListQueryOptions, RequestContext, UserInputError } from '../../common';
 import { getAllPermissionsMetadata } from '../../common/constants';
-import { EntityNotFoundError, InternalServerError, UserInputError } from '../../common/error/errors';
-import { RequestContext } from '../../common/request-context';
-import { ConfigService } from '../../config/config.service';
-import { TransactionalConnection } from '../../connection/transactional-connection';
-import { Role } from '../../entity/role/role.entity';
-import { EventBus } from '../../event-bus/event-bus';
-import { RoleEvent } from '../../event-bus/events/role-event';
+import { ConfigService } from '../../config';
+import { TransactionalConnection } from '../../connection';
+import { Role, User } from '../../entity';
+import { EventBus, RoleEvent } from '../../event-bus';
+import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
+import { getPermissions, getUserPermissions } from '../helpers/utils/get-user-permissions';
 import { patchEntity } from '../helpers/utils/patch-entity';
 
 /**
@@ -32,6 +34,8 @@ export class RoleService {
         private connection: TransactionalConnection,
         private configService: ConfigService,
         private eventBus: EventBus,
+        private listQueryBuilder: ListQueryBuilder,
+        private requestContextCache: RequestContextCacheService,
     ) {}
 
     async initRoles() {
@@ -41,15 +45,80 @@ export class RoleService {
         this.ensureRolesHaveValidPermissions();
     }
 
-    async findAll(ctx: RequestContext): Promise<Role[]> {
-        return this.connection.getRepository(ctx, Role).find();
+    async findAll(ctx: RequestContext, options?: ListQueryOptions<Role>, relations?: RelationPaths<Role>): Promise<PaginatedList<Role>> {
+        return this.listQueryBuilder
+            .build(Role, options, { relations: unique(relations ?? []), ctx })
+            .getManyAndCount()
+            .then(async ([items, totalItems]) => {
+                const visibleRoles: Role[] = [];
+                for (const item of items) {
+                    const canRead = await this.activeUserCanReadRole(ctx, item);
+                    if (canRead) {
+                        visibleRoles.push(item);
+                    }
+                }
+                return {
+                    items: visibleRoles,
+                    totalItems,
+                };
+            });
     }
 
-    async findOne(ctx: RequestContext, roleId: ID): Promise<Role | undefined> {
+    async findOne(ctx: RequestContext, roleId: ID, relations?: RelationPaths<Role>): Promise<Role | undefined> {
         return this.connection
             .getRepository(ctx, Role)
-            .findOne({ where: { id: roleId } })
-            .then((role) => role ?? undefined);
+            .findOne({
+                where: { id: roleId },
+                relations: unique(relations ?? []),
+            })
+            .then(async (result) => {
+                if (result && (await this.activeUserCanReadRole(ctx, result))) {
+                    return result;
+                }
+            });
+    }
+
+    async create(ctx: RequestContext, input: CreateRoleInput): Promise<Role> {
+        this.checkPermissionsAreValid(input.permissions);
+        const role = new Role({
+            code: input.code,
+            description: input.description,
+            permissions: unique([Permission.Authenticated, ...input.permissions]),
+        });
+        await this.connection.getRepository(ctx, Role).save(role, { reload: false });
+        await this.eventBus.publish(new RoleEvent(ctx, role, 'created', input));
+        return role;
+    }
+
+    async update(ctx: RequestContext, input: UpdateRoleInput): Promise<Role> {
+        this.checkPermissionsAreValid(input.permissions);
+        const role = await this.findOne(ctx, input.id);
+        if (!role) {
+            throw new EntityNotFoundError('Role', input.id);
+        }
+        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
+            throw new InternalServerError('error.cannot-modify-role');
+        }
+        const updatedRole = patchEntity(role, {
+            code: input.code,
+            description: input.description,
+            permissions: input.permissions ? unique([Permission.Authenticated, ...input.permissions]) : undefined,
+        });
+        await this.connection.getRepository(ctx, Role).save(updatedRole, { reload: false });
+        await this.eventBus.publish(new RoleEvent(ctx, role, 'updated', input));
+        return assertFound(this.findOne(ctx, role.id));
+    }
+
+    async delete(ctx: RequestContext, id: ID): Promise<void> {
+        const role = await this.findOne(ctx, id);
+        if (!role) {
+            throw new EntityNotFoundError('Role', id);
+        }
+        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
+            throw new InternalServerError('error.cannot-delete-role');
+        }
+        await this.connection.getRepository(ctx, Role).remove(role);
+        await this.eventBus.publish(new RoleEvent(ctx, role, 'deleted', id));
     }
 
     /**
@@ -97,49 +166,6 @@ export class RoleService {
      */
     getAllPermissions(): string[] {
         return Object.values(Permission);
-    }
-
-    async create(ctx: RequestContext, input: CreateRoleInput): Promise<Role> {
-        this.checkPermissionsAreValid(input.permissions);
-        const role = new Role({
-            code: input.code,
-            description: input.description,
-            permissions: unique([Permission.Authenticated, ...input.permissions]),
-        });
-        await this.connection.getRepository(ctx, Role).save(role, { reload: false });
-        await this.eventBus.publish(new RoleEvent(ctx, role, 'created', input));
-        return role;
-    }
-
-    async update(ctx: RequestContext, input: UpdateRoleInput): Promise<Role> {
-        this.checkPermissionsAreValid(input.permissions);
-        const role = await this.findOne(ctx, input.id);
-        if (!role) {
-            throw new EntityNotFoundError('Role', input.id);
-        }
-        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
-            throw new InternalServerError('error.cannot-modify-role');
-        }
-        const updatedRole = patchEntity(role, {
-            code: input.code,
-            description: input.description,
-            permissions: input.permissions ? unique([Permission.Authenticated, ...input.permissions]) : undefined,
-        });
-        await this.connection.getRepository(ctx, Role).save(updatedRole, { reload: false });
-        await this.eventBus.publish(new RoleEvent(ctx, role, 'updated', input));
-        return assertFound(this.findOne(ctx, role.id));
-    }
-
-    async delete(ctx: RequestContext, id: ID): Promise<void> {
-        const role = await this.findOne(ctx, id);
-        if (!role) {
-            throw new EntityNotFoundError('Role', id);
-        }
-        if (role.code === SUPER_ADMIN_ROLE_CODE || role.code === SELLER_ROLE_CODE || role.code === BUYER_ROLE_CODE) {
-            throw new InternalServerError('error.cannot-delete-role');
-        }
-        await this.connection.getRepository(ctx, Role).remove(role);
-        await this.eventBus.publish(new RoleEvent(ctx, role, 'deleted', id));
     }
 
     private checkPermissionsAreValid(permissions?: Permission[] | null) {
@@ -227,5 +253,67 @@ export class RoleService {
         return getAllPermissionsMetadata(this.configService.authOptions.customPermissions)
             .filter((p) => p.assignable)
             .map((p) => p.name as Permission);
+    }
+
+    /**
+     * @description
+     * Returns true if the User has the specified permission
+     */
+    async userHasPermission(ctx: RequestContext, permission: Permission): Promise<boolean> {
+        return this.userHasAnyPermissions(ctx, [permission]);
+    }
+
+    /**
+     * @description
+     * Returns true if the User has any of the specified permissions
+     */
+    async userHasAnyPermissions(ctx: RequestContext, permissions: Permission[]): Promise<boolean> {
+        const userPermissions = await this.getActiveUserPermissions(ctx);
+        for (const permission of permissions) {
+            if (userPermissions.includes(permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @description
+     * Returns true if the User has all the specified permissions
+     */
+    async userHasAllPermissions(ctx: RequestContext, permissions: Permission[]): Promise<boolean> {
+        const userPermissions = await this.getActiveUserPermissions(ctx);
+        for (const permission of permissions) {
+            if (!userPermissions.includes(permission)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @description
+     * Determines if the active user can read the specified role
+     */
+    private async activeUserCanReadRole(ctx: RequestContext, role: Role): Promise<boolean> {
+        const requiredPermissions = getPermissions([role]);
+        return await this.userHasAllPermissions(ctx, requiredPermissions);
+    }
+
+    /**
+     * @description
+     * Retrieves all permissions for the active user
+     */
+    private async getActiveUserPermissions(ctx: RequestContext): Promise<Permission[]> {
+        const { activeUserId } = ctx;
+        if (!activeUserId) {
+            return [];
+        }
+        return await this.requestContextCache.get(ctx, `RoleService.getActiveUserPermissions.user(${activeUserId})`, async () => {
+            const user = await this.connection.getEntityOrThrow(ctx, User, activeUserId, {
+                relations: ['roles'],
+            });
+            return getUserPermissions(user); // Adjusted to aggregate permissions at a global level.
+        });
     }
 }

@@ -4,7 +4,7 @@ import path from 'path';
 
 /**
  * @description
- * An extension of the DefaultAssetNamingStrategy which prefixes file names with
+ * An extension of the {@link DefaultAssetNamingStrategy} which prefixes file names with
  * the type (`'source'` or `'preview'`) as well as a 2-character sub-directory based on
  * the md5 hash of the original file name.
  *

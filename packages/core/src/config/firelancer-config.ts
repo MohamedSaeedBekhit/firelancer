@@ -47,6 +47,22 @@ export interface ApiOptions {
     shopApiPath: string;
     /**
      * @description
+     * The maximum number of items that may be returned by a query which returns a `PaginatedList` response. In other words,
+     * this is the upper limit of the `take` input option.
+     *
+     * @default 100
+     */
+    shopListQueryLimit?: number;
+    /**
+     * @description
+     * The maximum number of items that may be returned by a query which returns a `PaginatedList` response. In other words,
+     * this is the upper limit of the `take` input option.
+     *
+     * @default 1000
+     */
+    adminListQueryLimit?: number;
+    /**
+     * @description
      * Set the CORS handling for the server. See the [express CORS docs](https://github.com/expressjs/cors#configuration-options).
      */
     cors?: boolean | CorsOptions;

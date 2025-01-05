@@ -23,8 +23,10 @@ import { RoleService } from './services/role.service';
 import { SearchService } from './services/search.service';
 import { SessionService } from './services/session.service';
 import { UserService } from './services/user.service';
+import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
 
 const services = [
+    HistoryService,
     AdministratorService,
     AssetService,
     AuthService,
@@ -32,7 +34,6 @@ const services = [
     CustomerService,
     FacetService,
     FacetValueService,
-    HistoryService,
     JobPostService,
     RoleService,
     SessionService,
@@ -41,7 +42,7 @@ const services = [
     SearchService,
 ];
 
-const helpers = [RequestContextService, PasswordCipher, VerificationTokenGenerator, ConfigArgService];
+const helpers = [RequestContextService, PasswordCipher, VerificationTokenGenerator, ConfigArgService, ListQueryBuilder];
 
 /**
  * The ServiceCoreModule is imported internally by the ServiceModule. It is arranged in this way so that

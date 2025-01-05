@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitialMigration1735696697338 implements MigrationInterface {
+export class InitalMigration1735861401623 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(
             `CREATE TABLE "authentication_method" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "identifier" character varying, "passwordHash" character varying, "verificationToken" character varying, "passwordResetToken" character varying, "identifierChangeToken" character varying, "pendingIdentifier" character varying, "strategy" character varying, "externalIdentifier" character varying, "metadata" text, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_e204686018c3c60f6164e385081" PRIMARY KEY ("id"))`,
@@ -66,7 +66,7 @@ export class InitialMigration1735696697338 implements MigrationInterface {
             undefined,
         );
         await queryRunner.query(
-            `CREATE TABLE "balance_entry" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "type" character varying NOT NULL, "description" character varying, "currencyCode" character varying NOT NULL, "reviewDays" integer NOT NULL DEFAULT '0', "settledAt" TIMESTAMP, "rejectedAt" TIMESTAMP, "prevSettledAt" TIMESTAMP, "metadata" text, "id" SERIAL NOT NULL, "customerId" integer NOT NULL, "parentId" integer, "balance" integer, "credit" integer NOT NULL DEFAULT '0', "debit" integer NOT NULL DEFAULT '0', "prevBalance" integer, CONSTRAINT "CHK_2db2f5bf92406274b138e29369" CHECK ("settledAt" IS NOT NULL AND "rejectedAt" IS NOT NULL), CONSTRAINT "CHK_1d327a108f69d3eda73b5b50ca" CHECK (("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)), CONSTRAINT "CHK_88b99ce1e581e28ffe2307cf87" CHECK ("prevSettledAt" < "settledAt"), CONSTRAINT "CHK_c06d05c9479eccdd0c1d448f8b" CHECK ("balance" = COALESCE("prevBalance", 0) + "credit" - "debit"), CONSTRAINT "PK_8fb391d29b558b0320c5a0e3036" PRIMARY KEY ("id"))`,
+            `CREATE TABLE "balance_entry" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "type" character varying NOT NULL, "description" character varying, "currencyCode" character varying NOT NULL, "reviewDays" integer NOT NULL DEFAULT '0', "settledAt" TIMESTAMP, "rejectedAt" TIMESTAMP, "prevSettledAt" TIMESTAMP, "metadata" text, "id" SERIAL NOT NULL, "customerId" integer NOT NULL, "parentId" integer, "balance" integer, "credit" integer NOT NULL DEFAULT '0', "debit" integer NOT NULL DEFAULT '0', "prevBalance" integer, CONSTRAINT "CHK_1d327a108f69d3eda73b5b50ca" CHECK (("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)), CONSTRAINT "CHK_88b99ce1e581e28ffe2307cf87" CHECK ("prevSettledAt" < "settledAt"), CONSTRAINT "CHK_c06d05c9479eccdd0c1d448f8b" CHECK ("balance" = COALESCE("prevBalance", 0) + "credit" - "debit"), CONSTRAINT "PK_8fb391d29b558b0320c5a0e3036" PRIMARY KEY ("id"))`,
             undefined,
         );
         await queryRunner.query(

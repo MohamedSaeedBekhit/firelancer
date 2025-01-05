@@ -1,7 +1,9 @@
-import { assertFound, CustomerType, HistoryEntryType, ID, normalizeEmailAddress } from '@firelancer/common';
+import { assertFound, CustomerType, HistoryEntryType, ID, normalizeEmailAddress, PaginatedList } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
+import { RelationPaths } from '../../api';
 import { CreateCustomerInput, RegisterCustomerInput, UpdateCustomerInput } from '../../api/schema';
+import { ListQueryOptions } from '../../common';
 import {
     EmailAddressConflictError,
     EntityNotFoundError,
@@ -23,6 +25,7 @@ import { IdentifierChangeEvent } from '../../event-bus/events/identifier-change-
 import { IdentifierChangeRequestEvent } from '../../event-bus/events/identifier-change-request-event';
 import { PasswordResetEvent } from '../../event-bus/events/password-reset-event';
 import { PasswordResetVerifiedEvent } from '../../event-bus/events/password-reset-verified-event';
+import { ListQueryBuilder } from '../../service';
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { HistoryService } from './history.service';
 import { UserService } from './user.service';
@@ -39,14 +42,22 @@ export class CustomerService {
         private userService: UserService,
         private historyService: HistoryService,
         private eventBus: EventBus,
+        private listQueryBuilder: ListQueryBuilder,
     ) {}
 
-    async findAll(ctx: RequestContext): Promise<Customer[]> {
-        return this.connection.getRepository(ctx, Customer).find({
-            where: {
-                deletedAt: IsNull(),
-            },
-        });
+    async findAll(
+        ctx: RequestContext,
+        options: ListQueryOptions<Customer> | undefined,
+        relations: RelationPaths<Customer> = [],
+    ): Promise<PaginatedList<Customer>> {
+        return this.listQueryBuilder
+            .build(Customer, options, {
+                relations,
+                where: { deletedAt: IsNull() },
+                ctx,
+            })
+            .getManyAndCount()
+            .then(([items, totalItems]) => ({ items, totalItems }));
     }
 
     async findOne(ctx: RequestContext, id: ID): Promise<Customer | undefined> {

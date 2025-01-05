@@ -25,3 +25,4 @@ export * from './entity-id.decorator';
 export * from './set-entity-id-strategy';
 export * from './money.decorator';
 export * from './set-money-strategy';
+export * from './subscribers';

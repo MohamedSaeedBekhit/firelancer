@@ -1,17 +1,23 @@
-import { assertFound, ID, idsAreEqual, JobState, pick, Type } from '@firelancer/common';
+import { assertFound, ID, idsAreEqual, JobState, PaginatedList, pick, Type } from '@firelancer/common';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
 import { In } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
-import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, UpdateCollectionInput } from '../../api';
-import { EntityNotFoundError, IllegalOperationError, InternalServerError, RequestContext, SerializedRequestContext } from '../../common';
+import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, RelationPaths, UpdateCollectionInput } from '../../api';
+import {
+    EntityNotFoundError,
+    IllegalOperationError,
+    InternalServerError,
+    ListQueryOptions,
+    RequestContext,
+    SerializedRequestContext,
+} from '../../common';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { collectableEntities, Collection, FirelancerEntity } from '../../entity';
-import { EventBus } from '../../event-bus';
-import { CollectionEvent } from '../../event-bus/events/collection-event';
-import { CollectionModificationEvent } from '../../event-bus/events/collection-modification-event';
+import { CollectionEvent, CollectionModificationEvent, EventBus } from '../../event-bus';
 import { JobQueue, JobQueueService } from '../../job-queue';
+import { ListQueryBuilder } from '../../service';
 import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
 import { moveToIndex } from '../helpers/utils/move-to-index';
 import { patchEntity } from '../helpers/utils/patch-entity';
@@ -40,6 +46,7 @@ export class CollectionService implements OnModuleInit {
         private configService: ConfigService,
         private jobQueueService: JobQueueService,
         private assetService: AssetService,
+        private listQueryBuilder: ListQueryBuilder,
     ) {}
 
     async onModuleInit() {
@@ -113,8 +120,28 @@ export class CollectionService implements OnModuleInit {
         });
     }
 
-    async findAll(ctx: RequestContext): Promise<Collection[]> {
-        return this.connection.getTreeRepository(ctx, Collection).findTrees();
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<Collection> & { topLevelOnly?: boolean },
+        relations?: RelationPaths<Collection>,
+    ): Promise<PaginatedList<Collection>> {
+        const qb = this.listQueryBuilder.build(Collection, options, {
+            relations: relations ?? ['featuredAsset', 'parent'],
+            where: { isRoot: false },
+            orderBy: { position: 'ASC' },
+            ctx,
+        });
+
+        if (options?.topLevelOnly === true) {
+            qb.innerJoin('collection.parent', 'parent_filter', 'parent_filter.isRoot = :isRoot', {
+                isRoot: true,
+            });
+        }
+
+        return qb.getManyAndCount().then(async ([items, totalItems]) => ({
+            items,
+            totalItems,
+        }));
     }
 
     async findOne(ctx: RequestContext, collectionId: ID): Promise<Collection | undefined> {

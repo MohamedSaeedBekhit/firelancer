@@ -9,8 +9,10 @@ import {
     CustomerService,
     EntityNotFoundError,
     JobPost,
+    LogicalOperator,
     Permission,
     RequestContext,
+    Transaction,
 } from '@firelancer/core';
 import { Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -52,6 +54,7 @@ export class HelloWorldController {
         return this.collectionService.getCollectionCollectableIds(collection, JobPost, ctx);
     }
 
+    @Transaction()
     @Post('upload')
     @UseInterceptors(FileInterceptor('file'))
     uploadFile(@Ctx() ctx: RequestContext, @UploadedFile() file: Express.Multer.File) {
@@ -59,22 +62,33 @@ export class HelloWorldController {
         return this.assetService.create(ctx, { file });
     }
 
+    @Get('/balance')
+    @Allow(Permission.Public)
+    async getBalance(@Ctx() ctx: RequestContext) {
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        return this.balanceService.findAll(ctx, {
+            filter: {
+                customerId: { eq: String(customer.id) },
+            },
+            skip: 0,
+            take: 2,
+            sort: { createdAt: 'ASC' },
+        });
+    }
+
+    @Transaction()
     @Post('/balance')
     @Allow(Permission.Public)
     async balance(@Ctx() ctx: RequestContext) {
-        try {
-            const customer = await this.customerService.getUserCustomerFromRequest(ctx);
-            return this.balanceService.create(ctx, {
-                type: BalanceEntryType.PAYMENT,
-                currencyCode: CurrencyCode.USD,
-                credit: 0,
-                debit: 20_00,
-                customer,
-                description: 'test payment 2',
-                reviewDays: 0,
-            });
-        } catch (error) {
-            console.log(error);
-        }
+        const customer = await this.customerService.getUserCustomerFromRequest(ctx);
+        return this.balanceService.create(ctx, {
+            type: BalanceEntryType.PAYMENT,
+            currencyCode: CurrencyCode.USD,
+            credit: 0,
+            debit: 40_00,
+            customer,
+            description: 'test payment 2',
+            reviewDays: 0,
+        });
     }
 }

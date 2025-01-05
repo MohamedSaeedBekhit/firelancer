@@ -1,12 +1,13 @@
-import { assertFound, ID, idsAreEqual } from '@firelancer/common';
+import { assertFound, ID, idsAreEqual, PaginatedList } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { EntityNotFoundError } from 'typeorm';
-import { CreateFacetInput, UpdateFacetInput } from '../../api';
-import { RequestContext } from '../../common';
+import { CreateFacetInput, RelationPaths, UpdateFacetInput } from '../../api';
+import { ListQueryOptions, RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Facet } from '../../entity/facet/facet.entity';
 import { EventBus } from '../../event-bus';
 import { FacetEvent } from '../../event-bus/events/facet-event';
+import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { FacetValueService } from './facet-value.service';
 
@@ -20,16 +21,20 @@ export class FacetService {
         private connection: TransactionalConnection,
         private eventBus: EventBus,
         private facetValueService: FacetValueService,
+        private listQueryBuilder: ListQueryBuilder,
     ) {}
 
-    async findAll(ctx: RequestContext): Promise<Facet[]> {
-        return this.connection.getRepository(ctx, Facet).find({
-            relations: {
-                values: {
-                    facet: true,
-                },
-            },
-        });
+    async findAll(ctx: RequestContext, options?: ListQueryOptions<Facet>, relations?: RelationPaths<Facet>): Promise<PaginatedList<Facet>> {
+        return this.listQueryBuilder
+            .build(Facet, options, {
+                relations: relations ?? ['values', 'values.facet'],
+                ctx,
+            })
+            .getManyAndCount()
+            .then(([items, totalItems]) => ({
+                items,
+                totalItems,
+            }));
     }
 
     async findOne(ctx: RequestContext, facetId: ID): Promise<Facet | undefined> {

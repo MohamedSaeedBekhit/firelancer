@@ -21,7 +21,7 @@ export class AdministratorController {
 
     @Get()
     @Allow(Permission.ReadAdministrator)
-    async administrators(@Ctx() ctx: RequestContext): Promise<Administrator[]> {
+    async administrators(@Ctx() ctx: RequestContext) {
         return this.administratorService.findAll(ctx);
     }
 
