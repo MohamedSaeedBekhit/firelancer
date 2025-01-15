@@ -22,7 +22,6 @@ out/
 build/
 dist/
 public/
-static/
 lib/
 
 

@@ -13,6 +13,7 @@
         "populate": "node ./dist/populate.js"
     },
     "dependencies": {
+        "@firelancer/admin-ui-plugin": "^1.0.0",
         "@firelancer/asset-server-plugin": "^1.0.0",
         "@firelancer/core": "^0.0.0",
         "@nestjs/common": "^10.0.0",

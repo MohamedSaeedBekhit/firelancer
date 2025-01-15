@@ -1,16 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { PrimeNG } from 'primeng/config';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet],
+    selector: 'flr-root',
     templateUrl: './app.component.html',
-    styleUrl: './app.component.css',
+    standalone: false,
 })
 export class AppComponent {
-    title = 'admin-ui';
-
     constructor(private primeng: PrimeNG) {}
 
     ngOnInit() {

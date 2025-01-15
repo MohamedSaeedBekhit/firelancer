@@ -1,6 +1,16 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { AppComponent } from './app/app.component';
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { loadAppConfig } from '@firelancer/admin-ui/core';
 
-bootstrapApplication(AppComponent, appConfig)
-  .catch((err) => console.error(err));
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+    enableProdMode();
+}
+
+loadAppConfig()
+    .then(() => platformBrowserDynamic().bootstrapModule(AppModule))
+    .catch((err) => {
+        console.log(err);
+    });

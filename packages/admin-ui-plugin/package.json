@@ -1,0 +1,30 @@
+{
+    "name": "@firelancer/admin-ui-plugin",
+    "version": "1.0.0",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*"
+    ],
+    "scripts": {
+        "build": "rimraf lib && node -r ts-node/register build.ts && npm run compile",
+        "watch": "tsc -p ./tsconfig.build.json --watch",
+        "lint": "eslint --fix .",
+        "compile": "tsc -p ./tsconfig.build.json"
+    },
+    "dependencies": {
+        "date-fns": "^4.1.0",
+        "express-rate-limit": "^7.5.0",
+        "fs-extra": "^11.2.0"
+    },
+    "devDependencies": {
+        "@firelancer/admin-ui": "^0.0.0",
+        "@firelancer/common": "^1.0.0",
+        "@firelancer/core": "^0.0.0",
+        "@types/express": "^5.0.0",
+        "@types/fs-extra": "^11.0.4",
+        "express": "^4.21.2",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.7.3"
+    }
+}

@@ -614,3 +614,136 @@ export enum CurrencyCode {
     /** Zimbabwean dollar */
     ZWL = 'ZWL',
 }
+
+/**
+ * @description
+ * This interface describes JSON config file (firelancer-ui-config.json) used by the Admin UI.
+ * The values are loaded at run-time by the Admin UI app, and allow core configuration to be
+ * managed without the need to re-build the application.
+ */
+export interface AdminUiConfig {
+    /**
+     * @description
+     * The hostname of the Firelancer server which the admin UI will be making API calls
+     * to. If set to "auto", the Admin UI app will determine the hostname from the
+     * current location (i.e. `window.location.hostname`).
+     *
+     * @default 'auto'
+     */
+    apiHost: string | 'auto';
+    /**
+     * @description
+     * The port of the Firelancer server which the admin UI will be making API calls
+     * to. If set to "auto", the Admin UI app will determine the port from the
+     * current location (i.e. `window.location.port`).
+     *
+     * @default 'auto'
+     */
+    apiPort: number | 'auto';
+    /**
+     * @description
+     * The path to the REST Admin API.
+     *
+     * @default 'admin-api'
+     */
+    adminApiPath: string;
+    /**
+     * @description
+     * Whether to use cookies or bearer tokens to track sessions.
+     * Should match the setting of in the server's `tokenMethod` config
+     * option.
+     *
+     * @default 'cookie'
+     */
+    tokenMethod: 'cookie' | 'bearer';
+    /**
+     * @description
+     * The header used when using the 'bearer' auth method. Should match the
+     * setting of the server's `authOptions.authTokenHeaderKey` config option.
+     *
+     * @default 'firelancer-auth-token'
+     */
+    authTokenHeaderKey: string;
+    /**
+     * @description
+     * If you are using an external {@link AuthenticationStrategy} for the Admin API, you can configure
+     * a custom URL for the login page with this option. On logging out or redirecting an unauthenticated
+     * user, the Admin UI app will redirect the user to this URL rather than the default username/password
+     * screen.
+     */
+    loginUrl?: string;
+    /**
+     * @description
+     * The custom brand name.
+     */
+    brand?: string;
+    /**
+     * @description
+     * Option to hide firelancer branding.
+     *
+     * @default false
+     */
+    hideFirelancerBranding?: boolean;
+    /**
+     * @description
+     * Option to hide version.
+     *
+     * @default false
+     */
+    hideVersion?: boolean;
+}
+
+/**
+ * @description
+ * Configures the path to a custom-build of the Admin UI app.
+ */
+export interface AdminUiAppConfig {
+    /**
+     * @description
+     * The path to the compiled admin UI app files. If not specified, an internal
+     * default build is used. This path should contain the `firelancer-ui-config.json` file,
+     * index.html, the compiled js bundles etc.
+     */
+    path: string;
+    /**
+     * @description
+     * Specifies the url route to the Admin UI app.
+     *
+     * @default 'admin'
+     */
+    route?: string;
+    /**
+     * @description
+     * The function which will be invoked to start the app compilation process.
+     */
+    compile?: () => Promise<void>;
+}
+
+/**
+ * @description
+ * Information about the Admin UI app dev server.
+ */
+export interface AdminUiAppDevModeConfig {
+    /**
+     * @description
+     * The path to the uncompiled UI app source files. This path should contain the `firelancer-ui-config.json` file.
+     */
+    sourcePath: string;
+    /**
+     * @description
+     * The port on which the dev server is listening. Overrides the value set by `AdminUiOptions.port`.
+     */
+    port: number;
+    /**
+     * @description
+     * Specifies the url route to the Admin UI app.
+     *
+     * @default 'admin'
+     */
+    route?: string;
+    /**
+     * @description
+     * The function which will be invoked to start the app compilation process.
+     */
+    compile: () => Promise<void>;
+}
