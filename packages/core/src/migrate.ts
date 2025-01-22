@@ -37,7 +37,9 @@ export async function runMigrations(userConfig: Partial<FirelancerConfig>): Prom
 
     const migrationsRan: string[] = [];
     try {
-        const migrations = await disableForeignKeysForSqLite(connection, () => connection.runMigrations({ transaction: 'each' }));
+        const migrations = await disableForeignKeysForSqLite(connection, () =>
+            connection.runMigrations({ transaction: 'each' }),
+        );
         for (const migration of migrations) {
             log(pc.green(`Successfully ran migration: ${migration.name}`));
             migrationsRan.push(migration.name);
@@ -103,7 +105,10 @@ export async function revertLastMigration(userConfig: Partial<FirelancerConfig>)
  * See [TypeORM migration docs](https://typeorm.io/#/migrations) for more information about the
  * underlying migration mechanism.
  */
-export async function generateMigration(userConfig: Partial<FirelancerConfig>, options: MigrationOptions): Promise<string | undefined> {
+export async function generateMigration(
+    userConfig: Partial<FirelancerConfig>,
+    options: MigrationOptions,
+): Promise<string | undefined> {
     const config = await preBootstrapConfig(userConfig);
     const connection = new DataSource(createConnectionOptions(config));
     await connection.initialize();

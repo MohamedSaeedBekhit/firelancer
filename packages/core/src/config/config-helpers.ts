@@ -43,7 +43,9 @@ export function getConfig(): Readonly<RuntimeFirelancerConfig> {
             activeConfig = defaultConfig;
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
-            console.log('Error loading config. If this is a test, make sure you have called ensureConfigLoaded() before using the config.');
+            console.log(
+                'Error loading config. If this is a test, make sure you have called ensureConfigLoaded() before using the config.',
+            );
         }
     }
     return activeConfig;

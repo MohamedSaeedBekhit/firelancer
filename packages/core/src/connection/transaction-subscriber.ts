@@ -80,7 +80,10 @@ export class TransactionSubscriber implements EntitySubscriberInterface {
         return this.awaitTransactionEvent(queryRunner);
     }
 
-    private awaitTransactionEvent(queryRunner: QueryRunner, type?: TransactionSubscriberEventType): Promise<QueryRunner> {
+    private awaitTransactionEvent(
+        queryRunner: QueryRunner,
+        type?: TransactionSubscriberEventType,
+    ): Promise<QueryRunner> {
         if (queryRunner.isTransactionActive) {
             return lastValueFrom(
                 this.subject$.pipe(
@@ -88,7 +91,9 @@ export class TransactionSubscriber implements EntitySubscriberInterface {
                     take(1),
                     tap((event) => {
                         if (type && event.type !== type) {
-                            throw new TransactionSubscriberError(`Unexpected event type: ${event.type}. Expected ${type}.`);
+                            throw new TransactionSubscriberError(
+                                `Unexpected event type: ${event.type}. Expected ${type}.`,
+                            );
                         }
                     }),
                     map((event) => event.queryRunner),

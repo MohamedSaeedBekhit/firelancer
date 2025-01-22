@@ -1,4 +1,11 @@
-import { assertFound, CustomerType, HistoryEntryType, ID, normalizeEmailAddress, PaginatedList } from '@firelancer/common';
+import {
+    assertFound,
+    CustomerType,
+    HistoryEntryType,
+    ID,
+    normalizeEmailAddress,
+    PaginatedList,
+} from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
@@ -111,7 +118,12 @@ export class CustomerService {
             throw new EmailAddressConflictError();
         }
 
-        const customerUser = await this.userService.createCustomerUser(ctx, input.customerType, input.emailAddress, password);
+        const customerUser = await this.userService.createCustomerUser(
+            ctx,
+            input.customerType,
+            input.emailAddress,
+            password,
+        );
         customer.user = customerUser;
         if (password && password !== '') {
             const verificationToken = customer.user.getNativeAuthenticationMethod().verificationToken;
@@ -281,7 +293,11 @@ export class CustomerService {
      * Given a valid verification token which has been published in an AccountRegistrationEvent, this
      * method is used to set the Customer as `verified` as part of the account registration flow.
      */
-    async verifyCustomerEmailAddress(ctx: RequestContext, verificationToken: string, password?: string): Promise<Customer> {
+    async verifyCustomerEmailAddress(
+        ctx: RequestContext,
+        verificationToken: string,
+        password?: string,
+    ): Promise<Customer> {
         const user = await this.userService.verifyUserByToken(ctx, verificationToken, password);
 
         const customer = await this.findOneByUserId(ctx, user.id);
@@ -477,7 +493,7 @@ export class CustomerService {
     async getUserCustomerFromRequest(ctx: RequestContext) {
         const userId = ctx.session?.user?.id;
         if (!userId) {
-            throw new UnauthorizedError('Unauthenticated user');
+            throw new UnauthorizedError();
         }
         const customer = await this.findOneByUserId(ctx, userId);
         if (!customer) {

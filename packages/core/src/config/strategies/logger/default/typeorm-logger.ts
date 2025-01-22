@@ -68,7 +68,11 @@ export class TypeOrmLogger implements TypeOrmLoggerInterface {
     }
 
     private shouldDisplay(logType: typeOrmLogLevel): boolean {
-        return this.options === 'all' || this.options === true || (Array.isArray(this.options) && this.options.includes(logType));
+        return (
+            this.options === 'all' ||
+            this.options === true ||
+            (Array.isArray(this.options) && this.options.includes(logType))
+        );
     }
 
     private formatQueryWithParams(query: string, parameters?: unknown[]) {

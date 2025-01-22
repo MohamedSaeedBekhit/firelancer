@@ -14,7 +14,13 @@ import {
 import { Injectable } from '@nestjs/common';
 import { CreateRoleInput, RelationPaths, UpdateRoleInput } from '../../api';
 import { RequestContextCacheService } from '../../cache';
-import { EntityNotFoundError, InternalServerError, ListQueryOptions, RequestContext, UserInputError } from '../../common';
+import {
+    EntityNotFoundError,
+    InternalServerError,
+    ListQueryOptions,
+    RequestContext,
+    UserInputError,
+} from '../../common';
 import { getAllPermissionsMetadata } from '../../common/constants';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
@@ -45,7 +51,11 @@ export class RoleService {
         this.ensureRolesHaveValidPermissions();
     }
 
-    async findAll(ctx: RequestContext, options?: ListQueryOptions<Role>, relations?: RelationPaths<Role>): Promise<PaginatedList<Role>> {
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<Role>,
+        relations?: RelationPaths<Role>,
+    ): Promise<PaginatedList<Role>> {
         return this.listQueryBuilder
             .build(Role, options, { relations: unique(relations ?? []), ctx })
             .getManyAndCount()
@@ -181,7 +191,9 @@ export class RoleService {
     }
 
     private getRoleByCode(ctx: RequestContext | undefined, code: string) {
-        const repository = ctx ? this.connection.getRepository(ctx, Role) : this.connection.rawConnection.getRepository(Role);
+        const repository = ctx
+            ? this.connection.getRepository(ctx, Role)
+            : this.connection.rawConnection.getRepository(Role);
 
         return repository.findOne({
             where: { code },
@@ -309,11 +321,15 @@ export class RoleService {
         if (!activeUserId) {
             return [];
         }
-        return await this.requestContextCache.get(ctx, `RoleService.getActiveUserPermissions.user(${activeUserId})`, async () => {
-            const user = await this.connection.getEntityOrThrow(ctx, User, activeUserId, {
-                relations: ['roles'],
-            });
-            return getUserPermissions(user); // Adjusted to aggregate permissions at a global level.
-        });
+        return await this.requestContextCache.get(
+            ctx,
+            `RoleService.getActiveUserPermissions.user(${activeUserId})`,
+            async () => {
+                const user = await this.connection.getEntityOrThrow(ctx, User, activeUserId, {
+                    relations: ['roles'],
+                });
+                return getUserPermissions(user); // Adjusted to aggregate permissions at a global level.
+            },
+        );
     }
 }

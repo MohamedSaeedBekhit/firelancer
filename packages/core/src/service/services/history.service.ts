@@ -54,7 +54,11 @@ export class HistoryService {
         private eventBus: EventBus,
     ) {}
 
-    async getHistoryForCustomer(ctx: RequestContext, customerId: ID, publicOnly: boolean): Promise<CustomerHistoryEntry[]> {
+    async getHistoryForCustomer(
+        ctx: RequestContext,
+        customerId: ID,
+        publicOnly: boolean,
+    ): Promise<CustomerHistoryEntry[]> {
         return this.connection.getRepository(ctx, CustomerHistoryEntry).find({
             where: {
                 customer: {
@@ -115,7 +119,9 @@ export class HistoryService {
     }
 
     private async getAdministratorFromContext(ctx: RequestContext): Promise<Administrator | undefined> {
-        const administrator = ctx.activeUserId ? await this.administratorService.findOneByUserId(ctx, ctx.activeUserId) : undefined;
+        const administrator = ctx.activeUserId
+            ? await this.administratorService.findOneByUserId(ctx, ctx.activeUserId)
+            : undefined;
         return administrator;
     }
 }

@@ -44,7 +44,11 @@ export class JobPostService {
             }));
     }
 
-    async findOne(ctx: RequestContext, jobPostId: ID, relations?: RelationPaths<JobPost>): Promise<JobPost | undefined> {
+    async findOne(
+        ctx: RequestContext,
+        jobPostId: ID,
+        relations?: RelationPaths<JobPost>,
+    ): Promise<JobPost | undefined> {
         const effectiveRelations = relations ?? this.relations.slice();
         if (relations && effectiveRelations.includes('facetValues')) {
             // We need the facet to determine with the FacetValues are public

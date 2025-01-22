@@ -14,6 +14,7 @@ import {
     SystemOptions,
 } from './firelancer-config';
 import { Logger } from './strategies/logger/firelancer-logger';
+import { CurrencyCode, LanguageCode } from '@firelancer/common';
 
 @Injectable()
 export class ConfigService implements FirelancerConfig {
@@ -36,6 +37,14 @@ export class ConfigService implements FirelancerConfig {
 
     get dbConnectionOptions(): DataSourceOptions {
         return this.activeConfig.dbConnectionOptions;
+    }
+
+    get defaultLanguageCode(): LanguageCode {
+        return this.activeConfig.defaultLanguageCode;
+    }
+
+    get availableCurrencyCodes(): CurrencyCode[] {
+        return this.activeConfig.availableCurrencyCodes;
     }
 
     get plugins(): Array<DynamicModule | Type<unknown>> {

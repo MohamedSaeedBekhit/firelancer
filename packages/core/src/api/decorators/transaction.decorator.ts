@@ -57,7 +57,10 @@ export type TransactionIsolationLevel = 'READ UNCOMMITTED' | 'READ COMMITTED' | 
  * }
  * ```
  */
-export const Transaction = (transactionMode: TransactionMode = 'auto', transactionIsolationLevel?: TransactionIsolationLevel) => {
+export const Transaction = (
+    transactionMode: TransactionMode = 'auto',
+    transactionIsolationLevel?: TransactionIsolationLevel,
+) => {
     return applyDecorators(
         SetMetadata(TRANSACTION_MODE_METADATA_KEY, transactionMode),
         SetMetadata(TRANSACTION_ISOLATION_LEVEL_METADATA_KEY, transactionIsolationLevel),

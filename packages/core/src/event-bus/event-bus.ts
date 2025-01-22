@@ -160,7 +160,9 @@ export class EventBus implements OnModuleDestroy {
             let handlers = this.blockingEventHandlers.get(event);
             const handlerWithIdAlreadyExists = handlers?.some((h) => h.id === handlerOptions.id);
             if (handlerWithIdAlreadyExists) {
-                throw new Error(`A handler with the id "${handlerOptions.id}" is already registered for the event ${event.name}`);
+                throw new Error(
+                    `A handler with the id "${handlerOptions.id}" is already registered for the event ${event.name}`,
+                );
             }
 
             if (handlers) {
@@ -300,7 +302,9 @@ export class EventBus implements OnModuleDestroy {
                 return undefined;
             }
 
-            Logger.error(`Unexpected error while awaiting active transactions: ${e instanceof Error && e.message + e.stack}`);
+            Logger.error(
+                `Unexpected error while awaiting active transactions: ${e instanceof Error && e.message + e.stack}`,
+            );
             throw e;
         }
     }

@@ -108,7 +108,9 @@ export class AdminUiPlugin implements NestModule {
             return;
         }
         const { app, hostname, route, adminUiConfig } = AdminUiPlugin.options;
-        const adminUiAppPath = AdminUiPlugin.isDevModeApp(app) ? path.join(app.sourcePath, 'src') : (app && app.path) || DEFAULT_APP_PATH;
+        const adminUiAppPath = AdminUiPlugin.isDevModeApp(app)
+            ? path.join(app.sourcePath, 'src')
+            : (app && app.path) || DEFAULT_APP_PATH;
         const adminUiConfigPath = path.join(adminUiAppPath, 'firelancer-ui-config.json');
         const indexHtmlPath = path.join(adminUiAppPath, 'index.html');
 
@@ -217,7 +219,9 @@ export class AdminUiPlugin implements NestModule {
             isArray: boolean = false,
         ): AdminUiConfig[Prop] => {
             if (isArray) {
-                const isValidArray = partialConfig ? ((partialConfig as AdminUiConfig)[prop] as unknown as unknown[])?.length > 0 : false;
+                const isValidArray = partialConfig
+                    ? ((partialConfig as AdminUiConfig)[prop] as unknown as unknown[])?.length > 0
+                    : false;
                 return !!partialConfig && isValidArray ? (partialConfig as AdminUiConfig)[prop] : defaultVal;
             } else {
                 return partialConfig ? (partialConfig as AdminUiConfig)[prop] || defaultVal : defaultVal;
@@ -228,7 +232,10 @@ export class AdminUiPlugin implements NestModule {
             apiHost: propOrDefault('apiHost', 'auto'),
             apiPort: propOrDefault('apiPort', 'auto'),
             tokenMethod: propOrDefault('tokenMethod', authOptions.tokenMethod === 'bearer' ? 'bearer' : 'cookie'),
-            authTokenHeaderKey: propOrDefault('authTokenHeaderKey', authOptions.authTokenHeaderKey || DEFAULT_AUTH_TOKEN_HEADER_KEY),
+            authTokenHeaderKey: propOrDefault(
+                'authTokenHeaderKey',
+                authOptions.authTokenHeaderKey || DEFAULT_AUTH_TOKEN_HEADER_KEY,
+            ),
             loginUrl: options.adminUiConfig?.loginUrl,
             brand: options.adminUiConfig?.brand,
             hideVersion: propOrDefault('hideVersion', options.adminUiConfig?.hideVersion || false),
@@ -254,7 +261,9 @@ export class AdminUiPlugin implements NestModule {
             await fs.writeFile(adminUiConfigPath, JSON.stringify(config, null, 2));
         } catch (e) {
             if (e instanceof Error) {
-                throw new Error('[AdminUiPlugin] Could not write firelancer-ui-config.json file:\n' + JSON.stringify(e.message));
+                throw new Error(
+                    '[AdminUiPlugin] Could not write firelancer-ui-config.json file:\n' + JSON.stringify(e.message),
+                );
             } else {
                 throw new Error('Unexpected error');
             }
@@ -279,7 +288,10 @@ export class AdminUiPlugin implements NestModule {
             }
         }
         try {
-            const withCustomBaseHref = indexHtmlContent.replace(/<base href=".+"\s*\/>/, `<base href="/${baseHref}/" />`);
+            const withCustomBaseHref = indexHtmlContent.replace(
+                /<base href=".+"\s*\/>/,
+                `<base href="/${baseHref}/" />`,
+            );
             await fs.writeFile(indexHtmlPath, withCustomBaseHref);
         } catch (e) {
             if (e instanceof Error) {

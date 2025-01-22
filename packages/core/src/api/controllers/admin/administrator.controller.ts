@@ -35,14 +35,20 @@ export class AdministratorController {
 
     @Get(':id')
     @Allow(Permission.ReadAdministrator)
-    async administrator(@Ctx() ctx: RequestContext, @Param() params: QueryAdministratorArgs): Promise<Administrator | undefined> {
+    async administrator(
+        @Ctx() ctx: RequestContext,
+        @Param() params: QueryAdministratorArgs,
+    ): Promise<Administrator | undefined> {
         return this.administratorService.findOne(ctx, params.id);
     }
 
     @Transaction()
     @Post('create')
     @Allow(Permission.CreateAdministrator)
-    async createAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationCreateAdministratorArgs): Promise<Administrator> {
+    async createAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body() args: MutationCreateAdministratorArgs,
+    ): Promise<Administrator> {
         const { input } = args;
         return this.administratorService.create(ctx, input);
     }
@@ -50,7 +56,10 @@ export class AdministratorController {
     @Transaction()
     @Put()
     @Allow(Permission.UpdateAdministrator)
-    async updateAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateAdministratorArgs): Promise<Administrator> {
+    async updateAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Body() args: MutationUpdateAdministratorArgs,
+    ): Promise<Administrator> {
         const { input } = args;
         return this.administratorService.update(ctx, input);
     }
@@ -84,7 +93,10 @@ export class AdministratorController {
     @Transaction()
     @Delete(':id')
     @Allow(Permission.DeleteAdministrator)
-    async deleteAdministrator(@Ctx() ctx: RequestContext, @Param() params: MutationDeleteAdministratorArgs): Promise<void> {
+    async deleteAdministrator(
+        @Ctx() ctx: RequestContext,
+        @Param() params: MutationDeleteAdministratorArgs,
+    ): Promise<void> {
         const { id } = params;
         return this.administratorService.softDelete(ctx, id);
     }

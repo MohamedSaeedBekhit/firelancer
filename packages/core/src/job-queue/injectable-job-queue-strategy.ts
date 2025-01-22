@@ -38,6 +38,8 @@ export abstract class InjectableJobQueueStrategy {
         this.hasInitialized = false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    abstract start<Data extends JobData<Data> = object>(queueName: string, process: (job: Job<Data>) => Promise<any>): void;
+    abstract start<Data extends JobData<Data> = object>(
+        queueName: string,
+        process: (job: Job<Data>) => Promise<unknown>,
+    ): void;
 }

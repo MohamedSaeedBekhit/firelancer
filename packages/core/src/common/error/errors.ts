@@ -1,13 +1,15 @@
 import { ID } from '@firelancer/common';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { LogLevel } from '../../config';
+import { coreEntitiesMap } from '../../entity';
+import { I18nError } from '../../i18n';
 
 /**
  * @description
  * This error should be thrown when some unexpected and exceptional case is encountered.
  */
-export class InternalServerError extends HttpException {
-    constructor(public description: string = 'INTERNAL_SERVER_ERROR') {
-        super('INTERNAL_SERVER_ERROR', HttpStatus.INTERNAL_SERVER_ERROR, { cause: new Error(), description });
+export class InternalServerError extends I18nError {
+    constructor(message: string, variables: { [key: string]: string | number } = {}) {
+        super(500, message, variables, 'INTERNAL_SERVER_ERROR', LogLevel.Error);
     }
 }
 
@@ -15,9 +17,9 @@ export class InternalServerError extends HttpException {
  * @description
  * This error should be thrown when user input is not as expected.
  */
-export class UserInputError extends HttpException {
-    constructor(public description: string = 'USER_INPUT_ERROR') {
-        super('USER_INPUT_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class UserInputError extends I18nError {
+    constructor(message: string, variables: { [key: string]: string | number } = {}) {
+        super(400, message, variables, 'USER_INPUT_ERROR', LogLevel.Warn);
     }
 }
 
@@ -25,9 +27,9 @@ export class UserInputError extends HttpException {
  * @description
  * This error should be thrown when an operation is attempted which is not allowed.
  */
-export class IllegalOperationError extends HttpException {
-    constructor(public description: string = 'ILLEGAL_OPERATION') {
-        super('ILLEGAL_OPERATION', HttpStatus.BAD_REQUEST, { description });
+export class IllegalOperationError extends I18nError {
+    constructor(message: string, variables: { [key: string]: string | number } = {}) {
+        super(400, message, variables, 'ILLEGAL_OPERATION_ERROR', LogLevel.Warn);
     }
 }
 
@@ -35,9 +37,9 @@ export class IllegalOperationError extends HttpException {
  * @description
  * This error should be thrown when the user's authentication credentials do not match.
  */
-export class UnauthorizedError extends HttpException {
-    constructor(public description: string = 'error.unauthorized') {
-        super('UNAUTHORIZED', HttpStatus.UNAUTHORIZED, { description });
+export class UnauthorizedError extends I18nError {
+    constructor() {
+        super(400, 'error.unauthorized', {}, 'UNAUTHORIZED_ERROR', LogLevel.Info);
     }
 }
 
@@ -46,101 +48,103 @@ export class UnauthorizedError extends HttpException {
  * This error should be thrown when a user attempts to access a resource which is outside of
  * his or her privileges.
  */
-export class ForbiddenError extends HttpException {
-    constructor(public description: string = 'error.forbidden') {
-        super('FORBIDDEN', HttpStatus.FORBIDDEN, { description });
+export class ForbiddenError extends I18nError {
+    constructor(logLevel: LogLevel = LogLevel.Warn) {
+        super(400, 'error.forbidden', {}, 'FORBIDDEN_ERROR', logLevel);
     }
 }
 
 /**
  * @description
  * This error should be thrown when an entity cannot be found in the database, i.e. no entity of
- * the given entityName (JobPost, User etc.) exists with the provided id.
+ * the given entityName (Product, User etc.) exists with the provided id.
+
  */
-export class EntityNotFoundError extends HttpException {
-    constructor(
-        public entityName: unknown | string,
-        public id: ID,
-        public description: string = 'error.entity-with-id-not-found',
-    ) {
-        super('ENTITY_NOT_FOUND', HttpStatus.NOT_FOUND, { description });
+export class EntityNotFoundError extends I18nError {
+    constructor(entityName: keyof typeof coreEntitiesMap | string, id: ID) {
+        super(400, 'error.entity-with-id-not-found', { entityName, id }, 'ENTITY_NOT_FOUND_ERROR', LogLevel.Warn);
     }
 }
 
-export class InvalidCredentialsError extends HttpException {
-    constructor(public description: string = 'INVALID_CREDENTIALS_ERROR') {
-        super('INVALID_CREDENTIALS_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class InvalidCredentialsError extends I18nError {
+    readonly authenticationError: string;
+    constructor(input: { authenticationError: string }) {
+        super(400, 'error.invalid-credentials', {}, 'INVALID_CREDENTIALS_ERROR');
+        this.authenticationError = input.authenticationError;
     }
 }
 
-export class NotVerifiedError extends HttpException {
-    constructor(public description: string = 'NOT_VERIFIED_ERROR') {
-        super('NOT_VERIFIED_ERROR', HttpStatus.METHOD_NOT_ALLOWED, { description });
+export class NotVerifiedError extends I18nError {
+    readonly refundId: ID;
+    constructor() {
+        super(400, 'error.not-verified', {}, 'NOT_VERIFIED_ERROR');
     }
 }
 
-export class PasswordValidationError extends HttpException {
-    constructor(public description: string = 'PASSWORD_VALIDATION_ERROR') {
-        super('PASSWORD_VALIDATION_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class PasswordValidationError extends I18nError {
+    readonly validationErrorMessage: string;
+    constructor(input: { validationErrorMessage: string }) {
+        super(400, 'error.password-validation', {}, 'PASSWORD_VALIDATION_ERROR');
+        this.validationErrorMessage = input.validationErrorMessage;
     }
 }
 
-export class NativeAuthStrategyError extends HttpException {
-    constructor(public description: string = 'NATIVE_AUTH_STRATEGY_ERROR') {
-        super('NATIVE_AUTH_STRATEGY_ERROR', HttpStatus.INTERNAL_SERVER_ERROR, { description });
+export class NativeAuthStrategyError extends I18nError {
+    constructor() {
+        super(400, 'error.native-auth-strategy', {}, 'NATIVE_AUTH_STRATEGY_ERROR');
     }
 }
 
-export class EmailAddressConflictError extends HttpException {
-    constructor(public description: string = 'EMAIL_ADDRESS_CONFLICT_ERROR') {
-        super('EMAIL_ADDRESS_CONFLICT_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class EmailAddressConflictError extends I18nError {
+    constructor() {
+        super(400, 'error.email-address-conlict', {}, 'EMAIL_ADDRESS_CONFLICT_ERROR');
     }
 }
 
-export class MissingPasswordError extends HttpException {
-    constructor(public description: string = 'MISSING_PASSWORD_ERROR') {
-        super('MISSING_PASSWORD_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class MissingPasswordError extends I18nError {
+    constructor() {
+        super(400, 'error.missing-password', {}, 'MISSING_PASSWORD_ERROR');
     }
 }
 
-export class PasswordAlreadySetError extends HttpException {
+export class PasswordAlreadySetError extends I18nError {
     constructor(public description: string = 'PASSWORD_ALREADY_SET_ERROR') {
-        super('PASSWORD_ALREADY_SET_ERROR', HttpStatus.BAD_REQUEST, { description });
+        super(400, 'error.password-already-set', {}, 'PASSWORD_ALREADY_SET_ERROR');
     }
 }
 
-export class VerificationTokenExpiredError extends HttpException {
-    constructor(public description: string = 'VERIFICATION_TOKEN_EXPIRED_ERROR') {
-        super('VERIFICATION_TOKEN_EXPIRED_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class VerificationTokenExpiredError extends I18nError {
+    constructor() {
+        super(400, 'error.verification-token-expired', {}, 'VERIFICATION_TOKEN_EXPIRED_ERROR');
     }
 }
 
-export class VerificationTokenInvalidError extends HttpException {
-    constructor(public description: string = 'VERIFICATION_TOKEN_INVALID_ERROR') {
-        super('VERIFICATION_TOKEN_INVALID_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class VerificationTokenInvalidError extends I18nError {
+    constructor() {
+        super(400, 'error.verification-token-invalid', {}, 'VERIFICATION_TOKEN_INVALID_ERROR');
     }
 }
 
-export class PasswordResetTokenInvalidError extends HttpException {
-    constructor(public description: string = 'PASSWORD_RESET_TOKEN_INVALID_ERROR') {
-        super('PASSWORD_RESET_TOKEN_INVALID_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class PasswordResetTokenInvalidError extends I18nError {
+    constructor() {
+        super(400, 'error.password-reset-token', {}, 'PASSWORD_RESET_TOKEN_INVALID_ERROR');
     }
 }
 
-export class PasswordResetTokenExpiredError extends HttpException {
-    constructor(public description: string = 'PASSWORD_RESET_TOKEN_EXPIRED_ERROR') {
-        super('PASSWORD_RESET_TOKEN_EXPIRED_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class PasswordResetTokenExpiredError extends I18nError {
+    constructor() {
+        super(400, 'error.password-reset-token-expired', {}, 'PASSWORD_RESET_TOKEN_EXPIRED_ERROR');
     }
 }
 
-export class IdentifierChangeTokenInvalidError extends HttpException {
-    constructor(public description: string = 'IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR') {
-        super('IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class IdentifierChangeTokenInvalidError extends I18nError {
+    constructor() {
+        super(400, 'error.identifier-change-token-invalid', {}, 'IDENTIFIER_CHANGE_TOKEN_INVALID_ERROR');
     }
 }
 
-export class IdentifierChangeTokenExpiredError extends HttpException {
-    constructor(public description: string = 'IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR') {
-        super('IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR', HttpStatus.BAD_REQUEST, { description });
+export class IdentifierChangeTokenExpiredError extends I18nError {
+    constructor() {
+        super(400, 'error.identifier-change-token-expired', {}, 'IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR');
     }
 }

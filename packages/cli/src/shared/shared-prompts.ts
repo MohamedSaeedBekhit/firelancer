@@ -7,7 +7,10 @@ import { EntityRef } from './entity-ref';
 import { FirelancerPluginRef } from './firelancer-plugin-ref';
 import { ServiceRef } from './service-ref';
 
-export async function analyzeProject(options: { providedFirelancerPlugin?: FirelancerPluginRef; cancelledMessage?: string }) {
+export async function analyzeProject(options: {
+    providedFirelancerPlugin?: FirelancerPluginRef;
+    cancelledMessage?: string;
+}) {
     const providedFirelancerPlugin = options.providedFirelancerPlugin;
     let project = providedFirelancerPlugin?.classDeclaration.getProject();
     let tsConfigPath: string | undefined;
@@ -68,7 +71,10 @@ export async function selectEntity(plugin: FirelancerPluginRef): Promise<EntityR
     return targetEntity as EntityRef;
 }
 
-export async function selectMultiplePluginClasses(project: Project, cancelledMessage: string): Promise<FirelancerPluginRef[]> {
+export async function selectMultiplePluginClasses(
+    project: Project,
+    cancelledMessage: string,
+): Promise<FirelancerPluginRef[]> {
     const pluginClasses = getPluginClasses(project);
     if (pluginClasses.length === 0) {
         cancel(Messages.NoPluginsFound);

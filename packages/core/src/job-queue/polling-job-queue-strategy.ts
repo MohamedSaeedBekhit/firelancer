@@ -193,7 +193,9 @@ class ActiveQueue<Data extends JobData<Data> = object> {
 
                 if (this.activeJobs.length > 0) {
                     if (now - lastStatusUpdate > 2000) {
-                        Logger.info(`Stopping queue: ${this.queueName} - waiting for ${this.activeJobs.length} active jobs to complete...`);
+                        Logger.info(
+                            `Stopping queue: ${this.queueName} - waiting for ${this.activeJobs.length} active jobs to complete...`,
+                        );
                         lastStatusUpdate = now;
                     }
                 }

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService, Logger } from '../config';
 import { JobQueueStrategy } from '../config/strategies/job-queue/job-queue-strategy';
 import { loggerCtx } from './constants';
@@ -52,6 +52,7 @@ export class JobQueueService implements OnModuleDestroy {
     }
 
     constructor(
+        @Inject(forwardRef(() => ConfigService))
         private configService: ConfigService,
         private jobBufferService: JobBufferService,
     ) {}

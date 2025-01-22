@@ -124,7 +124,10 @@ export async function bootstrap(userConfig?: Partial<FirelancerConfig>, options?
  *   });
  * ```
  * */
-export async function bootstrapWorker(userConfig: Partial<FirelancerConfig>, options?: BootstrapWorkerOptions): Promise<FirelancerWorker> {
+export async function bootstrapWorker(
+    userConfig: Partial<FirelancerConfig>,
+    options?: BootstrapWorkerOptions,
+): Promise<FirelancerWorker> {
     const FirelancerConfig = await preBootstrapConfig(userConfig);
     const config = disableSynchronize(FirelancerConfig);
     config.logger.setDefaultContext?.('Firelancer Worker');
@@ -151,7 +154,9 @@ export async function bootstrapWorker(userConfig: Partial<FirelancerConfig>, opt
 /**
  * Setting the global config must be done prior to loading the AppModule.
  */
-export async function preBootstrapConfig(userConfig: Partial<FirelancerConfig> = {}): Promise<Readonly<RuntimeFirelancerConfig>> {
+export async function preBootstrapConfig(
+    userConfig: Partial<FirelancerConfig> = {},
+): Promise<Readonly<RuntimeFirelancerConfig>> {
     if (userConfig) {
         await setConfig(userConfig);
     }
@@ -241,7 +246,8 @@ async function validateDbTablesForWorker(worker: INestApplicationContext) {
  */
 function setExposedHeaders(config: Readonly<RuntimeFirelancerConfig>) {
     const { tokenMethod } = config.authOptions;
-    const isUsingBearerToken = tokenMethod === 'bearer' || (Array.isArray(tokenMethod) && tokenMethod.includes('bearer'));
+    const isUsingBearerToken =
+        tokenMethod === 'bearer' || (Array.isArray(tokenMethod) && tokenMethod.includes('bearer'));
     if (isUsingBearerToken) {
         const authTokenHeaderKey = config.authOptions.authTokenHeaderKey;
         const corsOptions = config.apiOptions.cors;
@@ -323,7 +329,9 @@ function checkPluginCompatibility(config: RuntimeFirelancerConfig): void {
                     `Plugin "${pluginName}" is not compatible with this version of Firelancer. ` +
                         `It specifies a semver range of "${compatibility}" but the current version is "${FIRELANCER_VERSION}".`,
                 );
-                throw new InternalServerError(`Plugin "${pluginName}" is not compatible with this version of Firelancer.`);
+                throw new InternalServerError(
+                    `Plugin "${pluginName}" is not compatible with this version of Firelancer.`,
+                );
             }
         }
     }

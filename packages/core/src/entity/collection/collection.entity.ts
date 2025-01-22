@@ -1,5 +1,16 @@
 import { DeepPartial, ID } from '@firelancer/common';
-import { Column, Entity, Index, JoinTable, ManyToMany, ManyToOne, OneToMany, Tree, TreeChildren, TreeParent } from 'typeorm';
+import {
+    Column,
+    Entity,
+    Index,
+    JoinTable,
+    ManyToMany,
+    ManyToOne,
+    OneToMany,
+    Tree,
+    TreeChildren,
+    TreeParent,
+} from 'typeorm';
 import { ConfigurableOperation } from '../../api';
 import { Orderable } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';

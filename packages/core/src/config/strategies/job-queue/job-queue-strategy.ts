@@ -19,19 +19,28 @@ export interface JobQueueStrategy extends InjectableStrategy {
      * @description
      * Add a new job to the queue.
      */
-    add<Data extends JobData<Data> = object>(job: Job<Data>, jobOptions?: JobQueueStrategyJobOptions<Data>): Promise<Job<Data>>;
+    add<Data extends JobData<Data> = object>(
+        job: Job<Data>,
+        jobOptions?: JobQueueStrategyJobOptions<Data>,
+    ): Promise<Job<Data>>;
 
     /**
      * @description
      * Start the job queue
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    start<Data extends JobData<Data> = object>(queueName: string, process: (job: Job<Data>) => Promise<any>): Promise<void>;
+
+    start<Data extends JobData<Data> = object>(
+        queueName: string,
+        process: (job: Job<Data>) => Promise<unknown>,
+    ): Promise<void>;
 
     /**
      * @description
      * Stops a queue from running. Its not guaranteed to stop immediately.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    stop<Data extends JobData<Data> = object>(queueName: string, process: (job: Job<Data>) => Promise<any>): Promise<void>;
+
+    stop<Data extends JobData<Data> = object>(
+        queueName: string,
+        process: (job: Job<Data>) => Promise<unknown>,
+    ): Promise<void>;
 }

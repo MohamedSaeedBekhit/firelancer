@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import pc from 'picocolors';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const version = require('../package.json').version;
 const program = new Command();
 

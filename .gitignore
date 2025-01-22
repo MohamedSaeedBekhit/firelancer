@@ -19,7 +19,6 @@ coverage
 # Build Outputs
 .next/
 out/
-build/
 dist/
 public/
 lib/

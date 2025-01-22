@@ -92,7 +92,10 @@ export class SubscribableJob<T extends JobData<T> = any> extends Job<T> {
                 filter(notNullOrUndefined),
                 distinctUntilChanged((a, b) => a?.progress === b?.progress && a?.state === b?.state),
                 takeWhile(
-                    (job) => job?.state !== JobState.FAILED && job.state !== JobState.COMPLETED && job.state !== JobState.CANCELLED,
+                    (job) =>
+                        job?.state !== JobState.FAILED &&
+                        job.state !== JobState.COMPLETED &&
+                        job.state !== JobState.CANCELLED,
                     true,
                 ),
                 tap((job) => {

@@ -6,7 +6,10 @@ import { AuthOptions } from '../config/firelancer-config';
  * Get the session token from either the cookie or the Authorization header, depending
  * on the configured tokenMethod.
  */
-export function extractSessionToken(req: Request, tokenMethod: Exclude<AuthOptions['tokenMethod'], undefined>): string | undefined {
+export function extractSessionToken(
+    req: Request,
+    tokenMethod: Exclude<AuthOptions['tokenMethod'], undefined>,
+): string | undefined {
     const tokenFromCookie = getFromCookie(req);
     const tokenFromHeader = getFromHeader(req);
 

@@ -32,7 +32,10 @@ export function getModuleMetadata(module: Type<unknown>) {
     };
 }
 
-export function getPluginAPIExtensions(plugins: Array<Type<unknown> | DynamicModule>, apiType: 'shop' | 'admin'): APIExtensionDefinition[] {
+export function getPluginAPIExtensions(
+    plugins: Array<Type<unknown> | DynamicModule>,
+    apiType: 'shop' | 'admin',
+): APIExtensionDefinition[] {
     const extensions =
         apiType === 'shop'
             ? plugins.map((p) => reflectMetadata(p, PLUGIN_METADATA.SHOP_API_EXTENSIONS))
@@ -49,7 +52,10 @@ export function getConfigurationFunction(plugin: Type<unknown> | DynamicModule):
     return reflectMetadata(plugin, PLUGIN_METADATA.CONFIGURATION);
 }
 
-export function restControllersFor(plugin: Type<unknown> | DynamicModule, apiType: 'shop' | 'admin'): Array<Type<unknown>> {
+export function restControllersFor(
+    plugin: Type<unknown> | DynamicModule,
+    apiType: 'shop' | 'admin',
+): Array<Type<unknown>> {
     const apiExtensions: APIExtensionDefinition =
         apiType === 'shop'
             ? reflectMetadata(plugin, PLUGIN_METADATA.SHOP_API_EXTENSIONS)

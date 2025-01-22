@@ -45,18 +45,24 @@ export class AuthService {
             new AttemptedLoginEvent(
                 ctx,
                 authenticationMethod,
-                authenticationMethod === NATIVE_AUTH_STRATEGY_NAME ? (authenticationData as NativeAuthenticationData).username : undefined,
+                authenticationMethod === NATIVE_AUTH_STRATEGY_NAME
+                    ? (authenticationData as NativeAuthenticationData).username
+                    : undefined,
             ),
         );
         const authenticationStrategy = this.getAuthenticationStrategy(apiType, authenticationMethod);
         const authenticateResult = await authenticationStrategy.authenticate(ctx, authenticationData);
         if (typeof authenticateResult === 'string') {
-            throw new InvalidCredentialsError(authenticateResult);
+            throw new InvalidCredentialsError({ authenticationError: authenticateResult });
         }
         if (!authenticateResult) {
-            throw new InvalidCredentialsError();
+            throw new InvalidCredentialsError({ authenticationError: '' });
         }
-        const session = await this.createAuthenticatedSessionForUser(ctx, authenticateResult, authenticationStrategy.name);
+        const session = await this.createAuthenticatedSessionForUser(
+            ctx,
+            authenticateResult,
+            authenticationStrategy.name,
+        );
         return session;
     }
 
@@ -65,8 +71,14 @@ export class AuthService {
         user: User,
         authenticationStrategyName: string,
     ): Promise<AuthenticatedSession> {
-        const externalAuthenticationMethods = (user.authenticationMethods ?? []).filter((am) => am instanceof ExternalAuthenticationMethod);
-        if (!externalAuthenticationMethods.length && this.configService.authOptions.requireVerification && !user.verified) {
+        const externalAuthenticationMethods = (user.authenticationMethods ?? []).filter(
+            (am) => am instanceof ExternalAuthenticationMethod,
+        );
+        if (
+            !externalAuthenticationMethods.length &&
+            this.configService.authOptions.requireVerification &&
+            !user.verified
+        ) {
             throw new NotVerifiedError();
         }
         if (ctx.session) {
@@ -88,7 +100,7 @@ export class AuthService {
         const nativeAuthenticationStrategy = this.getAuthenticationStrategy('shop', NATIVE_AUTH_STRATEGY_NAME);
         const passwordMatches = await nativeAuthenticationStrategy.verifyUserPassword(ctx, userId, password);
         if (!passwordMatches) {
-            throw new InvalidCredentialsError();
+            throw new InvalidCredentialsError({ authenticationError: '' });
         }
     }
 
@@ -112,11 +124,15 @@ export class AuthService {
         }
     }
 
-    private getAuthenticationStrategy(apiType: ApiType, method: typeof NATIVE_AUTH_STRATEGY_NAME): NativeAuthenticationStrategy;
+    private getAuthenticationStrategy(
+        apiType: ApiType,
+        method: typeof NATIVE_AUTH_STRATEGY_NAME,
+    ): NativeAuthenticationStrategy;
     private getAuthenticationStrategy(apiType: ApiType, method: string): AuthenticationStrategy;
     private getAuthenticationStrategy(apiType: ApiType, method: string): AuthenticationStrategy {
         const { authOptions } = this.configService;
-        const strategies = apiType === 'admin' ? authOptions.adminAuthenticationStrategy : authOptions.shopAuthenticationStrategy;
+        const strategies =
+            apiType === 'admin' ? authOptions.adminAuthenticationStrategy : authOptions.shopAuthenticationStrategy;
         const match = strategies.find((s) => s.name === method);
         if (!match) {
             throw new InternalServerError('error.unrecognized-authentication-strategy');

@@ -67,7 +67,9 @@ export class Job<T extends JobData<T> = any> {
     get isSettled(): boolean {
         return (
             !!this._settledAt &&
-            (this._state === JobState.COMPLETED || this._state === JobState.FAILED || this._state === JobState.CANCELLED)
+            (this._state === JobState.COMPLETED ||
+                this._state === JobState.FAILED ||
+                this._state === JobState.CANCELLED)
         );
     }
 

@@ -28,7 +28,10 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         super.destroy();
     }
 
-    async add<Data extends JobData<Data> = object>(job: Job<Data>, jobOptions?: JobQueueStrategyJobOptions<Data>): Promise<Job<Data>> {
+    async add<Data extends JobData<Data> = object>(
+        job: Job<Data>,
+        jobOptions?: JobQueueStrategyJobOptions<Data>,
+    ): Promise<Job<Data>> {
         if (!this.connectionAvailable(this.rawConnection)) {
             throw new Error('Connection not available');
         }
@@ -75,7 +78,8 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
         }
         const connection = this.rawConnection;
         const connectionType = this.rawConnection.options.type;
-        const isSQLite = connectionType === 'sqlite' || connectionType === 'sqljs' || connectionType === 'better-sqlite3';
+        const isSQLite =
+            connectionType === 'sqlite' || connectionType === 'sqljs' || connectionType === 'better-sqlite3';
 
         if (isSQLite) {
             // SQLite driver does not support concurrent transactions. See https://github.com/typeorm/typeorm/issues/1884
@@ -126,7 +130,10 @@ export class SqlJobQueueStrategy extends PollingJobQueueStrategy implements Insp
                 const msSinceLastFailure = Date.now() - +record.updatedAt;
                 const backOffDelayMs = this.backOffStrategy(queueName, record.attempts, job);
                 if (msSinceLastFailure < backOffDelayMs) {
-                    return await this.getNextAndSetAsRunning(manager, queueName, setLock, [...waitingJobIds, record.id]);
+                    return await this.getNextAndSetAsRunning(manager, queueName, setLock, [
+                        ...waitingJobIds,
+                        record.id,
+                    ]);
                 }
             }
             job.start();

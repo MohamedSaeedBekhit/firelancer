@@ -1,7 +1,7 @@
 import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '@firelancer/common';
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
-import { Calculated } from '../../common';
+import { Calculated, UserInputError } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { Customer } from '../customer/customer.entity';
 import { EntityId } from '../entity-id.decorator';
@@ -15,7 +15,9 @@ import { Money } from '../money.decorator';
 @Entity()
 @Check('"balance" = COALESCE("prevBalance", 0) + "credit" - "debit"')
 @Check('"prevSettledAt" < "settledAt"')
-@Check('("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)')
+@Check(
+    '("prevSettledAt" IS NULL AND "prevBalance" IS NULL) OR ("prevSettledAt" IS NOT NULL AND "prevBalance" IS NOT NULL)',
+)
 @Check('"settledAt" IS NULL OR "rejectedAt" IS NULL')
 export class BalanceEntry extends FirelancerEntity {
     constructor(input?: DeepPartial<BalanceEntry>) {
@@ -96,19 +98,19 @@ export class BalanceEntry extends FirelancerEntity {
 
     validate() {
         if (this.debit < 0) {
-            throw new Error('entry.debit-cannot-be-negative-number');
+            throw new UserInputError('entry.debit-cannot-be-negative-number');
         }
 
         if (this.credit < 0) {
-            throw new Error('entry.credit-cannot-be-negative-number');
+            throw new UserInputError('entry.credit-cannot-be-negative-number');
         }
 
         if (!Number.isInteger(this.debit)) {
-            throw new Error('entry.debit-must-be-integer-number');
+            throw new UserInputError('entry.debit-must-be-integer-number');
         }
 
         if (!Number.isInteger(this.credit)) {
-            throw new Error('entry.credit-must-be-integer-number');
+            throw new UserInputError('entry.credit-must-be-integer-number');
         }
     }
 }

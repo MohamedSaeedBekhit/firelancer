@@ -65,7 +65,7 @@ export interface MoneyStrategy extends InjectableStrategy {
     /**
      * @description
      * Defines the precision (i.e. number of decimal places) represented by the monetary values.
-     * For example, consider a product variant with a price value of `12345`.
+     * For example, consider a service with a price value of `12345`.
      *
      * - If the precision is `2`, then the price is `123.45`.
      * - If the precision is `3`, then the price is `12.345`.

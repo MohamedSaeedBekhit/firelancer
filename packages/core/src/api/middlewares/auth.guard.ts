@@ -34,7 +34,10 @@ export class AuthGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const { req, res } = parseContext(context);
-        const permissions = this.reflector.get<Permission[] | undefined>(PERMISSIONS_METADATA_KEY, context.getHandler());
+        const permissions = this.reflector.get<Permission[] | undefined>(
+            PERMISSIONS_METADATA_KEY,
+            context.getHandler(),
+        );
         const isAuthDisabled = this.configService.authOptions.disableAuth;
         const isPublicPermissionRequired = !!permissions && permissions.includes(Permission.Public);
         const isOwnerPermissionRequired = !!permissions && permissions.includes(Permission.Owner);
@@ -55,7 +58,11 @@ export class AuthGuard implements CanActivate {
         }
     }
 
-    private async getSession(req: Request, res: Response, isOwnerPermissionRequired: boolean): Promise<CachedSession | undefined> {
+    private async getSession(
+        req: Request,
+        res: Response,
+        isOwnerPermissionRequired: boolean,
+    ): Promise<CachedSession | undefined> {
         const { authOptions } = this.configService;
         const sessionToken = extractSessionToken(req, authOptions.tokenMethod);
         let serializedSession: CachedSession | undefined;

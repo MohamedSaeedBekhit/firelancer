@@ -30,7 +30,10 @@ export class TransactionInterceptor implements NestInterceptor {
         const { req } = parseContext(context);
         const ctx: RequestContext | undefined = internal_getRequestContext(req, context);
         if (ctx) {
-            const transactionMode = this.reflector.get<TransactionMode>(TRANSACTION_MODE_METADATA_KEY, context.getHandler());
+            const transactionMode = this.reflector.get<TransactionMode>(
+                TRANSACTION_MODE_METADATA_KEY,
+                context.getHandler(),
+            );
             const transactionIsolationLevel = this.reflector.get<TransactionIsolationLevel | undefined>(
                 TRANSACTION_ISOLATION_LEVEL_METADATA_KEY,
                 context.getHandler(),

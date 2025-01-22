@@ -52,7 +52,11 @@ export class InitializerService {
                     Logger.warn(`Awaiting DB schema creation... (attempt ${attempt})`);
                     await new Promise((resolve) => setTimeout(resolve, delayMs));
                 } else {
-                    Logger.error('Timed out when awaiting the DB schema to be ready!', undefined, e instanceof Error ? e.stack : undefined);
+                    Logger.error(
+                        'Timed out when awaiting the DB schema to be ready!',
+                        undefined,
+                        e instanceof Error ? e.stack : undefined,
+                    );
                 }
             }
         }

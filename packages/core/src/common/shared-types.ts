@@ -1,4 +1,11 @@
-import { BooleanOperators, DateOperators, LogicalOperator, NumberOperators, StringOperators, Type } from '@firelancer/common';
+import {
+    BooleanOperators,
+    DateOperators,
+    LogicalOperator,
+    NumberOperators,
+    StringOperators,
+    Type,
+} from '@firelancer/common';
 import { FirelancerEntity } from '../entity';
 import { Request, Response } from 'express';
 

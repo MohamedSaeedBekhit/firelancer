@@ -15,7 +15,12 @@ type CustomerInputTypes =
  * This event is fired whenever a Customer is added, updated or deleted.
  */
 export class CustomerEvent extends FirelancerEntityEvent<Customer, CustomerInputTypes> {
-    constructor(ctx: RequestContext, entity: Customer, type: 'created' | 'updated' | 'deleted', input?: CustomerInputTypes) {
+    constructor(
+        ctx: RequestContext,
+        entity: Customer,
+        type: 'created' | 'updated' | 'deleted',
+        input?: CustomerInputTypes,
+    ) {
         super(entity, type, ctx, input);
     }
 }

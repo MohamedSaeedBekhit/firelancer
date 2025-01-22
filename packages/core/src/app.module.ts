@@ -7,21 +7,38 @@ import { ConnectionModule } from './connection/connection.module';
 import { PluginModule } from './plugin/plugin.module';
 import { ProcessContextModule } from './process-context/process-context.module';
 import { ServiceModule } from './service/service.module';
+import { I18nModule, I18nService } from './i18n';
 
 /* eslint-disable @typescript-eslint/no-require-imports */
 const cookieSession = require('cookie-session');
 
 @Module({
-    imports: [ProcessContextModule, ConfigModule, ApiModule, PluginModule.forRoot(), ServiceModule, ConnectionModule],
+    imports: [
+        ProcessContextModule,
+        ConfigModule,
+        ApiModule,
+        PluginModule.forRoot(),
+        ServiceModule,
+        ConnectionModule,
+        I18nModule,
+    ],
 })
 export class AppModule implements NestModule {
-    constructor(private configService: ConfigService) {}
+    constructor(
+        private configService: ConfigService,
+        private i18nService: I18nService,
+    ) {}
 
     configure(consumer: MiddlewareConsumer) {
         const { middlewares, adminApiPath, shopApiPath } = this.configService.apiOptions;
         const { cookieOptions } = this.configService.authOptions;
 
-        const allMiddlewares = middlewares || [];
+        const i18nextHandler = this.i18nService.handle();
+        const defaultMiddleware: Middleware[] = [
+            { handler: i18nextHandler, route: adminApiPath },
+            { handler: i18nextHandler, route: shopApiPath },
+        ];
+        const allMiddlewares = defaultMiddleware.concat(middlewares);
 
         if (typeof cookieOptions?.name === 'object') {
             const shopApiCookieName = cookieOptions.name.shop;

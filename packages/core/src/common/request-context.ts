@@ -1,10 +1,11 @@
-import { ID, JsonCompatible, Permission, intersect, isObject } from '@firelancer/common';
+import { ID, JsonCompatible, Permission, intersect, isObject, LanguageCode, CurrencyCode } from '@firelancer/common';
 import { ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 import { EntityManager } from 'typeorm';
 import { CachedSession } from '../config/strategies/session-cache/session-cache-strategy';
 import { REQUEST_CONTEXT_KEY, REQUEST_CONTEXT_MAP_KEY, TRANSACTION_MANAGER_KEY } from './constants';
 import { ApiType } from './get-api-type';
+import { TFunction } from 'i18next';
 
 export type SerializedRequestContext = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +14,7 @@ export type SerializedRequestContext = {
     _apiType: ApiType;
     _isAuthorized: boolean;
     _authorizedAsOwnerOnly: boolean;
+    _languageCode: LanguageCode;
 };
 
 /**
@@ -49,7 +51,11 @@ interface RequestWithStores extends Request {
  * For example, here is a diagram to show how, in an incoming API request, we are able to store
  * and retrieve the `RequestContext` in a resolver:
  */
-export function internal_setRequestContext(req: RequestWithStores, ctx: RequestContext, executionContext?: ExecutionContext) {
+export function internal_setRequestContext(
+    req: RequestWithStores,
+    ctx: RequestContext,
+    executionContext?: ExecutionContext,
+) {
     // If we have access to the `ExecutionContext`, it means we are able to bind
     // the `ctx` object to the specific "handler", i.e. the controller (for REST).
     let item: RequestContextStore | undefined;
@@ -84,7 +90,10 @@ export function internal_setRequestContext(req: RequestWithStores, ctx: RequestC
  * Gets the RequestContext from the `req` object. See internal_setRequestContext
  * for more details on this mechanism.
  */
-export function internal_getRequestContext(req: RequestWithStores, executionContext?: ExecutionContext): RequestContext | undefined {
+export function internal_getRequestContext(
+    req: RequestWithStores,
+    executionContext?: ExecutionContext,
+): RequestContext | undefined {
     let item: RequestContextStore | undefined;
     if (executionContext && typeof executionContext.getHandler === 'function') {
         const map = req[REQUEST_CONTEXT_MAP_KEY];
@@ -132,10 +141,13 @@ export function internal_getRequestContext(req: RequestWithStores, executionCont
  */
 export class RequestContext {
     private readonly _req?: Request;
-    private readonly _session?: CachedSession;
     private readonly _apiType: ApiType;
+    private readonly _session?: CachedSession;
     private readonly _isAuthorized: boolean;
     private readonly _authorizedAsOwnerOnly: boolean;
+    private readonly _currencyCode: CurrencyCode;
+    private readonly _languageCode: LanguageCode;
+    private readonly _translationFn: TFunction;
 
     constructor(options: {
         req?: Request;
@@ -143,13 +155,19 @@ export class RequestContext {
         session?: CachedSession;
         isAuthorized: boolean;
         authorizedAsOwnerOnly: boolean;
+        currencyCode?: CurrencyCode;
+        languageCode?: LanguageCode;
+        translationFn?: TFunction;
     }) {
-        const { req, apiType, session } = options;
+        const { req, apiType, session, currencyCode, languageCode, translationFn } = options;
         this._req = req;
         this._apiType = apiType;
         this._session = session;
         this._isAuthorized = options.isAuthorized;
         this._authorizedAsOwnerOnly = options.authorizedAsOwnerOnly;
+        this._currencyCode = currencyCode || CurrencyCode.USD;
+        this._languageCode = languageCode || LanguageCode.en;
+        this._translationFn = translationFn || (((key: string) => key) as any); // eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     /**
@@ -202,6 +220,7 @@ export class RequestContext {
             },
             isAuthorized: ctxObject._isAuthorized,
             authorizedAsOwnerOnly: ctxObject._authorizedAsOwnerOnly,
+            languageCode: ctxObject._languageCode,
         });
     }
 
@@ -290,6 +309,14 @@ export class RequestContext {
         return this._apiType;
     }
 
+    get currencyCode(): CurrencyCode {
+        return this._currencyCode;
+    }
+
+    get languageCode(): LanguageCode {
+        return this._languageCode;
+    }
+
     get session(): CachedSession | undefined {
         return this._session;
     }
@@ -313,5 +340,17 @@ export class RequestContext {
      */
     get authorizedAsOwnerOnly(): boolean {
         return this._authorizedAsOwnerOnly;
+    }
+
+    /**
+     * @description
+     * Translate the given i18n key
+     */
+    translate(key: string, variables?: { [k: string]: unknown }): string {
+        try {
+            return this._translationFn(key, variables);
+        } catch (e) {
+            return `Translation format error: ${JSON.stringify(e instanceof Error && e.message)}). Original key: ${key}`;
+        }
     }
 }

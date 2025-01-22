@@ -6,13 +6,22 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "authentication_method" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "identifier" character varying, "passwordHash" character varying, "verificationToken" character varying, "passwordResetToken" character varying, "identifierChangeToken" character varying, "pendingIdentifier" character varying, "strategy" character varying, "externalIdentifier" character varying, "metadata" text, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_e204686018c3c60f6164e385081" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_00cbe87bc0d4e36758d61bd31d" ON "authentication_method" ("userId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_a23445b2c942d8dfcae15b8de2" ON "authentication_method" ("type") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_00cbe87bc0d4e36758d61bd31d" ON "authentication_method" ("userId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_a23445b2c942d8dfcae15b8de2" ON "authentication_method" ("type") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "session" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "token" character varying NOT NULL, "expires" TIMESTAMP NOT NULL, "invalidated" boolean NOT NULL, "authenticationStrategy" character varying, "id" SERIAL NOT NULL, "type" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_f55da76ac1c3ac420f444d2ff11" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_232f8e85d7633bd6ddfad42169" ON "session" ("token") `, undefined);
+        await queryRunner.query(
+            `CREATE UNIQUE INDEX "IDX_232f8e85d7633bd6ddfad42169" ON "session" ("token") `,
+            undefined,
+        );
         await queryRunner.query(`CREATE INDEX "IDX_3d2f174ef04fb312fdebd0ddc5" ON "session" ("userId") `, undefined);
         await queryRunner.query(`CREATE INDEX "IDX_e5598363000cab9d9116bd5835" ON "session" ("type") `, undefined);
         await queryRunner.query(
@@ -39,13 +48,22 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "facet_value" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "code" character varying NOT NULL, "name" character varying NOT NULL, "id" SERIAL NOT NULL, "facetId" integer NOT NULL, CONSTRAINT "PK_d231e8eecc7e1a6059e1da7d325" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_d101dc2265a7341be3d94968c5" ON "facet_value" ("facetId") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_d101dc2265a7341be3d94968c5" ON "facet_value" ("facetId") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "job_post_asset" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "position" integer NOT NULL, "id" SERIAL NOT NULL, "jobPostId" integer NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_880dd97c36cc75453f592482626" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_ee44237b8964f6c9223377be7f" ON "job_post_asset" ("assetId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_c1ed28c618dd757b037bd1624b" ON "job_post_asset" ("jobPostId") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_ee44237b8964f6c9223377be7f" ON "job_post_asset" ("assetId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_c1ed28c618dd757b037bd1624b" ON "job_post_asset" ("jobPostId") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "job_post" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "publishedAt" TIMESTAMP, "customerId" integer NOT NULL, "title" character varying NOT NULL, "description" character varying NOT NULL, "enabled" boolean NOT NULL, "private" boolean NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_a70f902a85e6de57340d153c813" PRIMARY KEY ("id"))`,
             undefined,
@@ -54,13 +72,22 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "collection_asset" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "position" integer NOT NULL, "collectionId" integer NOT NULL, "id" SERIAL NOT NULL, "assetId" integer NOT NULL, CONSTRAINT "PK_a2adab6fd086adfb7858f1f110c" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_51da53b26522dc0525762d2de8" ON "collection_asset" ("assetId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_1ed9e48dfbf74b5fcbb35d3d68" ON "collection_asset" ("collectionId") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_51da53b26522dc0525762d2de8" ON "collection_asset" ("assetId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_1ed9e48dfbf74b5fcbb35d3d68" ON "collection_asset" ("collectionId") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "collection" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "isRoot" boolean NOT NULL DEFAULT false, "position" integer NOT NULL, "isPrivate" boolean NOT NULL DEFAULT false, "name" character varying NOT NULL, "description" character varying NOT NULL, "slug" character varying NOT NULL, "filters" text NOT NULL, "inheritFilters" boolean NOT NULL DEFAULT true, "id" SERIAL NOT NULL, "parentId" integer, "featuredAssetId" integer, CONSTRAINT "PK_ad3f485bbc99d875491f44d7c85" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_7256fef1bb42f1b38156b7449f" ON "collection" ("featuredAssetId") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_7256fef1bb42f1b38156b7449f" ON "collection" ("featuredAssetId") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "asset" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "name" character varying NOT NULL, "type" character varying NOT NULL, "mimeType" character varying NOT NULL, "width" integer NOT NULL DEFAULT '0', "height" integer NOT NULL DEFAULT '0', "fileSize" integer NOT NULL, "source" character varying NOT NULL, "preview" character varying NOT NULL, "focalPoint" text, "id" SERIAL NOT NULL, CONSTRAINT "PK_1209d107fe21482beaea51b745e" PRIMARY KEY ("id"))`,
             undefined,
@@ -73,9 +100,18 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "history_entry" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "type" character varying NOT NULL, "isPublic" boolean NOT NULL, "data" text NOT NULL, "id" SERIAL NOT NULL, "discriminator" character varying NOT NULL, "administratorId" integer, "customerId" integer, CONSTRAINT "PK_b65bd95b0d2929668589d57b97a" PRIMARY KEY ("id"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_92f8c334ef06275f9586fd0183" ON "history_entry" ("administratorId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_43ac602f839847fdb91101f30e" ON "history_entry" ("customerId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_f3a761f6bcfabb474b11e1e51f" ON "history_entry" ("discriminator") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_92f8c334ef06275f9586fd0183" ON "history_entry" ("administratorId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_43ac602f839847fdb91101f30e" ON "history_entry" ("customerId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_f3a761f6bcfabb474b11e1e51f" ON "history_entry" ("discriminator") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "job_record_buffer" ("createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "bufferId" character varying NOT NULL, "job" text NOT NULL, "id" SERIAL NOT NULL, CONSTRAINT "PK_9a1cfa02511065b32053efceeff" PRIMARY KEY ("id"))`,
             undefined,
@@ -88,8 +124,14 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "user_roles_role" ("userId" integer NOT NULL, "roleId" integer NOT NULL, CONSTRAINT "PK_b47cd6c84ee205ac5a713718292" PRIMARY KEY ("userId", "roleId"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_5f9286e6c25594c6b88c108db7" ON "user_roles_role" ("userId") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_4be2f7adf862634f5f803d246b" ON "user_roles_role" ("roleId") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_5f9286e6c25594c6b88c108db7" ON "user_roles_role" ("userId") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_4be2f7adf862634f5f803d246b" ON "user_roles_role" ("roleId") `,
+            undefined,
+        );
         await queryRunner.query(
             `CREATE TABLE "job_post_facet_values_facet_value" ("jobPostId" integer NOT NULL, "facetValueId" integer NOT NULL, CONSTRAINT "PK_4627c9d7b1a190feece9c87c085" PRIMARY KEY ("jobPostId", "facetValueId"))`,
             undefined,
@@ -118,8 +160,14 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `CREATE TABLE "collection_closure" ("id_ancestor" integer NOT NULL, "id_descendant" integer NOT NULL, CONSTRAINT "PK_9dda38e2273a7744b8f655782a5" PRIMARY KEY ("id_ancestor", "id_descendant"))`,
             undefined,
         );
-        await queryRunner.query(`CREATE INDEX "IDX_c309f8cd152bbeaea08491e0c6" ON "collection_closure" ("id_ancestor") `, undefined);
-        await queryRunner.query(`CREATE INDEX "IDX_457784c710f8ac9396010441f6" ON "collection_closure" ("id_descendant") `, undefined);
+        await queryRunner.query(
+            `CREATE INDEX "IDX_c309f8cd152bbeaea08491e0c6" ON "collection_closure" ("id_ancestor") `,
+            undefined,
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_457784c710f8ac9396010441f6" ON "collection_closure" ("id_descendant") `,
+            undefined,
+        );
         await queryRunner.query(
             `ALTER TABLE "authentication_method" ADD CONSTRAINT "FK_00cbe87bc0d4e36758d61bd31d6" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             undefined,
@@ -219,10 +267,22 @@ export class InitalMigration1735861401623 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
-        await queryRunner.query(`ALTER TABLE "collection_closure" DROP CONSTRAINT "FK_457784c710f8ac9396010441f6c"`, undefined);
-        await queryRunner.query(`ALTER TABLE "collection_closure" DROP CONSTRAINT "FK_c309f8cd152bbeaea08491e0c66"`, undefined);
-        await queryRunner.query(`ALTER TABLE "collection_job_posts_job_post" DROP CONSTRAINT "FK_9f21d87b5af12d4dfce9ad59173"`, undefined);
-        await queryRunner.query(`ALTER TABLE "collection_job_posts_job_post" DROP CONSTRAINT "FK_08139e575080cd25187fd6fa028"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "collection_closure" DROP CONSTRAINT "FK_457784c710f8ac9396010441f6c"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "collection_closure" DROP CONSTRAINT "FK_c309f8cd152bbeaea08491e0c66"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "collection_job_posts_job_post" DROP CONSTRAINT "FK_9f21d87b5af12d4dfce9ad59173"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "collection_job_posts_job_post" DROP CONSTRAINT "FK_08139e575080cd25187fd6fa028"`,
+            undefined,
+        );
         await queryRunner.query(
             `ALTER TABLE "job_post_facet_values_facet_value" DROP CONSTRAINT "FK_d5a6128c439c09b691c48a25ebd"`,
             undefined,
@@ -231,24 +291,63 @@ export class InitalMigration1735861401623 implements MigrationInterface {
             `ALTER TABLE "job_post_facet_values_facet_value" DROP CONSTRAINT "FK_3d8dfbc3432b77cb48103ee032f"`,
             undefined,
         );
-        await queryRunner.query(`ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_4be2f7adf862634f5f803d246b8"`, undefined);
-        await queryRunner.query(`ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_5f9286e6c25594c6b88c108db77"`, undefined);
-        await queryRunner.query(`ALTER TABLE "history_entry" DROP CONSTRAINT "FK_43ac602f839847fdb91101f30ec"`, undefined);
-        await queryRunner.query(`ALTER TABLE "history_entry" DROP CONSTRAINT "FK_92f8c334ef06275f9586fd01832"`, undefined);
-        await queryRunner.query(`ALTER TABLE "balance_entry" DROP CONSTRAINT "FK_17fc1ea7fcb1da3d217302b19d3"`, undefined);
-        await queryRunner.query(`ALTER TABLE "balance_entry" DROP CONSTRAINT "FK_8617695e2ce579c6194fe685f7a"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_4be2f7adf862634f5f803d246b8"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "user_roles_role" DROP CONSTRAINT "FK_5f9286e6c25594c6b88c108db77"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "history_entry" DROP CONSTRAINT "FK_43ac602f839847fdb91101f30ec"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "history_entry" DROP CONSTRAINT "FK_92f8c334ef06275f9586fd01832"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "balance_entry" DROP CONSTRAINT "FK_17fc1ea7fcb1da3d217302b19d3"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "balance_entry" DROP CONSTRAINT "FK_8617695e2ce579c6194fe685f7a"`,
+            undefined,
+        );
         await queryRunner.query(`ALTER TABLE "collection" DROP CONSTRAINT "FK_7256fef1bb42f1b38156b7449f5"`, undefined);
         await queryRunner.query(`ALTER TABLE "collection" DROP CONSTRAINT "FK_4257b61275144db89fa0f5dc059"`, undefined);
-        await queryRunner.query(`ALTER TABLE "collection_asset" DROP CONSTRAINT "FK_1ed9e48dfbf74b5fcbb35d3d686"`, undefined);
-        await queryRunner.query(`ALTER TABLE "collection_asset" DROP CONSTRAINT "FK_51da53b26522dc0525762d2de8e"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "collection_asset" DROP CONSTRAINT "FK_1ed9e48dfbf74b5fcbb35d3d686"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "collection_asset" DROP CONSTRAINT "FK_51da53b26522dc0525762d2de8e"`,
+            undefined,
+        );
         await queryRunner.query(`ALTER TABLE "job_post" DROP CONSTRAINT "FK_eefeb315e1ee3ef2f252f1d3671"`, undefined);
-        await queryRunner.query(`ALTER TABLE "job_post_asset" DROP CONSTRAINT "FK_c1ed28c618dd757b037bd1624bf"`, undefined);
-        await queryRunner.query(`ALTER TABLE "job_post_asset" DROP CONSTRAINT "FK_ee44237b8964f6c9223377be7f8"`, undefined);
-        await queryRunner.query(`ALTER TABLE "facet_value" DROP CONSTRAINT "FK_d101dc2265a7341be3d94968c5b"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "job_post_asset" DROP CONSTRAINT "FK_c1ed28c618dd757b037bd1624bf"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "job_post_asset" DROP CONSTRAINT "FK_ee44237b8964f6c9223377be7f8"`,
+            undefined,
+        );
+        await queryRunner.query(
+            `ALTER TABLE "facet_value" DROP CONSTRAINT "FK_d101dc2265a7341be3d94968c5b"`,
+            undefined,
+        );
         await queryRunner.query(`ALTER TABLE "customer" DROP CONSTRAINT "FK_3f62b42ed23958b120c235f74df"`, undefined);
-        await queryRunner.query(`ALTER TABLE "administrator" DROP CONSTRAINT "FK_1966e18ce6a39a82b19204704d7"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "administrator" DROP CONSTRAINT "FK_1966e18ce6a39a82b19204704d7"`,
+            undefined,
+        );
         await queryRunner.query(`ALTER TABLE "session" DROP CONSTRAINT "FK_3d2f174ef04fb312fdebd0ddc53"`, undefined);
-        await queryRunner.query(`ALTER TABLE "authentication_method" DROP CONSTRAINT "FK_00cbe87bc0d4e36758d61bd31d6"`, undefined);
+        await queryRunner.query(
+            `ALTER TABLE "authentication_method" DROP CONSTRAINT "FK_00cbe87bc0d4e36758d61bd31d6"`,
+            undefined,
+        );
         await queryRunner.query(`DROP INDEX "public"."IDX_457784c710f8ac9396010441f6"`, undefined);
         await queryRunner.query(`DROP INDEX "public"."IDX_c309f8cd152bbeaea08491e0c6"`, undefined);
         await queryRunner.query(`DROP TABLE "collection_closure"`, undefined);

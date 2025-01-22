@@ -45,7 +45,9 @@ export class SessionService implements EntitySubscriberInterface {
         await this.clearSessionCacheOnDataChange(event);
     }
 
-    private async clearSessionCacheOnDataChange(event: InsertEvent<unknown> | RemoveEvent<unknown> | UpdateEvent<unknown>) {
+    private async clearSessionCacheOnDataChange(
+        event: InsertEvent<unknown> | RemoveEvent<unknown> | UpdateEvent<unknown>,
+    ) {
         if (event.entity) {
             // If a Role changes, potentially all the cached permissions in the
             // session cache will be wrong, so we just clear the entire cache.
@@ -177,7 +179,9 @@ export class SessionService implements EntitySubscriberInterface {
      * Deletes all existing sessions for the given user.
      */
     async deleteSessionsByUser(ctx: RequestContext, user: User): Promise<void> {
-        const userSessions = await this.connection.getRepository(ctx, AuthenticatedSession).find({ where: { user: { id: user.id } } });
+        const userSessions = await this.connection
+            .getRepository(ctx, AuthenticatedSession)
+            .find({ where: { user: { id: user.id } } });
         await this.connection.getRepository(ctx, AuthenticatedSession).remove(userSessions);
         for (const session of userSessions) {
             await this.withTimeout(this.sessionCacheStrategy.delete(session.token));
@@ -195,7 +199,9 @@ export class SessionService implements EntitySubscriberInterface {
         if (session.expires.getTime() - now < this.sessionDurationInMs / 2) {
             const newExpiryDate = this.getExpiryDate(this.sessionDurationInMs);
             session.expires = newExpiryDate;
-            await this.connection.rawConnection.getRepository(Session).update({ id: session.id }, { expires: newExpiryDate });
+            await this.connection.rawConnection
+                .getRepository(Session)
+                .update({ id: session.id }, { expires: newExpiryDate });
         }
     }
 

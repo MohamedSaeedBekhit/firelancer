@@ -45,7 +45,9 @@ export class User extends FirelancerEntity implements SoftDeletable {
         if (!this.authenticationMethods) {
             throw new InternalServerError('error.user-authentication-methods-not-loaded');
         }
-        const match = this.authenticationMethods.find((m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod);
+        const match = this.authenticationMethods.find(
+            (m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod,
+        );
         if (!match && (strict === undefined || strict)) {
             throw new InternalServerError('error.native-authentication-methods-not-found');
         }

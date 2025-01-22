@@ -24,7 +24,11 @@ export class FacetService {
         private listQueryBuilder: ListQueryBuilder,
     ) {}
 
-    async findAll(ctx: RequestContext, options?: ListQueryOptions<Facet>, relations?: RelationPaths<Facet>): Promise<PaginatedList<Facet>> {
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<Facet>,
+        relations?: RelationPaths<Facet>,
+    ): Promise<PaginatedList<Facet>> {
         return this.listQueryBuilder
             .build(Facet, options, {
                 relations: relations ?? ['values', 'values.facet'],

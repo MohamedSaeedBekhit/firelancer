@@ -11,7 +11,12 @@ type FacetValueInputTypes = CreateFacetValueInput | UpdateFacetValueInput | ID;
  * This event is fired whenever a FacetValue is added, updated or deleted.
  */
 export class FacetValueEvent extends FirelancerEntityEvent<FacetValue, FacetValueInputTypes> {
-    constructor(ctx: RequestContext, entity: FacetValue, type: 'created' | 'updated' | 'deleted', input?: FacetValueInputTypes) {
+    constructor(
+        ctx: RequestContext,
+        entity: FacetValue,
+        type: 'created' | 'updated' | 'deleted',
+        input?: FacetValueInputTypes,
+    ) {
         super(entity, type, ctx, input);
     }
 }

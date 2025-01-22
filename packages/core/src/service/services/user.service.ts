@@ -79,7 +79,12 @@ export class UserService {
         return qb.getOne().then((result) => result ?? undefined);
     }
 
-    async createCustomerUser(ctx: RequestContext, customerType: CustomerType, identifier: string, password?: string): Promise<User> {
+    async createCustomerUser(
+        ctx: RequestContext,
+        customerType: CustomerType,
+        identifier: string,
+        password?: string,
+    ): Promise<User> {
         const user = new User();
         user.identifier = normalizeEmailAddress(identifier);
         let customerRole: Role | undefined;
@@ -101,10 +106,19 @@ export class UserService {
      * is set to `true` (as is the default), the User will be marked as unverified until the email verification
      * flow is completed.
      */
-    async addNativeAuthenticationMethod(ctx: RequestContext, user: User, identifier: string, password?: string): Promise<User> {
+    async addNativeAuthenticationMethod(
+        ctx: RequestContext,
+        user: User,
+        identifier: string,
+        password?: string,
+    ): Promise<User> {
         const checkUser = user.id != null && (await this.getUserById(ctx, user.id));
         if (checkUser) {
-            if (checkUser.authenticationMethods.find((m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod)) {
+            if (
+                checkUser.authenticationMethods.find(
+                    (m): m is NativeAuthenticationMethod => m instanceof NativeAuthenticationMethod,
+                )
+            ) {
                 return user;
             }
         }
@@ -148,7 +162,9 @@ export class UserService {
     }
 
     async softDelete(ctx: RequestContext, userId: ID): Promise<void> {
-        await this.moduleRef.get((await import('./session.service.js')).SessionService).deleteSessionsByUser(ctx, new User({ id: userId }));
+        await this.moduleRef
+            .get((await import('./session.service.js')).SessionService)
+            .deleteSessionsByUser(ctx, new User({ id: userId }));
         await this.connection.getEntityOrThrow(ctx, User, userId);
         await this.connection.getRepository(ctx, User).update({ id: userId }, { deletedAt: new Date() });
     }
@@ -283,7 +299,9 @@ export class UserService {
             nativeAuthMethod.identifier = newIdentifier;
             nativeAuthMethod.identifierChangeToken = null;
             nativeAuthMethod.pendingIdentifier = null;
-            await this.connection.getRepository(ctx, NativeAuthenticationMethod).save(nativeAuthMethod, { reload: false });
+            await this.connection
+                .getRepository(ctx, NativeAuthenticationMethod)
+                .save(nativeAuthMethod, { reload: false });
         }
         user.identifier = newIdentifier;
         await this.connection.getRepository(ctx, User).save(user, { reload: false });
@@ -361,7 +379,7 @@ export class UserService {
         const matches = await this.passwordCipher.check(currentPassword, nativeAuthMethod.passwordHash);
 
         if (!matches) {
-            throw new InvalidCredentialsError();
+            throw new InvalidCredentialsError({ authenticationError: '' });
         }
 
         nativeAuthMethod.passwordHash = await this.passwordCipher.hash(newPassword);
@@ -369,10 +387,14 @@ export class UserService {
     }
 
     private async validatePassword(ctx: RequestContext, password: string): Promise<void> {
-        const passwordValidationResult = await this.configService.authOptions.passwordValidationStrategy.validate(ctx, password);
+        const passwordValidationResult = await this.configService.authOptions.passwordValidationStrategy.validate(
+            ctx,
+            password,
+        );
         if (passwordValidationResult !== true) {
-            const message = typeof passwordValidationResult === 'string' ? passwordValidationResult : 'Password is invalid';
-            throw new PasswordValidationError(message);
+            const message =
+                typeof passwordValidationResult === 'string' ? passwordValidationResult : 'Password is invalid';
+            throw new PasswordValidationError({ validationErrorMessage: message });
         }
     }
 }

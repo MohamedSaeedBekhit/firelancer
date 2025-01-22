@@ -1,9 +1,24 @@
 import { LogicalOperator, Type, unique } from '@firelancer/common';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { Brackets, FindOneOptions, FindOptionsWhere, Repository, SelectQueryBuilder, WhereExpressionBuilder, ObjectLiteral } from 'typeorm';
+import {
+    Brackets,
+    FindOneOptions,
+    FindOptionsWhere,
+    Repository,
+    SelectQueryBuilder,
+    WhereExpressionBuilder,
+    ObjectLiteral,
+} from 'typeorm';
 import { BetterSqlite3Driver } from 'typeorm/driver/better-sqlite3/BetterSqlite3Driver';
 import { SqljsDriver } from 'typeorm/driver/sqljs/SqljsDriver';
-import { ApiType, FilterParameter, ListQueryOptions, NullOptionals, RequestContext, UserInputError } from '../../../common';
+import {
+    ApiType,
+    FilterParameter,
+    ListQueryOptions,
+    NullOptionals,
+    RequestContext,
+    UserInputError,
+} from '../../../common';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { FirelancerEntity } from '../../../entity';
@@ -24,7 +39,7 @@ export type ExtendedListQueryOptions<T extends FirelancerEntity> = {
     /**
      * @description
      * Allows you to specify the alias used for the entity `T` in the generated SQL query.
-     * Defaults to the entity class name lower-cased, i.e. `ProductVariant` -> `'productvariant'`.
+     * Defaults to the entity class name lower-cased, i.e. `JobPost` -> `'jobpost'`.
      */
     entityAlias?: string;
     /**
@@ -270,7 +285,11 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
         ignoreQueryLimits = false,
     ): { take: number; skip: number } {
         const { shopListQueryLimit, adminListQueryLimit } = this.configService.apiOptions;
-        const takeLimit = ignoreQueryLimits ? Number.MAX_SAFE_INTEGER : apiType === 'admin' ? adminListQueryLimit : shopListQueryLimit;
+        const takeLimit = ignoreQueryLimits
+            ? Number.MAX_SAFE_INTEGER
+            : apiType === 'admin'
+              ? adminListQueryLimit
+              : shopListQueryLimit;
         if (options.take && options.take > takeLimit) {
             throw new UserInputError('error.list-query-limit-exceeded');
         }
@@ -364,7 +383,9 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
                 }
                 const relationMetadata = entityMetadata.findRelationWithPropertyPath(entityPart);
                 if (!relationMetadata || !relationMetadata?.propertyName) {
-                    Logger.error(`The customPropertyMap entry "${property}:${value}" could not be resolved to a related table`);
+                    Logger.error(
+                        `The customPropertyMap entry "${property}:${value}" could not be resolved to a related table`,
+                    );
                     delete customPropertyMap[property];
                     return;
                 }

@@ -5,7 +5,12 @@ export const initialData: InitialData = {
         {
             code: 'administrator',
             description: 'Administrator',
-            permissions: [Permission.CreateCustomer, Permission.ReadCustomer, Permission.UpdateCustomer, Permission.DeleteCustomer],
+            permissions: [
+                Permission.CreateCustomer,
+                Permission.ReadCustomer,
+                Permission.UpdateCustomer,
+                Permission.DeleteCustomer,
+            ],
         },
     ],
     facets: [

@@ -1,4 +1,11 @@
-import { ClassDeclaration, InterfaceDeclaration, Node, PropertyAssignment, SyntaxKind, VariableDeclaration } from 'ts-morph';
+import {
+    ClassDeclaration,
+    InterfaceDeclaration,
+    Node,
+    PropertyAssignment,
+    SyntaxKind,
+    VariableDeclaration,
+} from 'ts-morph';
 import { AdminUiExtensionTypeName } from '../constants';
 import { EntityRef } from './entity-ref';
 
@@ -29,7 +36,9 @@ export class FirelancerPluginRef {
         return pluginOptions;
     }
 
-    getPluginOptions(): { typeDeclaration: InterfaceDeclaration; constantDeclaration: VariableDeclaration } | undefined {
+    getPluginOptions():
+        | { typeDeclaration: InterfaceDeclaration; constantDeclaration: VariableDeclaration }
+        | undefined {
         const metadataOptions = this.getMetadataOptions();
         const staticOptions = this.classDeclaration.getStaticProperty('options');
         const typeDeclaration = staticOptions
@@ -40,7 +49,9 @@ export class FirelancerPluginRef {
         if (!typeDeclaration || !Node.isInterfaceDeclaration(typeDeclaration)) {
             return;
         }
-        const providersArray = metadataOptions.getProperty('providers')?.getFirstChildByKind(SyntaxKind.ArrayLiteralExpression);
+        const providersArray = metadataOptions
+            .getProperty('providers')
+            ?.getFirstChildByKind(SyntaxKind.ArrayLiteralExpression);
         if (!providersArray) {
             return;
         }
@@ -104,7 +115,11 @@ export class FirelancerPluginRef {
             ?.getType()
             .getSymbolOrThrow()
             .getDeclarations()[0];
-        if (extension.schema && adminApiExtensionsProperty && Node.isObjectLiteralExpression(adminApiExtensionsProperty)) {
+        if (
+            extension.schema &&
+            adminApiExtensionsProperty &&
+            Node.isObjectLiteralExpression(adminApiExtensionsProperty)
+        ) {
             const schemaProp = adminApiExtensionsProperty.getProperty('schema');
             if (!schemaProp) {
                 adminApiExtensionsProperty.addPropertyAssignment({
@@ -168,7 +183,9 @@ export class FirelancerPluginRef {
             })
             .map((imp) => imp.getModuleSpecifierSourceFileOrThrow());
         return entitySourceFiles
-            .map((sourceFile) => sourceFile.getClasses().filter((c) => c.getExtends()?.getText() === 'FirelancerEntity'))
+            .map((sourceFile) =>
+                sourceFile.getClasses().filter((c) => c.getExtends()?.getText() === 'FirelancerEntity'),
+            )
             .flat()
             .map((classDeclaration) => new EntityRef(classDeclaration));
     }

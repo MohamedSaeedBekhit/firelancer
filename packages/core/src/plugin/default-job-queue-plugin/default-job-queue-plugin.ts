@@ -169,9 +169,11 @@ export interface DefaultJobQueueOptions {
  */
 @FirelancerPlugin({
     imports: [PluginCommonModule],
-    entities: () => (DefaultJobQueuePlugin.options.useDatabaseForBuffer === true ? [JobRecord, JobRecordBuffer] : [JobRecord]),
+    entities: () =>
+        DefaultJobQueuePlugin.options.useDatabaseForBuffer === true ? [JobRecord, JobRecordBuffer] : [JobRecord],
     configuration: (config) => {
-        const { pollInterval, concurrency, backoffStrategy, setRetries, gracefulShutdownTimeout } = DefaultJobQueuePlugin.options ?? {};
+        const { pollInterval, concurrency, backoffStrategy, setRetries, gracefulShutdownTimeout } =
+            DefaultJobQueuePlugin.options ?? {};
         config.jobQueueOptions.jobQueueStrategy = new SqlJobQueueStrategy({
             concurrency,
             pollInterval,

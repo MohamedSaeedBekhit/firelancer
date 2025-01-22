@@ -73,7 +73,9 @@ export interface APIExtensionDefinition {
  * @description
  * This method is called before the app bootstraps and should be used to perform any needed modifications to the FirelancerConfig.
  */
-export type PluginConfigurationFn = (config: RuntimeFirelancerConfig) => RuntimeFirelancerConfig | Promise<RuntimeFirelancerConfig>;
+export type PluginConfigurationFn = (
+    config: RuntimeFirelancerConfig,
+) => RuntimeFirelancerConfig | Promise<RuntimeFirelancerConfig>;
 
 /**
  * @description

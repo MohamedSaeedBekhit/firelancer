@@ -79,7 +79,8 @@ export function joinTreeRelationsDynamically<T extends FirelancerEntity>(
             return;
         }
         parentPath = parentPath?.filter((p) => p !== '');
-        const currentMetadataIsTree = isTreeEntityMetadata(currentMetadata) || sourceMetadataIsTree || parentMetadataIsTree;
+        const currentMetadataIsTree =
+            isTreeEntityMetadata(currentMetadata) || sourceMetadataIsTree || parentMetadataIsTree;
         if (!currentMetadataIsTree) {
             return;
         }
@@ -142,7 +143,9 @@ export function joinTreeRelationsDynamically<T extends FirelancerEntity>(
         }
 
         if (nextPath) {
-            processRelation(relationMetadata.inverseEntityMetadata, currentMetadataIsTree, nextPath, nextAlias, [fullPath]);
+            processRelation(relationMetadata.inverseEntityMetadata, currentMetadataIsTree, nextPath, nextAlias, [
+                fullPath,
+            ]);
         }
     };
 

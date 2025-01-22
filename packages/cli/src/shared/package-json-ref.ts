@@ -53,7 +53,9 @@ export class PackageJson {
     getPackageJsonContent() {
         const packageJsonPath = this.locatePackageJsonWithFirelancerDependency();
         if (!packageJsonPath || !fs.existsSync(packageJsonPath)) {
-            note(`Could not find a package.json in the current directory. Please run this command from the root of a Firelancer project.`);
+            note(
+                `Could not find a package.json in the current directory. Please run this command from the root of a Firelancer project.`,
+            );
             return false;
         }
         return fs.readJsonSync(packageJsonPath);

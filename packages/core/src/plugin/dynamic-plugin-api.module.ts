@@ -29,7 +29,10 @@ export function createDynamicRestModulesForPlugins(apiType: 'shop' | 'admin'): D
                         ...imports,
                         RouterModule.register([
                             {
-                                path: apiType === 'admin' ? config.apiOptions.adminApiPath : config.apiOptions.shopApiPath,
+                                path:
+                                    apiType === 'admin'
+                                        ? config.apiOptions.adminApiPath
+                                        : config.apiOptions.shopApiPath,
                                 module: dynamicApiModuleClassMap[className],
                             },
                         ]),

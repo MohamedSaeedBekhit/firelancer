@@ -141,7 +141,9 @@ export class InMemoryJobQueueStrategy extends PollingJobQueueStrategy implements
     private checkProcessContext() {
         if (!this.processContextChecked) {
             if (this.processContext.isWorker) {
-                Logger.error('The InMemoryJobQueueStrategy will not work when running job queues outside the main server process!');
+                Logger.error(
+                    'The InMemoryJobQueueStrategy will not work when running job queues outside the main server process!',
+                );
                 process.kill(process.pid, 'SIGINT');
             }
             this.processContextChecked = true;

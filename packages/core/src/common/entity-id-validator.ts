@@ -30,7 +30,10 @@ export function IsEntityId(validationOptions?: ValidationOptions) {
                 },
                 defaultMessage: buildMessage(function (eachPrefix) {
                     const config = getConfig();
-                    return eachPrefix + `$property must be entity-id type (${config.entityOptions.entityIdStrategy.primaryKeyType})`;
+                    return (
+                        eachPrefix +
+                        `$property must be entity-id type (${config.entityOptions.entityIdStrategy.primaryKeyType})`
+                    );
                 }, validationOptions),
             },
         },

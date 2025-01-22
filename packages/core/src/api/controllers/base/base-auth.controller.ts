@@ -5,6 +5,7 @@ import { extractSessionToken } from '../../../common/extract-session-token';
 import { ApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
 import { setSessionToken } from '../../../common/set-session-token';
+import { LogLevel } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { AuthOptions } from '../../../config/firelancer-config';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
@@ -61,12 +62,12 @@ export class BaseAuthController {
     async me(ctx: RequestContext, apiType: ApiType): Promise<CurrentUser | null> {
         const userId = ctx.activeUserId;
         if (!userId) {
-            throw new ForbiddenError();
+            throw new ForbiddenError(LogLevel.Verbose);
         }
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, userId);
             if (!administrator) {
-                throw new ForbiddenError();
+                throw new ForbiddenError(LogLevel.Verbose);
             }
         }
         const user = userId && (await this.userService.getUserById(ctx, userId));
@@ -90,7 +91,7 @@ export class BaseAuthController {
         if (apiType === 'admin') {
             const administrator = await this.administratorService.findOneByUserId(ctx, session.user.id);
             if (!administrator) {
-                throw new InvalidCredentialsError();
+                throw new InvalidCredentialsError({ authenticationError: '' });
             }
         }
 

@@ -8,9 +8,21 @@ import { User } from '../../../entity';
 import { Collection } from '../../../entity/collection/collection.entity';
 import { FacetValue } from '../../../entity/facet-value/facet-value.entity';
 import { Facet } from '../../../entity/facet/facet.entity';
-import { CollectionService, FacetService, FacetValueService, RequestContextService, RoleService } from '../../../service';
+import {
+    CollectionService,
+    FacetService,
+    FacetValueService,
+    RequestContextService,
+    RoleService,
+} from '../../../service';
 import { SearchService } from '../../../service/services/search.service';
-import { CollectionDefinition, CollectionFilterDefinition, FacetDefinition, InitialData, RoleDefinition } from '../../types';
+import {
+    CollectionDefinition,
+    CollectionFilterDefinition,
+    FacetDefinition,
+    InitialData,
+    RoleDefinition,
+} from '../../types';
 import { AssetImporter } from '../asset-importer/asset-importer';
 
 /**
@@ -125,7 +137,9 @@ export class Populator {
 
             let filters: ConfigurableOperation[] = [];
             try {
-                filters = (collectionDef.filters || []).map((filter) => this.processFilterDefinition(filter, allFacetValues));
+                filters = (collectionDef.filters || []).map((filter) =>
+                    this.processFilterDefinition(filter, allFacetValues),
+                );
             } catch (e) {
                 if (e && e instanceof Error) {
                     Logger.error(e.message);
@@ -159,7 +173,10 @@ export class Populator {
         }
     }
 
-    private processFilterDefinition(filter: CollectionFilterDefinition, allFacetValues: FacetValue[]): ConfigurableOperation {
+    private processFilterDefinition(
+        filter: CollectionFilterDefinition,
+        allFacetValues: FacetValue[],
+    ): ConfigurableOperation {
         switch (filter.code) {
             case 'job-post-facet-value-filter': {
                 const facetValueIds = filter.args.facetValueNames

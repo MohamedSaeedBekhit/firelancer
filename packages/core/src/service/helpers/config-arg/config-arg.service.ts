@@ -50,7 +50,10 @@ export class ConfigArgService {
         };
     }
 
-    private orderArgsToMatchDef<T extends ConfigDefType>(def: ConfigDefTypeMap[T], args: ConfigurableOperation['args']) {
+    private orderArgsToMatchDef<T extends ConfigDefType>(
+        def: ConfigDefTypeMap[T],
+        args: ConfigurableOperation['args'],
+    ) {
         const output: ConfigurableOperation['args'] = [];
         for (const name of Object.keys(def.args)) {
             const match = args.find((arg) => arg.name === name);

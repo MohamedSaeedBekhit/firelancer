@@ -152,7 +152,10 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('request-reset-password')
     @Allow(Permission.Public)
-    async requestPasswordReset(@Ctx() ctx: RequestContext, @Body() args: MutationRequestPasswordResetArgs): Promise<{ success: boolean }> {
+    async requestPasswordReset(
+        @Ctx() ctx: RequestContext,
+        @Body() args: MutationRequestPasswordResetArgs,
+    ): Promise<{ success: boolean }> {
         this.requireNativeAuthStrategy();
         await this.customerService.requestPasswordReset(ctx, args.emailAddress);
         return { success: true };
@@ -225,7 +228,11 @@ export class ShopAuthController extends BaseAuthController {
             throw new ForbiddenError();
         }
         await this.authService.verifyUserPassword(ctx, ctx.activeUserId, args.password);
-        const result = await this.customerService.requestUpdateEmailAddress(ctx, ctx.activeUserId, args.newEmailAddress);
+        const result = await this.customerService.requestUpdateEmailAddress(
+            ctx,
+            ctx.activeUserId,
+            args.newEmailAddress,
+        );
         return {
             success: result,
         };
@@ -245,7 +252,9 @@ export class ShopAuthController extends BaseAuthController {
 
     protected requireNativeAuthStrategy() {
         const { shopAuthenticationStrategy } = this.configService.authOptions;
-        const nativeAuthStrategyIsConfigured = !!shopAuthenticationStrategy.find((strategy) => strategy.name === NATIVE_AUTH_STRATEGY_NAME);
+        const nativeAuthStrategyIsConfigured = !!shopAuthenticationStrategy.find(
+            (strategy) => strategy.name === NATIVE_AUTH_STRATEGY_NAME,
+        );
         if (!nativeAuthStrategyIsConfigured) {
             const authStrategyNames = shopAuthenticationStrategy.map((s) => s.name).join(', ');
             const errorMessage =

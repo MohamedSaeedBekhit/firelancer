@@ -17,9 +17,11 @@ export function setSessionToken(options: {
 }) {
     const { sessionToken, rememberMe, authOptions, req, res } = options;
     const usingCookie =
-        authOptions.tokenMethod === 'cookie' || (Array.isArray(authOptions.tokenMethod) && authOptions.tokenMethod.includes('cookie'));
+        authOptions.tokenMethod === 'cookie' ||
+        (Array.isArray(authOptions.tokenMethod) && authOptions.tokenMethod.includes('cookie'));
     const usingBearer =
-        authOptions.tokenMethod === 'bearer' || (Array.isArray(authOptions.tokenMethod) && authOptions.tokenMethod.includes('bearer'));
+        authOptions.tokenMethod === 'bearer' ||
+        (Array.isArray(authOptions.tokenMethod) && authOptions.tokenMethod.includes('bearer'));
 
     if (usingCookie) {
         if (req.session) {

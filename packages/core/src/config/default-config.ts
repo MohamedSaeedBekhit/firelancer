@@ -1,8 +1,15 @@
+import {
+    CurrencyCode,
+    DEFAULT_AUTH_TOKEN_HEADER_KEY,
+    LanguageCode,
+    SUPER_ADMIN_USER_IDENTIFIER,
+    SUPER_ADMIN_USER_PASSWORD,
+} from '@firelancer/common';
 import { randomBytes } from 'crypto';
-import { DEFAULT_AUTH_TOKEN_HEADER_KEY, SUPER_ADMIN_USER_IDENTIFIER, SUPER_ADMIN_USER_PASSWORD } from '@firelancer/common';
 import { InMemoryJobBufferStorageStrategy } from '../job-queue';
 import { InMemoryJobQueueStrategy } from '../job-queue/in-memory-job-queue-strategy';
 import { RuntimeFirelancerConfig } from './firelancer-config';
+import { DefaultAssetImportStrategy } from './strategies/asset-import/default/default-asset-import-strategy';
 import { DefaultAssetNamingStrategy } from './strategies/asset/default/default-asset-naming-strategy';
 import { NoAssetPreviewStrategy } from './strategies/asset/default/no-asset-preview-strategy';
 import { NoAssetStorageStrategy } from './strategies/asset/default/no-asset-storage-strategy';
@@ -10,11 +17,10 @@ import { BcryptPasswordHashingStrategy } from './strategies/authentication/defau
 import { DefaultPasswordValidationStrategy } from './strategies/authentication/default/default-password-validation-strategy';
 import { NativeAuthenticationStrategy } from './strategies/authentication/default/native-authentication-strategy';
 import { defaultCollectionFilters } from './strategies/catalog/default/default-collection-filters';
-import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
-import { DefaultLogger } from './strategies/logger/default/default-logger';
 import { AutoIncrementIdStrategy } from './strategies/entity/default/auto-increment-id-strategy';
 import { DefaultMoneyStrategy } from './strategies/entity/default/default-money-strategy';
-import { DefaultAssetImportStrategy } from './strategies/asset-import/default/default-asset-import-strategy';
+import { DefaultLogger } from './strategies/logger/default/default-logger';
+import { InMemorySessionCacheStrategy } from './strategies/session-cache/default/in-memory-session-cache-strategy';
 
 /**
  * @description
@@ -39,6 +45,8 @@ export const defaultConfig: RuntimeFirelancerConfig = {
         type: 'postgres',
         synchronize: false,
     },
+    defaultLanguageCode: LanguageCode.en,
+    availableCurrencyCodes: [CurrencyCode.USD],
     authOptions: {
         disableAuth: false,
         tokenMethod: 'cookie',

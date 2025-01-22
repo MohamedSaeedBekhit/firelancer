@@ -143,7 +143,9 @@ export class AdministratorService {
                 .map((role) => role.id)
                 .filter((roleId) => (input.roleIds as ID[]).indexOf(roleId) === -1);
 
-            const addIds = (input.roleIds as ID[]).filter((roleId) => !administrator.user.roles.some((role) => role.id === roleId));
+            const addIds = (input.roleIds as ID[]).filter(
+                (roleId) => !administrator.user.roles.some((role) => role.id === roleId),
+            );
 
             administrator.user.roles = [];
             await this.connection.getRepository(ctx, User).save(administrator.user, { reload: false });

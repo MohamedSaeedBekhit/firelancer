@@ -85,7 +85,11 @@ export function addImportsToFile(
             importDeclaration.setOrder(options.order);
         }
     } else {
-        if (options.namespaceImport && !existingDeclaration.getNamespaceImport() && !existingDeclaration.getDefaultImport()) {
+        if (
+            options.namespaceImport &&
+            !existingDeclaration.getNamespaceImport() &&
+            !existingDeclaration.getDefaultImport()
+        ) {
             existingDeclaration.setNamespaceImport(options.namespaceImport);
         }
         if (options.namedImports) {

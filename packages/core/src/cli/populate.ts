@@ -24,7 +24,10 @@ export async function populate<T extends INestApplicationContext>(
     return app;
 }
 
-export async function populateInitialData(app: INestApplicationContext, initialData: import('@firelancer/core').InitialData) {
+export async function populateInitialData(
+    app: INestApplicationContext,
+    initialData: import('@firelancer/core').InitialData,
+) {
     const { Populator, Logger } = await import('@firelancer/core');
     const populator = app.get(Populator);
     try {

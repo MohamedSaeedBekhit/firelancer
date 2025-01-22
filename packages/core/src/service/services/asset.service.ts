@@ -58,7 +58,11 @@ export class AssetService {
             .then((result) => result ?? undefined);
     }
 
-    async findAll(ctx: RequestContext, options?: ListQueryOptions<Asset>, relations?: RelationPaths<Asset>): Promise<PaginatedList<Asset>> {
+    async findAll(
+        ctx: RequestContext,
+        options?: ListQueryOptions<Asset>,
+        relations?: RelationPaths<Asset>,
+    ): Promise<PaginatedList<Asset>> {
         return this.listQueryBuilder
             .build(Asset, options, {
                 ctx,
@@ -71,7 +75,10 @@ export class AssetService {
             }));
     }
 
-    async getFeaturedAsset<T extends Omit<EntityWithAssets, 'assets'>>(ctx: RequestContext, entity: T): Promise<Asset | undefined> {
+    async getFeaturedAsset<T extends Omit<EntityWithAssets, 'assets'>>(
+        ctx: RequestContext,
+        entity: T,
+    ): Promise<Asset | undefined> {
         const entityType: Type<T> = Object.getPrototypeOf(entity).constructor;
         const entityWithFeaturedAsset = await this.connection
             .getRepository(ctx, entityType)
@@ -110,7 +117,11 @@ export class AssetService {
         return orderableAssets.sort((a, b) => a.position - b.position).map((a) => a.asset);
     }
 
-    async updateFeaturedAsset<T extends EntityWithAssets>(ctx: RequestContext, entity: T, input: EntityAssetInput): Promise<T> {
+    async updateFeaturedAsset<T extends EntityWithAssets>(
+        ctx: RequestContext,
+        entity: T,
+        input: EntityAssetInput,
+    ): Promise<T> {
         const { assetIds, featuredAssetId } = input;
         if (featuredAssetId === null || (assetIds && assetIds.length === 0)) {
             entity.featuredAsset = null;
@@ -130,7 +141,11 @@ export class AssetService {
      * @description
      * Updates the assets of an entity, ensuring that only valid assetIds are used.
      */
-    async updateEntityAssets<T extends EntityWithAssets>(ctx: RequestContext, entity: T, input: EntityAssetInput): Promise<T> {
+    async updateEntityAssets<T extends EntityWithAssets>(
+        ctx: RequestContext,
+        entity: T,
+        input: EntityAssetInput,
+    ): Promise<T> {
         if (!entity.id) {
             throw new InternalServerError('error.entity-must-have-an-id');
         }
@@ -142,7 +157,9 @@ export class AssetService {
                     id: In(assetIds),
                 },
             });
-            const sortedAssets = assetIds.map((id) => assets.find((a) => idsAreEqual(a.id, id))).filter(notNullOrUndefined);
+            const sortedAssets = assetIds
+                .map((id) => assets.find((a) => idsAreEqual(a.id, id)))
+                .filter(notNullOrUndefined);
             await this.removeExistingOrderableAssets(ctx, entity);
             entity.assets = await this.createOrderableAssets(ctx, entity, sortedAssets);
         } else if (assetIds && assetIds.length === 0) {
@@ -223,7 +240,12 @@ export class AssetService {
         return updatedAsset;
     }
 
-    private async createAssetInternal(ctx: RequestContext, stream: Stream, filename: string, mimetype: string): Promise<Asset> {
+    private async createAssetInternal(
+        ctx: RequestContext,
+        stream: Stream,
+        filename: string,
+        mimetype: string,
+    ): Promise<Asset> {
         const { assetOptions } = this.configService;
         if (!this.validateMimeType(mimetype)) {
             // return new MimeTypeError({ fileName: filename, mimeType: mimetype });
@@ -324,7 +346,8 @@ export class AssetService {
         maybeCtx?: RequestContext,
     ): Promise<Asset> {
         const filePathFromArgs = maybeFilePathOrCtx instanceof RequestContext ? undefined : maybeFilePathOrCtx;
-        const filePath = stream instanceof ReadStream || stream instanceof FSReadStream ? stream.path : filePathFromArgs;
+        const filePath =
+            stream instanceof ReadStream || stream instanceof FSReadStream ? stream.path : filePathFromArgs;
         if (typeof filePath === 'string') {
             const filename = path.basename(filePath).split('?')[0];
             const mimetype = this.getMimeType(stream, filename);
@@ -384,7 +407,11 @@ export class AssetService {
         return { jobPosts };
     }
 
-    private async createOrderableAssets(ctx: RequestContext, entity: EntityWithAssets, assets: Asset[]): Promise<OrderableAsset[]> {
+    private async createOrderableAssets(
+        ctx: RequestContext,
+        entity: EntityWithAssets,
+        assets: Asset[],
+    ): Promise<OrderableAsset[]> {
         const orderableAssets = assets.map((asset, i) => this.getOrderableAsset(ctx, entity, asset, i));
         return this.connection.getRepository(ctx, orderableAssets[0].constructor).save(orderableAssets);
     }
@@ -397,7 +424,12 @@ export class AssetService {
         });
     }
 
-    private getOrderableAsset(ctx: RequestContext, entity: EntityWithAssets, asset: Asset, index: number): OrderableAsset {
+    private getOrderableAsset(
+        ctx: RequestContext,
+        entity: EntityWithAssets,
+        asset: Asset,
+        index: number,
+    ): OrderableAsset {
         const entityIdProperty = this.getHostEntityIdProperty(entity);
         const orderableAssetType = this.getOrderableAssetType(ctx, entity);
         return new orderableAssetType({

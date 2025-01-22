@@ -1,4 +1,4 @@
-import { Permission, intersect } from '@firelancer/common';
+import { CurrencyCode, LanguageCode, Permission, intersect } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { ApiType, getApiType } from '../../../common/get-api-type';
@@ -6,8 +6,8 @@ import { RequestContext } from '../../../common/request-context';
 import { ConfigService } from '../../../config/config.service';
 import { CachedSession, CachedSessionUser } from '../../../config/strategies/session-cache/session-cache-strategy';
 import { User } from '../../../entity';
-/* eslint-disable-next-line @typescript-eslint/no-require-imports */
-const ms = require('ms');
+import { UserInputError } from '../../../common';
+const ms = require('ms'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**
  * @description
@@ -23,8 +23,14 @@ export class RequestContextService {
      * with services outside the request-response cycle, for example in stand-alone scripts or in
      * worker jobs.
      */
-    create(config: { req?: Request; apiType: ApiType; user?: User }): RequestContext {
-        const { req, apiType, user } = config;
+    create(config: {
+        req?: Request;
+        apiType: ApiType;
+        languageCode?: LanguageCode;
+        currencyCode?: CurrencyCode;
+        user?: User;
+    }): RequestContext {
+        const { req, apiType, languageCode, currencyCode, user } = config;
         let session: CachedSession | undefined;
         if (user) {
             session = {
@@ -46,6 +52,8 @@ export class RequestContextService {
             session,
             isAuthorized: true,
             authorizedAsOwnerOnly: false,
+            languageCode,
+            currencyCode,
         });
     }
 
@@ -59,16 +67,34 @@ export class RequestContextService {
         const apiType = getApiType(req);
 
         const hasOwnerPermission = !!requiredPermissions && requiredPermissions.includes(Permission.Owner);
+        const languageCode = this.getLanguageCode(req);
+        const currencyCode = this.getCurrencyCode(req);
         const user = session && session.user;
         const isAuthorized = this.userHasPermissions(requiredPermissions ?? [], user);
         const authorizedAsOwnerOnly = !isAuthorized && hasOwnerPermission;
+        const translationFn = (req as any).t; // eslint-disable-line @typescript-eslint/no-explicit-any
         return new RequestContext({
             req,
             apiType,
             session,
             isAuthorized,
             authorizedAsOwnerOnly,
+            languageCode,
+            currencyCode,
+            translationFn,
         });
+    }
+
+    private getLanguageCode(req: Request): LanguageCode | undefined {
+        return (req.query && (req.query.languageCode as LanguageCode)) ?? this.configService.defaultLanguageCode;
+    }
+
+    private getCurrencyCode(req: Request): CurrencyCode | undefined {
+        const queryCurrencyCode = req.query && (req.query.currencyCode as CurrencyCode);
+        if (queryCurrencyCode && this.configService.availableCurrencyCodes.includes(queryCurrencyCode)) {
+            throw new UserInputError('error.currency-not-available');
+        }
+        return queryCurrencyCode;
     }
 
     /**

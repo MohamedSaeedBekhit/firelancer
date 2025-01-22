@@ -3,12 +3,18 @@ import { Column, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityIdStrategy } from '../config';
 import { getIdColumnsFor, getPrimaryGeneratedIdColumn } from './entity-id.decorator';
 
-export function setEntityIdStrategy(entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>, entities: Array<Type<unknown>>) {
+export function setEntityIdStrategy(
+    entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>,
+    entities: Array<Type<unknown>>,
+) {
     setBaseEntityIdType(entityIdStrategy);
     setEntityIdColumnTypes(entityIdStrategy, entities);
 }
 
-function setEntityIdColumnTypes(entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>, entities: Array<Type<unknown>>) {
+function setEntityIdColumnTypes(
+    entityIdStrategy: EntityIdStrategy<'uuid' | 'increment'>,
+    entities: Array<Type<unknown>>,
+) {
     const columnDataType = entityIdStrategy.primaryKeyType === 'increment' ? 'int' : 'varchar';
     for (const EntityCtor of entities) {
         const columnConfig = getIdColumnsFor(EntityCtor);

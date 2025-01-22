@@ -1,9 +1,11 @@
+import { CurrencyCode, LanguageCode } from '@firelancer/common';
 import { DynamicModule, Type } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { DataSourceOptions } from 'typeorm';
 import { PermissionDefinition } from '../common/permission-definition';
 import { Middleware } from '../common/shared-types';
 import { JobBufferStorageStrategy } from '../job-queue';
+import { AssetImportStrategy } from './strategies/asset-import/asset-import-strategy';
 import { AssetNamingStrategy } from './strategies/asset/asset-naming-strategy';
 import { AssetPreviewStrategy } from './strategies/asset/asset-preview-strategy';
 import { AssetStorageStrategy } from './strategies/asset/asset-storage-strategy';
@@ -11,13 +13,12 @@ import { AuthenticationStrategy } from './strategies/authentication/authenticati
 import { PasswordHashingStrategy } from './strategies/authentication/password-hashing-strategy';
 import { PasswordValidationStrategy } from './strategies/authentication/password-validation-strategy';
 import { CollectionFilter } from './strategies/catalog/collection-filter';
+import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
+import { MoneyStrategy } from './strategies/entity/money-strategy';
 import { JobQueueStrategy } from './strategies/job-queue/job-queue-strategy';
 import { FirelancerLogger } from './strategies/logger/firelancer-logger';
 import { SessionCacheStrategy } from './strategies/session-cache/session-cache-strategy';
 import { ErrorHandlerStrategy } from './strategies/system/error-handler-strategy';
-import { EntityIdStrategy } from './strategies/entity/entity-id-strategy';
-import { MoneyStrategy } from './strategies/entity/money-strategy';
-import { AssetImportStrategy } from './strategies/asset-import/asset-import-strategy';
 
 /**
  * @description
@@ -511,12 +512,25 @@ export interface FirelancerConfig {
     dbConnectionOptions: DataSourceOptions;
     /**
      * @description
+     * The default languageCode of the app.
+     *
+     * @default LanguageCode.en
+     */
+    defaultLanguageCode?: LanguageCode;
+    /**
+     * @description
+     * Specifies the currencies that are available for use in the application.
+     *
+     * @default [CurrencyCode.USD]
+     */
+    availableCurrencyCodes?: CurrencyCode[];
+    /**
+     * @description
      * An array of plugins.
      *
      * @default []
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    plugins?: Array<DynamicModule | Type<any>>;
+    plugins?: Array<DynamicModule | Type<any>>; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @description
      * Configures how the job queue is persisted and processed.

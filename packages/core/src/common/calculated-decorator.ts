@@ -41,7 +41,9 @@ export function Calculated(queryInstruction?: CalculatedColumnQueryInstruction):
             listQuery: queryInstruction,
         };
         if (target[CALCULATED_PROPERTIES]) {
-            if (!target[CALCULATED_PROPERTIES].map((p: CalculatedColumnDefinition) => p.name).includes(definition.name)) {
+            if (
+                !target[CALCULATED_PROPERTIES].map((p: CalculatedColumnDefinition) => p.name).includes(definition.name)
+            ) {
                 target[CALCULATED_PROPERTIES].push(definition);
             }
         } else {

@@ -107,7 +107,10 @@ export function resizeToFocalPoint(
 /**
  * Calculates the dimensions of the intermediate (resized) image.
  */
-function getIntermediateDimensions(original: Dimensions, target: Dimensions): { width: number; height: number; factor: number } {
+function getIntermediateDimensions(
+    original: Dimensions,
+    target: Dimensions,
+): { width: number; height: number; factor: number } {
     const hRatio = original.h / target.h;
     const wRatio = original.w / target.w;
 

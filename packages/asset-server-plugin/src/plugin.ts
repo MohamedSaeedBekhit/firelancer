@@ -199,7 +199,9 @@ export class AssetServerPlugin implements NestModule, OnApplicationBootstrap {
             if (typeof cacheHeader === 'string') {
                 this.cacheHeader = cacheHeader;
             } else {
-                this.cacheHeader = [cacheHeader.restriction, `max-age: ${cacheHeader.maxAge}`].filter((value) => !!value).join(', ');
+                this.cacheHeader = [cacheHeader.restriction, `max-age: ${cacheHeader.maxAge}`]
+                    .filter((value) => !!value)
+                    .join(', ');
             }
         }
 

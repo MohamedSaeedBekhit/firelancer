@@ -3,7 +3,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
 import { In, SelectQueryBuilder, ObjectLiteral, ObjectType } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
-import { ConfigurableOperation, CreateCollectionInput, MoveCollectionInput, RelationPaths, UpdateCollectionInput } from '../../api';
+import {
+    ConfigurableOperation,
+    CreateCollectionInput,
+    MoveCollectionInput,
+    RelationPaths,
+    UpdateCollectionInput,
+} from '../../api';
 import {
     EntityNotFoundError,
     IllegalOperationError,
@@ -54,7 +60,9 @@ export class CollectionService implements OnModuleInit {
             merge(this.eventBus.ofType(EntityEvent))
                 .pipe(debounceTime(50))
                 .subscribe(async (event) => {
-                    const collections = await this.connection.rawConnection.getRepository(Collection).find({ select: { id: true } });
+                    const collections = await this.connection.rawConnection
+                        .getRepository(Collection)
+                        .find({ select: { id: true } });
                     await this.applyFiltersQueue.add(
                         {
                             ctx: (event as FirelancerEntityEvent<unknown, unknown>).ctx.serialize(),
@@ -111,7 +119,9 @@ export class CollectionService implements OnModuleInit {
                             // To avoid performance issues on huge collections
                             // we first split the affected job-post ids into chunks
                             this.chunkArray(affectedCollectableIds, 50000).map((chunk) =>
-                                this.eventBus.publish(new CollectionModificationEvent(ctx, collection, entity.EntityType, chunk)),
+                                this.eventBus.publish(
+                                    new CollectionModificationEvent(ctx, collection, entity.EntityType, chunk),
+                                ),
                             );
                         }
                     }
@@ -187,7 +197,10 @@ export class CollectionService implements OnModuleInit {
      * Returns an array of name/id pairs representing all ancestor Collections up
      * to the Root Collection.
      */
-    async getBreadcrumbs(ctx: RequestContext, collection: Collection): Promise<Array<{ name: string; id: ID; slug: string }>> {
+    async getBreadcrumbs(
+        ctx: RequestContext,
+        collection: Collection,
+    ): Promise<Array<{ name: string; id: ID; slug: string }>> {
         const rootCollection = await this.getRootCollection(ctx);
         if (idsAreEqual(collection.id, rootCollection.id)) {
             return [pick(rootCollection, ['id', 'name', 'slug'])];
@@ -205,7 +218,11 @@ export class CollectionService implements OnModuleInit {
      * Returns the descendants of a Collection as a flat array. The depth of the traversal can be limited
      * with the maxDepth argument. So to get only the immediate children, set maxDepth = 1.
      */
-    async getDescendants(ctx: RequestContext, rootId: ID, maxDepth: number = Number.MAX_SAFE_INTEGER): Promise<Array<Collection>> {
+    async getDescendants(
+        ctx: RequestContext,
+        rootId: ID,
+        maxDepth: number = Number.MAX_SAFE_INTEGER,
+    ): Promise<Array<Collection>> {
         const getChildren = async (id: ID, _descendants: Collection[] = [], depth = 1) => {
             const children = await this.connection
                 .getRepository(ctx, Collection)
@@ -314,7 +331,9 @@ export class CollectionService implements OnModuleInit {
                 );
             } else {
                 const affectedCollectableIds = await this.getCollectionCollectableIds(collection, EntityType);
-                await this.eventBus.publish(new CollectionModificationEvent(ctx, collection, EntityType, affectedCollectableIds));
+                await this.eventBus.publish(
+                    new CollectionModificationEvent(ctx, collection, EntityType, affectedCollectableIds),
+                );
             }
         }
 
@@ -342,7 +361,9 @@ export class CollectionService implements OnModuleInit {
                         .remove(chunkedDeleteId);
                 }
                 await this.connection.getRepository(ctx, Collection).remove(coll);
-                await this.eventBus.publish(new CollectionModificationEvent(ctx, deletedColl, EntityType, affectedCollectableIds));
+                await this.eventBus.publish(
+                    new CollectionModificationEvent(ctx, deletedColl, EntityType, affectedCollectableIds),
+                );
             }
         }
         await this.eventBus.publish(new CollectionEvent(ctx, deletedCollection, 'deleted', id));
@@ -387,7 +408,9 @@ export class CollectionService implements OnModuleInit {
         return assertFound(this.findOne(ctx, input.collectionId));
     }
 
-    private getCollectionFiltersFromInput(input: CreateCollectionInput | UpdateCollectionInput): ConfigurableOperation[] {
+    private getCollectionFiltersFromInput(
+        input: CreateCollectionInput | UpdateCollectionInput,
+    ): ConfigurableOperation[] {
         const filters: ConfigurableOperation[] = [];
         if (input.filters) {
             for (const filter of input.filters) {
@@ -434,7 +457,10 @@ export class CollectionService implements OnModuleInit {
                 const filtersOfType = filters.filter((f) => f.code === filterType.code);
                 if (filtersOfType.length) {
                     for (const filter of filtersOfType) {
-                        filteredQb = filterType.apply(filteredQb as SelectQueryBuilder<ObjectType<ObjectLiteral>>, filter.args);
+                        filteredQb = filterType.apply(
+                            filteredQb as SelectQueryBuilder<ObjectType<ObjectLiteral>>,
+                            filter.args,
+                        );
                     }
                 }
             }
@@ -507,7 +533,10 @@ export class CollectionService implements OnModuleInit {
             return [...toAddIds, ...toRemoveIds];
         }
 
-        return [...(await existingEntitiesQb.getRawMany().then((results) => results.map((result) => result.id))), ...toRemoveIds];
+        return [
+            ...(await existingEntitiesQb.getRawMany().then((results) => results.map((result) => result.id))),
+            ...toRemoveIds,
+        ];
     }
 
     /**

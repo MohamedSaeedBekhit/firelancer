@@ -35,7 +35,10 @@ export class EntityRef {
         if (!this.isTranslatable()) {
             return;
         }
-        const translationsDecoratorArgs = this.classDeclaration.getProperty('translations')?.getDecorator('OneToMany')?.getArguments();
+        const translationsDecoratorArgs = this.classDeclaration
+            .getProperty('translations')
+            ?.getDecorator('OneToMany')
+            ?.getArguments();
 
         if (translationsDecoratorArgs) {
             const typeFn = translationsDecoratorArgs[0];

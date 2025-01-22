@@ -14,7 +14,9 @@ export interface ConfigArgCommonDef<T extends ConfigArgType> {
     description?: string;
 }
 
-export type ConfigArgListDef<T extends ConfigArgType, C extends ConfigArgCommonDef<T> = ConfigArgCommonDef<T>> = C & { list: true };
+export type ConfigArgListDef<T extends ConfigArgType, C extends ConfigArgCommonDef<T> = ConfigArgCommonDef<T>> = C & {
+    list: true;
+};
 
 export type WithArgConfig<T> = {
     config?: T;
@@ -291,7 +293,11 @@ export class ConfigurableOperationDef<T extends ConfigArgs = ConfigArgs> {
     }
 }
 
-function coerceValueToType<T extends ConfigArgs>(value: string, type: ConfigArgType, isList: boolean): ConfigArgValues<T>[keyof T] {
+function coerceValueToType<T extends ConfigArgs>(
+    value: string,
+    type: ConfigArgType,
+    isList: boolean,
+): ConfigArgValues<T>[keyof T] {
     if (isList) {
         try {
             return (JSON.parse(value) as string[]).map((v) => coerceValueToType(v, type, false)) as any;

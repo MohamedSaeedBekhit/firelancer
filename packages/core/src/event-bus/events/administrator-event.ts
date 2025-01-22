@@ -11,7 +11,12 @@ type AdministratorInputTypes = CreateAdministratorInput | UpdateAdministratorInp
  * This event is fired whenever a Administrator is added, updated or deleted.
  */
 export class AdministratorEvent extends FirelancerEntityEvent<Administrator, AdministratorInputTypes> {
-    constructor(ctx: RequestContext, entity: Administrator, type: 'created' | 'updated' | 'deleted', input?: AdministratorInputTypes) {
+    constructor(
+        ctx: RequestContext,
+        entity: Administrator,
+        type: 'created' | 'updated' | 'deleted',
+        input?: AdministratorInputTypes,
+    ) {
         super(entity, type, ctx, input);
     }
 }
