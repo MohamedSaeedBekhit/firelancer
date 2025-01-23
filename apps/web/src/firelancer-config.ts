@@ -1,10 +1,10 @@
-import 'dotenv/config';
-import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
-import { AutoIncrementIdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
-import { NextFunction, Request, Response } from 'express';
-import { HelloWorldPlugin } from './plugins/hello-world/plugin';
 import { AdminUiPlugin } from '@firelancer/admin-ui-plugin';
+import { AssetServerPlugin } from '@firelancer/asset-server-plugin';
+import { Base64IdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger } from '@firelancer/core';
+import 'dotenv/config';
+import { NextFunction, Request, Response } from 'express';
 import * as path from 'path';
+import { HelloWorldPlugin } from './plugins/hello-world/plugin';
 
 const serverPort = Number(process.env.PORT) || 3000;
 
@@ -69,7 +69,7 @@ export const config: FirelancerConfig = {
         HelloWorldPlugin,
     ],
     entityOptions: {
-        entityIdStrategy: new AutoIncrementIdStrategy(),
+        entityIdStrategy: new Base64IdStrategy(),
     },
     importExportOptions: {
         importAssetsDir: path.join(__dirname, './import/assets'),
