@@ -52,6 +52,11 @@ export interface Orderable {
 }
 
 /**
+ * Given an array type e.g. Array<string>, return the inner type e.g. string.
+ */
+export type UnwrappedArray<T extends any[]> = T[number]; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+/**
  * Parameters for list queries
  */
 export interface ListQueryOptions<T extends FirelancerEntity> {

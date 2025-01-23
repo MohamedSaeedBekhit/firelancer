@@ -6,9 +6,12 @@ import { ExternalAuthenticationMethod } from './authentication-method/external-a
 import { NativeAuthenticationMethod } from './authentication-method/native-authentication-method.entity';
 import { BalanceEntry } from './balance-entry/balance-entry.entity';
 import { CollectionAsset } from './collection/collection-asset.entity';
+import { CollectionTranslation } from './collection/collection-translation.entity';
 import { Collection } from './collection/collection.entity';
 import { Customer } from './customer/customer.entity';
+import { FacetValueTranslation } from './facet-value/facet-value-translation.entity';
 import { FacetValue } from './facet-value/facet-value.entity';
+import { FacetTranslation } from './facet/facet-translation.entity';
 import { Facet } from './facet/facet.entity';
 import { CustomerHistoryEntry } from './history-entry/customer-history-entry.entity';
 import { HistoryEntry } from './history-entry/history-entry.entity';
@@ -24,19 +27,22 @@ import { User } from './user/user.entity';
  * A map of all the core database entities.
  */
 export const coreEntitiesMap = {
+    Administrator,
     Asset,
     AuthenticatedSession,
     AuthenticationMethod,
-    Administrator,
     AnonymousSession,
     BalanceEntry,
     Collection,
     CollectionAsset,
+    CollectionTranslation,
     Customer,
     CustomerHistoryEntry,
     Session,
     Facet,
+    FacetTranslation,
     FacetValue,
+    FacetValueTranslation,
     JobPost,
     JobPostAsset,
     ExternalAuthenticationMethod,

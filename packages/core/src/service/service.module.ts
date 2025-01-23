@@ -24,6 +24,10 @@ import { SearchService } from './services/search.service';
 import { SessionService } from './services/session.service';
 import { UserService } from './services/user.service';
 import { ListQueryBuilder } from './helpers/list-query-builder/list-query-builder';
+import { TranslatableSaver } from './helpers/translatable-saver/translatable-saver';
+import { TranslationDiffer } from './helpers/translatable-saver/translation-differ';
+import { TranslatorService } from './helpers/translator/translator.service';
+import { SlugValidator } from './helpers/slug-validator/slug-validator';
 
 const services = [
     HistoryService,
@@ -42,7 +46,17 @@ const services = [
     SearchService,
 ];
 
-const helpers = [RequestContextService, PasswordCipher, VerificationTokenGenerator, ConfigArgService, ListQueryBuilder];
+const helpers = [
+    ConfigArgService,
+    ListQueryBuilder,
+    PasswordCipher,
+    RequestContextService,
+    SlugValidator,
+    TranslatableSaver,
+    TranslationDiffer,
+    TranslatorService,
+    VerificationTokenGenerator,
+];
 
 /**
  * The ServiceCoreModule is imported internally by the ServiceModule. It is arranged in this way so that

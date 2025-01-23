@@ -12,12 +12,13 @@ import {
     TreeParent,
 } from 'typeorm';
 import { ConfigurableOperation } from '../../api';
-import { Orderable } from '../../common';
+import { LocaleString, Orderable, Translatable, Translation } from '../../common';
 import { FirelancerEntity } from '../base/base.entity';
 import { EntityId } from '../entity-id.decorator';
 import { JobPost } from '../job-post/job-post.entity';
 import { Asset } from '../asset/asset.entity';
 import { CollectionAsset } from './collection-asset.entity';
+import { CollectionTranslation } from './collection-translation.entity';
 
 /**
  * @description
@@ -25,7 +26,7 @@ import { CollectionAsset } from './collection-asset.entity';
  */
 @Entity()
 @Tree('closure-table')
-export class Collection extends FirelancerEntity implements Orderable {
+export class Collection extends FirelancerEntity implements Translatable, Orderable {
     constructor(input?: DeepPartial<Collection>) {
         super(input);
     }
@@ -39,14 +40,14 @@ export class Collection extends FirelancerEntity implements Orderable {
     @Column({ default: false })
     isPrivate: boolean;
 
-    @Column()
-    name: string;
+    name: LocaleString;
 
-    @Column()
-    description: string;
+    description: LocaleString;
 
-    @Column()
-    slug: string;
+    slug: LocaleString;
+
+    @OneToMany(() => CollectionTranslation, (translation) => translation.base, { eager: true })
+    translations: Array<Translation<Collection>>;
 
     @Column('simple-json')
     filters: ConfigurableOperation[];

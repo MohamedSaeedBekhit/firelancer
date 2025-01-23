@@ -1,4 +1,4 @@
-import { Permission } from '@firelancer/common';
+import { LanguageCode, Permission } from '@firelancer/common';
 
 export interface CountryDefinition {
     code: string;
@@ -40,6 +40,7 @@ export interface RoleDefinition {
  * An object defining initial settings for a new Firelancer installation.
  */
 export interface InitialData {
+    defaultLanguage: LanguageCode;
     roles?: RoleDefinition[];
     facets: FacetDefinition[];
     countries: CountryDefinition[];

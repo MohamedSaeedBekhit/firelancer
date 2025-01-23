@@ -16,3 +16,4 @@ export const DEFAULT_AUTH_TOKEN_HEADER_KEY = 'firelancer-auth-token';
 export const DEFAULT_COOKIE_NAME = 'session';
 export const SKILL_FACET_CODE = '__skill_facet__';
 export const SPECIALITY_FACET_CODE = '__speciality_facet__';
+export const ROOT_COLLECTION_NAME = '__root_collection__';

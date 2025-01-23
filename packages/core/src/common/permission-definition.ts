@@ -36,7 +36,7 @@ export interface PermissionDefinitionConfig {
 
 /**
  * @description
- * Permission metadata used internally in generating the GraphQL `Permissions` enum.
+ * Permission metadata used internally in generating the `Permissions` enum.
  */
 export type PermissionMetadata = Required<PermissionDefinitionConfig>;
 

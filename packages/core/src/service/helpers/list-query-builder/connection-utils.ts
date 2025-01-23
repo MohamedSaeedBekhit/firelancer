@@ -1,5 +1,8 @@
 import { Type } from '@firelancer/common';
 import { DataSource } from 'typeorm';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { Translation } from '../../../common';
+import { FirelancerEntity } from '../../../entity';
 
 /**
  * @description
@@ -8,8 +11,27 @@ import { DataSource } from 'typeorm';
 export function getColumnMetadata<T>(connection: DataSource, entity: Type<T>) {
     const metadata = connection.getMetadata(entity);
     const columns = metadata.columns;
+    let translationColumns: ColumnMetadata[] = [];
+    const relations = metadata.relations;
+
+    const translationRelation = relations.find((r) => r.propertyName === 'translations');
+    if (translationRelation) {
+        const commonFields: Array<keyof (Translation<T> & FirelancerEntity)> = [
+            'id',
+            'createdAt',
+            'updatedAt',
+            'languageCode',
+        ];
+        const translationMetadata = connection.getMetadata(translationRelation.type);
+        translationColumns = translationColumns.concat(
+            translationMetadata.columns.filter(
+                (c) => !c.relationMetadata && !commonFields.includes(c.propertyName as keyof Translation<T>),
+            ),
+        );
+    }
+
     const alias = metadata.name.toLowerCase();
-    return { columns, alias };
+    return { columns, translationColumns, alias };
 }
 
 export function getEntityAlias<T>(connection: DataSource, entity: Type<T>): string {

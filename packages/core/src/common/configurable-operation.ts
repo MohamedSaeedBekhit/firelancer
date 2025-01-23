@@ -1,17 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ConfigArgType, ID, assertNever } from '@firelancer/common';
+import { ConfigArgType, ID, LocalizedString, assertNever } from '@firelancer/common';
 import { ConfigArg } from '../api';
 import { InternalServerError } from './error/errors';
 import { InjectableStrategy } from './injectable-strategy';
 import { Injector } from './injector';
+
+/**
+ * @description
+ * An array of string values in a given {@link LanguageCode}, used to define human-readable string values.
+ *
+ * @example
+ * ```ts
+ * const title: LocalizedStringArray = [
+ *   { languageCode: LanguageCode.en, value: 'English Title' },
+ * ]
+ * ```
+ */
+export type LocalizedStringArray = Array<LocalizedString>;
 
 export interface ConfigArgCommonDef<T extends ConfigArgType> {
     type: T;
     required?: boolean;
     defaultValue?: ConfigArgTypeToTsType<T>;
     list?: boolean;
-    label?: string;
-    description?: string;
+    label?: LocalizedStringArray;
+    description?: LocalizedStringArray;
 }
 
 export type ConfigArgListDef<T extends ConfigArgType, C extends ConfigArgCommonDef<T> = ConfigArgCommonDef<T>> = C & {
@@ -25,6 +38,7 @@ export type WithArgConfig<T> = {
 export type StringArgConfig = WithArgConfig<{
     options?: { label?: string; value: string }[];
 }>;
+
 export type IntArgConfig = WithArgConfig<{
     inputType?: 'default' | 'percentage' | 'money';
 }>;
@@ -150,7 +164,7 @@ export type TypeToConfigArgDef<T extends ConfigArgDefToType<any>> = T extends nu
 
 /**
  * @description
- * Common configuration options used when creating a new instance of a ConfigurableOperationDef
+ * Common configuration options used when creating a new instance of a {@link ConfigurableOperationDef}
  */
 export interface ConfigurableOperationDefOptions<T extends ConfigArgs> extends InjectableStrategy {
     /**
@@ -177,7 +191,7 @@ export interface ConfigurableOperationDefOptions<T extends ConfigArgs> extends I
      * @description
      * A human-readable description for the operation method.
      */
-    description: string;
+    description: LocalizedStringArray;
 }
 
 /**
@@ -252,7 +266,7 @@ export class ConfigurableOperationDef<T extends ConfigArgs = ConfigArgs> {
     get args(): T {
         return this.options.args;
     }
-    get description(): string {
+    get description(): LocalizedStringArray {
         return this.options.description;
     }
     constructor(protected options: ConfigurableOperationDefOptions<T>) {}

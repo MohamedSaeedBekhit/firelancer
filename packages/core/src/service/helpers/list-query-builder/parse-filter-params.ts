@@ -46,7 +46,7 @@ export function parseFilterParams<
     if (!filterParams) {
         return [] as unknown as R;
     }
-    const { columns, alias: defaultAlias } = getColumnMetadata(connection, entity);
+    const { columns, translationColumns, alias: defaultAlias } = getColumnMetadata(connection, entity);
     const alias = entityAlias ?? defaultAlias;
     const calculatedColumns = getCalculatedColumns(entity);
 
@@ -62,6 +62,9 @@ export function parseFilterParams<
             let fieldName: string;
             if (columns.find((c) => c.propertyName === key)) {
                 fieldName = `${alias}.${key}`;
+            } else if (translationColumns.find((c) => c.propertyName === key)) {
+                const translationsAlias = [alias, 'translations'].join('__');
+                fieldName = `${translationsAlias}.${key}`;
             } else if (calculatedColumnExpression) {
                 fieldName = escapeCalculatedColumnExpression(connection, calculatedColumnExpression);
             } else if (customPropertyMap?.[key]) {

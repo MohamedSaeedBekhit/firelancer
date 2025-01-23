@@ -1,6 +1,7 @@
-import { Type } from '@firelancer/common';
+import { Type, unique } from '@firelancer/common';
 import { OrderByCondition } from 'typeorm';
 import { DataSource } from 'typeorm/data-source/DataSource';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { NullOptionals, SortParameter } from '../../../common';
 import { UserInputError } from '../../../common/error/errors';
 import { FirelancerEntity } from '../../../entity';
@@ -27,7 +28,7 @@ export function parseSortParams<T extends FirelancerEntity>(
     if (!sortParams || Object.keys(sortParams).length === 0) {
         return {};
     }
-    const { columns, alias: defaultAlias } = getColumnMetadata(connection, entity);
+    const { columns, translationColumns, alias: defaultAlias } = getColumnMetadata(connection, entity);
     const alias = entityAlias ?? defaultAlias;
     const calculatedColumns = getCalculatedColumns(entity);
     const output: OrderByCondition = {};
@@ -36,6 +37,11 @@ export function parseSortParams<T extends FirelancerEntity>(
         const matchingColumn = columns.find((c) => c.propertyName === key);
         if (matchingColumn) {
             output[`${alias}.${matchingColumn.propertyPath}`] = order as 'ASC' | 'DESC';
+        } else if (translationColumns.find((c) => c.propertyName === key)) {
+            const translationsAlias = connection.namingStrategy.joinTableName(alias, 'translations', '', '');
+            const pathParts = [translationsAlias];
+            pathParts.push(key);
+            output[pathParts.join('.')] = order as 'ASC' | 'DESC';
         } else if (calculatedColumnDef) {
             const instruction = calculatedColumnDef.listQuery;
             if (instruction && instruction.expression) {
@@ -44,8 +50,18 @@ export function parseSortParams<T extends FirelancerEntity>(
         } else if (customPropertyMap?.[key]) {
             output[customPropertyMap[key]] = order as 'ASC' | 'DESC';
         } else {
-            throw new UserInputError('error.invalid-sort-field');
+            throw new UserInputError('error.invalid-sort-field', {
+                fieldName: key,
+                validFields: [
+                    ...getValidSortFields([...columns, ...translationColumns]),
+                    ...calculatedColumns.map((c) => c.name.toString()),
+                ].join(', '),
+            });
         }
     }
     return output;
+}
+
+function getValidSortFields(columns: ColumnMetadata[]): string[] {
+    return unique(columns.map((c) => c.propertyName));
 }

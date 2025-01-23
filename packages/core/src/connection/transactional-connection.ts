@@ -106,7 +106,7 @@ export class TransactionalConnection {
      * In the context of API requests, you should instead use the Transaction decorator on your resolver or
      * controller method.
      *
-     * On the other hand, for code that does not run in the context of a GraphQL/REST request, this method
+     * On the other hand, for code that does not run in the context of a REST request, this method
      * should be used to protect against non-atomic changes to the data which could leave your data in an
      * inconsistent state.
      *

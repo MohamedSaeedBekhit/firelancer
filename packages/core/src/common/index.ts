@@ -6,6 +6,7 @@ export * from './extract-session-token';
 export * from './get-api-type';
 export * from './injectable-strategy';
 export * from './injector';
+export * from './locale-types';
 export * from './parse-context';
 export * from './permission-definition';
 export * from './request-context';

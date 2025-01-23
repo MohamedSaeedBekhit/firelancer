@@ -80,6 +80,11 @@ export function createDate(timeSpan: TimeSpan): Date {
     return new Date(Date.now() + timeSpan.milliseconds());
 }
 
+export type LocalizedString = {
+    languageCode: LanguageCode;
+    value: string;
+};
+
 export enum LogicalOperator {
     AND = 'AND',
     OR = 'OR',

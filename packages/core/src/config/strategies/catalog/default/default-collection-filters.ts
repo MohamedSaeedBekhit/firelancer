@@ -1,3 +1,4 @@
+import { LanguageCode } from '@firelancer/common';
 import { ConfigArgDef } from '../../../../common/configurable-operation';
 import { JobPost } from '../../../../entity';
 import { CollectionFilter } from '../collection-filter';
@@ -22,9 +23,18 @@ export function randomSuffix(prefix: string) {
  */
 export const combineWithAndArg: ConfigArgDef<'boolean'> = {
     type: 'boolean',
-    label: 'Combination mode',
-    description:
-        'If this filter is being combined with other filters, do all conditions need to be satisfied (AND), or just one or the other (OR)?',
+    label: [
+        {
+            languageCode: LanguageCode.en,
+            value: 'Combination mode',
+        },
+    ],
+    description: [
+        {
+            languageCode: LanguageCode.en,
+            value: 'If this filter is being combined with other filters, do all conditions need to be satisfied (AND), or just one or the other (OR)?',
+        },
+    ],
     defaultValue: true,
 };
 
@@ -34,18 +44,37 @@ export const combineWithAndArg: ConfigArgDef<'boolean'> = {
 export const jobPostFacetValueCollectionFilter = new CollectionFilter({
     entityType: JobPost,
     code: 'job-post-facet-value-filter',
-    description: 'Filter by facet values',
+    description: [
+        {
+            languageCode: LanguageCode.en,
+            value: 'Filter by facet values',
+        },
+    ],
     args: {
         facetValueIds: {
             type: 'ID',
             list: true,
-            label: 'Facet values',
+            label: [
+                {
+                    languageCode: LanguageCode.en,
+                    value: 'Facet values',
+                },
+            ],
         },
         containsAny: {
             type: 'boolean',
-            label: 'Contains any',
-            description:
-                'If checked, job posts must have at least one of the selected facet values. If not checked, the job post must have all selected values.',
+            label: [
+                {
+                    languageCode: LanguageCode.en,
+                    value: 'Contains any',
+                },
+            ],
+            description: [
+                {
+                    languageCode: LanguageCode.en,
+                    value: 'If checked, job posts must have at least one of the selected facet values. If not checked, the job post must have all selected values.',
+                },
+            ],
         },
         combineWithAnd: combineWithAndArg,
     },
@@ -94,12 +123,22 @@ export const jobPostFacetValueCollectionFilter = new CollectionFilter({
 export const jobPostIdCollectionFilter = new CollectionFilter({
     entityType: JobPost,
     code: 'job-post-id-filter',
-    description: 'Manually select job posts',
+    description: [
+        {
+            languageCode: LanguageCode.en,
+            value: 'Manually select job posts',
+        },
+    ],
     args: {
         jobPostIds: {
             type: 'ID',
             list: true,
-            label: 'Job Posts',
+            label: [
+                {
+                    languageCode: LanguageCode.en,
+                    value: 'Job Posts',
+                },
+            ],
         },
         combineWithAnd: combineWithAndArg,
     },

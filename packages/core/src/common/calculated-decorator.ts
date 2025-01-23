@@ -9,7 +9,7 @@ export const CALCULATED_PROPERTIES = '__calculatedProperties__';
 /**
  * @description
  * Optional metadata used to tell the {@link ListQueryBuilder} & {@link Relations} decorator how to deal with
- * calculated columns when sorting, filtering and deriving required relations from GraphQL operations.
+ * calculated columns when sorting, filtering and deriving required relations from operations.
  */
 export interface CalculatedColumnQueryInstruction {
     /**

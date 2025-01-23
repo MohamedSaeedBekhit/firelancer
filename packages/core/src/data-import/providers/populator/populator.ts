@@ -1,7 +1,7 @@
-import { ID, normalizeString, notNullOrUndefined } from '@firelancer/common';
+import { ID, normalizeString, notNullOrUndefined, PaginatedList } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { ConfigurableOperation } from '../../../api';
-import { RequestContext } from '../../../common';
+import { RequestContext, Translated } from '../../../common';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { User } from '../../../entity';
@@ -94,7 +94,12 @@ export class Populator {
                 } else {
                     facetEntity = await this.facetService.create(ctx, {
                         code: normalizeString(facetName, '-'),
-                        name: facetName,
+                        translations: [
+                            {
+                                languageCode: ctx.languageCode,
+                                name: facetName,
+                            },
+                        ],
                     });
                 }
                 this.facetMap.set(facetName, facetEntity);
@@ -111,9 +116,14 @@ export class Populator {
                     facetValueEntity = existing;
                 } else {
                     facetValueEntity = await this.facetValueService.create(ctx, {
-                        code: normalizeString(valueName, '-'),
-                        name: valueName,
                         facetId: facetEntity.id,
+                        code: normalizeString(valueName, '-'),
+                        translations: [
+                            {
+                                languageCode: ctx.languageCode,
+                                name: valueName,
+                            },
+                        ],
                     });
                 }
                 this.facetValueMap.set(facetValueMapKey, facetValueEntity);
@@ -147,9 +157,14 @@ export class Populator {
             }
 
             const collection = await this.collectionService.create(ctx, {
-                name: collectionDef.name,
-                description: collectionDef.description || '',
-                slug: collectionDef.slug ?? normalizeString(collectionDef.name, '-'),
+                translations: [
+                    {
+                        languageCode: ctx.languageCode,
+                        name: collectionDef.name,
+                        description: collectionDef.description || '',
+                        slug: collectionDef.slug ?? collectionDef.name,
+                    },
+                ],
                 isPrivate: collectionDef.private || false,
                 parentId,
                 assetIds: assets.map((a) => a.id.toString()),
@@ -175,13 +190,13 @@ export class Populator {
 
     private processFilterDefinition(
         filter: CollectionFilterDefinition,
-        allFacetValues: FacetValue[],
+        allFacetValues: PaginatedList<Translated<FacetValue>>,
     ): ConfigurableOperation {
         switch (filter.code) {
             case 'job-post-facet-value-filter': {
                 const facetValueIds = filter.args.facetValueNames
                     .map((name) =>
-                        allFacetValues.find((fv) => {
+                        allFacetValues.items.find((fv) => {
                             if (name.includes(':')) {
                                 const [facetName, valueName] = name.split(':');
                                 return (

@@ -1,6 +1,7 @@
-import { InitialData, Permission } from '@firelancer/core';
+import { InitialData, LanguageCode, Permission } from '@firelancer/core';
 
 export const initialData: InitialData = {
+    defaultLanguage: LanguageCode.en,
     roles: [
         {
             code: 'administrator',

@@ -17,13 +17,14 @@ import {
     ListQueryOptions,
     NullOptionals,
     RequestContext,
+    SortParameter,
     UserInputError,
 } from '../../../common';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { FirelancerEntity } from '../../../entity';
 import { joinTreeRelationsDynamically } from '../utils/tree-relations-qb-joiner';
-import { getEntityAlias } from './connection-utils';
+import { getColumnMetadata, getEntityAlias } from './connection-utils';
 import { getCalculatedColumns } from './get-calculated-columns';
 import { parseFilterParams, WhereGroup } from './parse-filter-params';
 import { parseSortParams } from './parse-sort-params';
@@ -229,6 +230,7 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
         }
 
         const sortParams = Object.assign({}, options.sort, extendedOptions.orderBy);
+        this.applyTranslationConditions(qb, entity, sortParams, extendedOptions.ctx);
         const sort = parseSortParams(qb.connection, entity, sortParams, customPropertyMap, qb.alias);
         const filter = parseFilterParams(qb.connection, entity, options.filter, customPropertyMap, qb.alias);
 
@@ -438,6 +440,89 @@ export class ListQueryBuilder implements OnApplicationBootstrap {
                     instruction.query(qb as SelectQueryBuilder<ObjectLiteral>);
                 }
             }
+        }
+    }
+
+    /**
+     * @description
+     * If this entity is Translatable, and we are sorting on one of the translatable fields,
+     * then we need to apply appropriate WHERE clauses to limit
+     * the joined translation relations.
+     */
+    private applyTranslationConditions<T extends FirelancerEntity>(
+        qb: SelectQueryBuilder<any>,
+        entity: Type<T>,
+        sortParams: NullOptionals<SortParameter<T>> & FindOneOptions<T>['order'],
+        ctx?: RequestContext,
+    ) {
+        const languageCode = ctx?.languageCode || this.configService.defaultLanguageCode;
+
+        const { translationColumns } = getColumnMetadata(qb.connection, entity);
+        const alias = qb.alias;
+
+        const sortKeys = Object.keys(sortParams);
+        let sortingOnTranslatableKey = false;
+        for (const translationColumn of translationColumns) {
+            if (sortKeys.includes(translationColumn.propertyName)) {
+                sortingOnTranslatableKey = true;
+            }
+        }
+
+        if (translationColumns.length && sortingOnTranslatableKey) {
+            const translationsAlias = qb.connection.namingStrategy.joinTableName(alias, 'translations', '', '');
+            if (!this.isRelationAlreadyJoined(qb, translationsAlias)) {
+                qb.leftJoinAndSelect(`${alias}.translations`, translationsAlias);
+            }
+
+            qb.andWhere(
+                new Brackets((qb1) => {
+                    qb1.where(`${translationsAlias}.languageCode = :languageCode`, { languageCode });
+                    const defaultLanguageCode = ctx?.languageCode ?? this.configService.defaultLanguageCode;
+                    const translationEntity = translationColumns[0].entityMetadata.target;
+                    if (languageCode !== defaultLanguageCode) {
+                        // If the current languageCode is not the default, then we create a more
+                        // complex WHERE clause to allow us to use the non-default translations and
+                        // fall back to the default language if no translation exists.
+                        qb1.orWhere(
+                            new Brackets((qb2) => {
+                                const subQb1 = this.connection.rawConnection
+                                    .createQueryBuilder(translationEntity, 'translation')
+                                    .where(`translation.base = ${alias}.id`)
+                                    .andWhere('translation.languageCode = :defaultLanguageCode');
+                                const subQb2 = this.connection.rawConnection
+                                    .createQueryBuilder(translationEntity, 'translation')
+                                    .where(`translation.base = ${alias}.id`)
+                                    .andWhere('translation.languageCode = :nonDefaultLanguageCode');
+
+                                qb2.where(`EXISTS (${subQb1.getQuery()})`).andWhere(
+                                    `NOT EXISTS (${subQb2.getQuery()})`,
+                                );
+                            }),
+                        );
+                    } else {
+                        qb1.orWhere(
+                            new Brackets((qb2) => {
+                                const subQb1 = this.connection.rawConnection
+                                    .createQueryBuilder(translationEntity, 'translation')
+                                    .where(`translation.base = ${alias}.id`)
+                                    .andWhere('translation.languageCode = :defaultLanguageCode');
+                                const subQb2 = this.connection.rawConnection
+                                    .createQueryBuilder(translationEntity, 'translation')
+                                    .where(`translation.base = ${alias}.id`)
+                                    .andWhere('translation.languageCode != :defaultLanguageCode');
+
+                                qb2.where(`NOT EXISTS (${subQb1.getQuery()})`).andWhere(
+                                    `EXISTS (${subQb2.getQuery()})`,
+                                );
+                            }),
+                        );
+                    }
+                    qb.setParameters({
+                        nonDefaultLanguageCode: languageCode,
+                        defaultLanguageCode,
+                    });
+                }),
+            );
         }
     }
 

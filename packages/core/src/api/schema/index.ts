@@ -1,4 +1,4 @@
-import { BalanceEntryType, CurrencyCode, CustomerType, ID, Permission } from '@firelancer/common';
+import { BalanceEntryType, CurrencyCode, CustomerType, ID, LanguageCode, Permission } from '@firelancer/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Buffer } from 'buffer';
 import { Type } from 'class-transformer';
@@ -517,28 +517,36 @@ export class MutationCreateJobPostArgs {
     facetValueIds?: Array<ID>;
 }
 
+export class FacetValueTranslationInput {
+    @ApiPropertyOptional()
+    @IsEntityId()
+    @IsOptional()
+    id?: ID;
+
+    @ApiProperty()
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    name?: string;
+}
+
 export class CreateFacetValueInput {
     @ApiProperty()
     @IsString()
     code: string;
 
     @ApiProperty()
-    @IsString()
-    name: string;
-
-    @ApiProperty()
     @IsEntityId()
     facetId: ID;
-}
-
-export class CreateFacetValueWithFacetInput {
-    @ApiProperty()
-    @IsString()
-    code: string;
 
     @ApiProperty()
-    @IsString()
-    name: string;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueTranslationInput)
+    translations: Array<FacetValueTranslationInput>;
 }
 
 export class UpdateFacetValueInput {
@@ -552,14 +560,37 @@ export class UpdateFacetValueInput {
     code?: string;
 
     @ApiPropertyOptional()
-    @IsString()
+    @IsArray()
     @IsOptional()
-    name?: string;
+    @ValidateNested({ each: true })
+    @Type(() => FacetValueTranslationInput)
+    translations?: Array<FacetValueTranslationInput>;
+}
 
+export class CreateFacetValueWithFacetInput {
+    @ApiProperty()
+    @IsString()
+    code: string;
+
+    @ApiProperty()
+    @IsString()
+    name: string;
+}
+
+export class FacetTranslationInput {
     @ApiPropertyOptional()
     @IsEntityId()
     @IsOptional()
-    facetId?: ID;
+    id?: ID;
+
+    @ApiProperty()
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
+    @ApiPropertyOptional()
+    @IsString()
+    @IsOptional()
+    name?: string;
 }
 
 export class CreateFacetInput {
@@ -568,8 +599,10 @@ export class CreateFacetInput {
     code: string;
 
     @ApiProperty()
-    @IsString()
-    name: string;
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => FacetTranslationInput)
+    translations: Array<FacetTranslationInput>;
 
     @ApiPropertyOptional()
     @IsArray()
@@ -589,10 +622,11 @@ export class UpdateFacetInput {
     @IsOptional()
     code?: string;
 
-    @ApiPropertyOptional()
-    @IsString()
-    @IsOptional()
-    name?: string;
+    @ApiProperty()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => FacetTranslationInput)
+    translations: Array<FacetTranslationInput>;
 }
 
 export class CreateBalanceEntryInput {
@@ -635,18 +669,30 @@ export class ConfigurableOperation {
     args: Array<ConfigArg>;
 }
 
-export class CreateCollectionInput {
+export class CreateCollectionTranslationInput {
+    @ApiProperty()
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
+
     @ApiProperty()
     @IsString()
     name: string;
 
     @ApiProperty()
     @IsString()
-    description: string;
+    slug: string;
 
     @ApiProperty()
     @IsString()
-    slug: string;
+    description: string;
+}
+
+export class CreateCollectionInput {
+    @ApiProperty()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateCollectionTranslationInput)
+    translations: Array<CreateCollectionTranslationInput>;
 
     @ApiPropertyOptional()
     @IsEntityId()
@@ -690,10 +736,15 @@ export class MutationCreateCollectionArgs {
     input: CreateCollectionInput;
 }
 
-export class UpdateCollectionInput {
-    @ApiProperty()
+export class UpdateCollectionTranslationInput {
+    @ApiPropertyOptional()
     @IsEntityId()
-    id: ID;
+    @IsOptional()
+    id?: ID;
+
+    @ApiPropertyOptional()
+    @IsEnum(LanguageCode)
+    languageCode: LanguageCode;
 
     @ApiPropertyOptional()
     @IsString()
@@ -703,12 +754,25 @@ export class UpdateCollectionInput {
     @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    description?: string;
+    slug?: string;
 
     @ApiPropertyOptional()
     @IsString()
     @IsOptional()
-    slug?: string;
+    description?: string;
+}
+
+export class UpdateCollectionInput {
+    @ApiProperty()
+    @IsEntityId()
+    id: ID;
+
+    @ApiPropertyOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => UpdateCollectionTranslationInput)
+    @IsOptional()
+    translations?: Array<UpdateCollectionTranslationInput>;
 
     @ApiPropertyOptional()
     @IsEntityId()
