@@ -1,11 +1,13 @@
-import { ID, JsonCompatible, Permission, intersect, isObject, LanguageCode, CurrencyCode } from '@firelancer/common';
+import { JsonCompatible } from '@firelancer/common/lib/shared-types';
+import { intersect, isObject } from '@firelancer/common/lib/shared-utils';
 import { ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import { TFunction } from 'i18next';
 import { EntityManager } from 'typeorm';
 import { CachedSession } from '../config/strategies/session-cache/session-cache-strategy';
 import { REQUEST_CONTEXT_KEY, REQUEST_CONTEXT_MAP_KEY, TRANSACTION_MANAGER_KEY } from './constants';
 import { ApiType } from './get-api-type';
-import { TFunction } from 'i18next';
+import { CurrencyCode, ID, LanguageCode, Permission } from './shared-schema';
 
 export type SerializedRequestContext = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

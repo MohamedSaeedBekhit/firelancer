@@ -1,4 +1,4 @@
-import { DeepPartial } from '@firelancer/common';
+import { DeepPartial } from '@firelancer/common/lib/shared-types';
 import { Column, Entity } from 'typeorm';
 import { FirelancerEntity } from '../../../entity/base/base.entity';
 import { JobConfig } from '../../../job-queue/types';

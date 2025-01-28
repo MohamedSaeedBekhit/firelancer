@@ -1,6 +1,5 @@
-import { ID } from '@firelancer/common';
-import { CreateJobPostInput } from '../../api';
 import { RequestContext } from '../../common';
+import { CreateJobPostInput, ID } from '../../common/shared-schema';
 import { JobPost } from '../../entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

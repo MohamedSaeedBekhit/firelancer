@@ -1,4 +1,4 @@
-import { ID, Permission } from '@firelancer/common';
+import { ID, Permission } from '../../../common/shared-schema';
 import { InjectableStrategy } from '../../../common/injectable-strategy';
 
 /**

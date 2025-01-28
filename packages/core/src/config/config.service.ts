@@ -1,5 +1,6 @@
 import { DynamicModule, Injectable, Type } from '@nestjs/common';
 import { DataSourceOptions } from 'typeorm';
+import { CurrencyCode, LanguageCode } from '../common/shared-schema';
 import { getConfig } from './config-helpers';
 import {
     ApiOptions,
@@ -14,7 +15,6 @@ import {
     SystemOptions,
 } from './firelancer-config';
 import { Logger } from './strategies/logger/firelancer-logger';
-import { CurrencyCode, LanguageCode } from '@firelancer/common';
 
 @Injectable()
 export class ConfigService implements FirelancerConfig {

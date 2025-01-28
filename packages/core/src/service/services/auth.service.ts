@@ -1,8 +1,8 @@
-import { ID } from '@firelancer/common';
 import { Injectable } from '@nestjs/common';
 import { InternalServerError, InvalidCredentialsError, NotVerifiedError } from '../../common/error/errors';
 import { ApiType } from '../../common/get-api-type';
 import { RequestContext } from '../../common/request-context';
+import { ID } from '../../common/shared-schema';
 import { ConfigService } from '../../config/config.service';
 import { AuthenticationStrategy } from '../../config/strategies/authentication/authentication-strategy';
 import {

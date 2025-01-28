@@ -1,9 +1,10 @@
-import { Injectable, Type } from '@nestjs/common';
-
+import { Type } from '@firelancer/common/lib/shared-types';
+import { normalizeString } from '@firelancer/common/lib/shared-utils';
+import { Injectable } from '@nestjs/common';
 import { RequestContext } from '../../../common';
+import { ID, LanguageCode } from '../../../common/shared-schema';
 import { TransactionalConnection } from '../../../connection/';
 import { FirelancerEntity } from '../../../entity';
-import { ID, LanguageCode, normalizeString } from '@firelancer/common';
 
 export type InputWithSlug = {
     id?: ID | null;

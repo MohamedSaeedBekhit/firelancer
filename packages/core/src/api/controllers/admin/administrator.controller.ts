@@ -1,4 +1,3 @@
-import { Permission } from '@firelancer/common';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
@@ -9,8 +8,9 @@ import {
     MutationDeleteAdministratorArgs,
     MutationUpdateActiveAdministratorArgs,
     MutationUpdateAdministratorArgs,
+    Permission,
     QueryAdministratorArgs,
-} from '../../../api/schema';
+} from '../../../common/shared-schema';
 import { RequestContext } from '../../../common';
 import { Administrator } from '../../../entity/administrator/administrator.entity';
 import { AdministratorService } from '../../../service';

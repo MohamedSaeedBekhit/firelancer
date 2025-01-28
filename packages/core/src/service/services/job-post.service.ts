@@ -1,8 +1,10 @@
-import { assertFound, ID, PaginatedList, unique } from '@firelancer/common';
+import { assertFound, unique } from '@firelancer/common/lib/shared-utils';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
-import { CreateJobPostInput, RelationPaths } from '../../api';
+import { RelationPaths } from '../../api';
 import { ListQueryOptions, RequestContext } from '../../common';
+import { CreateJobPostInput, ID } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { JobPost } from '../../entity';
 import { EventBus, JobPostEvent } from '../../event-bus';

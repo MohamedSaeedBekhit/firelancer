@@ -3,3 +3,7 @@ export * from './app.component.module';
 export * from './app.component';
 export * from './app.config';
 export * from './core.module';
+export * from './data/data.module';
+export * from './data/providers/auth-data.service';
+export * from './data/providers/base-data.service';
+export * from './data/providers/data.service';

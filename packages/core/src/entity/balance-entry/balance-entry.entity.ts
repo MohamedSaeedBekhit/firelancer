@@ -1,4 +1,4 @@
-import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '@firelancer/common';
+import { BalanceEntryStatus, BalanceEntryType, CurrencyCode, ID } from '../../common/shared-schema';
 import date from 'date-fns';
 import { Check, Column, DeepPartial, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { Calculated, UserInputError } from '../../common';

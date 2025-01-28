@@ -1,8 +1,10 @@
-import { assertFound, ID, normalizeEmailAddress, PaginatedList } from '@firelancer/common';
+import { assertFound, normalizeEmailAddress } from '@firelancer/common/lib/shared-utils';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
-import { CreateAdministratorInput, RelationPaths, UpdateAdministratorInput } from '../../api';
+import { RelationPaths } from '../../api';
 import { EntityNotFoundError, ListQueryOptions, RequestContext } from '../../common';
+import { CreateAdministratorInput, ID, UpdateAdministratorInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Administrator, NativeAuthenticationMethod, User } from '../../entity';

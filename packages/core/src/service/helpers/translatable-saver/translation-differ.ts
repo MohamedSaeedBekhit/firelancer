@@ -1,4 +1,5 @@
-import { DeepPartial, foundIn, not } from '@firelancer/common';
+import { foundIn, not } from '@firelancer/common/lib/shared-utils';
+import { DeepPartial } from '@firelancer/common/lib/shared-types';
 import { RequestContext, InternalServerError, Translatable, Translation, TranslationInput } from '../../../common';
 import { TransactionalConnection } from '../../../connection/transactional-connection';
 

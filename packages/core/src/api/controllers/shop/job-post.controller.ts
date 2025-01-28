@@ -1,9 +1,8 @@
-import { Permission } from '@firelancer/common';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import { CreateJobPostInput, MutationCreateJobPostArgs } from '../../../api/schema';
+import { CreateJobPostInput, MutationCreateJobPostArgs, Permission } from '../../../common/shared-schema';
 import { RequestContext } from '../../../common';
 import { AssetService, CustomerService } from '../../../service';
 import { JobPostService } from '../../../service/services/job-post.service';

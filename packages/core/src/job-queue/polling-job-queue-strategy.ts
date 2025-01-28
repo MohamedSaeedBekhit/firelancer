@@ -1,7 +1,7 @@
-import { ID, JobState } from '@firelancer/common';
 import { isObject } from 'class-validator';
 import { from, interval, race, Subject, Subscription } from 'rxjs';
 import { filter, switchMap, take, throttleTime } from 'rxjs/operators';
+import { ID, JobState } from '../common/shared-schema';
 import { Logger } from '../config';
 import { InjectableJobQueueStrategy } from './injectable-job-queue-strategy';
 import { Job } from './job';

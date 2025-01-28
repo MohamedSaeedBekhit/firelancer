@@ -6,12 +6,14 @@ import { AppComponent, AppComponentModule } from '@firelancer/admin-ui/core';
 import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
     declarations: [],
     imports: [CommonModule, AppComponentModule, RouterModule.forRoot(routes, { useHash: false })],
     bootstrap: [AppComponent],
     providers: [
+        provideHttpClient(),
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideAnimationsAsync(),
         providePrimeNG({

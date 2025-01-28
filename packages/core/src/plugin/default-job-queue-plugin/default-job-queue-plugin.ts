@@ -1,4 +1,4 @@
-import { Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { Job } from '../../job-queue/job';
 import { BackoffStrategy } from '../../job-queue/polling-job-queue-strategy';
 import { FirelancerPlugin } from '../../plugin';

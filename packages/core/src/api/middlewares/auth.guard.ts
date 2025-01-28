@@ -1,4 +1,4 @@
-import { Permission } from '@firelancer/common';
+import { Permission } from '@firelancer/common/lib/shared-schema';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request, Response } from 'express';

@@ -1,10 +1,14 @@
-import { HistoryEntryType, Permission } from '@firelancer/common';
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
+import { EmailAddressConflictError, ForbiddenError, NativeAuthStrategyError } from '../../../common/error/errors';
+import { RequestContext } from '../../../common/request-context';
+import { setSessionToken } from '../../../common/set-session-token';
 import {
+    AttemptLoginMutation,
+    HistoryEntryType,
     MutationAuthenticateArgs,
     MutationLoginArgs,
     MutationRefreshCustomerVerificationArgs,
@@ -15,10 +19,8 @@ import {
     MutationUpdateCustomerEmailAddressArgs,
     MutationUpdateCustomerPasswordArgs,
     MutationVerifyCustomerAccountArgs,
-} from '../../../api/schema';
-import { EmailAddressConflictError, ForbiddenError, NativeAuthStrategyError } from '../../../common/error/errors';
-import { RequestContext } from '../../../common/request-context';
-import { setSessionToken } from '../../../common/set-session-token';
+    Permission,
+} from '../../../common/shared-schema';
 import { Logger } from '../../../config';
 import { ConfigService } from '../../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../../config/strategies/authentication/default/native-authentication-strategy';
@@ -52,9 +54,7 @@ export class ShopAuthController extends BaseAuthController {
         @Body() args: MutationLoginArgs,
     ) {
         this.requireNativeAuthStrategy();
-
-        const result = await super.baseLogin(args, ctx, req, res);
-        res.send(result);
+        return super.baseLogin(args, ctx, req, res);
     }
 
     @Transaction()
@@ -67,7 +67,7 @@ export class ShopAuthController extends BaseAuthController {
         @Body() args: MutationAuthenticateArgs,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        res.send(result);
+        return res.send({ login: result } satisfies AttemptLoginMutation);
     }
 
     @Transaction()
@@ -86,10 +86,7 @@ export class ShopAuthController extends BaseAuthController {
     @Transaction()
     @Post('register')
     @Allow(Permission.Public)
-    async registerCustomerAccount(
-        @Ctx() ctx: RequestContext,
-        @Body() args: MutationRegisterCustomerAccountArgs,
-    ): Promise<{ sucess: boolean }> {
+    async registerCustomerAccount(@Ctx() ctx: RequestContext, @Body() args: MutationRegisterCustomerAccountArgs) {
         try {
             this.requireNativeAuthStrategy();
             await this.customerService.registerCustomerAccount(ctx, args.input);

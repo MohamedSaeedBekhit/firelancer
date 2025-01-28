@@ -1,8 +1,8 @@
-import { CurrencyCode, LanguageCode } from '@firelancer/common';
 import { DynamicModule, Type } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { DataSourceOptions } from 'typeorm';
 import { PermissionDefinition } from '../common/permission-definition';
+import { CurrencyCode, LanguageCode } from '../common/shared-schema';
 import { Middleware } from '../common/shared-types';
 import { JobBufferStorageStrategy } from '../job-queue';
 import { AssetImportStrategy } from './strategies/asset-import/asset-import-strategy';

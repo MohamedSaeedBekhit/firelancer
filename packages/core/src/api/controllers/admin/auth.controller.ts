@@ -1,10 +1,14 @@
-import { Permission } from '@firelancer/common';
 import { Body, Controller, Get, Post, Request, Response } from '@nestjs/common';
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import { Allow } from '../../../api/decorators/allow.decorator';
 import { Ctx } from '../../../api/decorators/request-context.decorator';
 import { Transaction } from '../../../api/decorators/transaction.decorator';
-import { MutationAuthenticateArgs, MutationLoginArgs } from '../../../api/schema';
+import {
+    AttemptLoginMutation,
+    MutationAuthenticateArgs,
+    MutationLoginArgs,
+    Permission,
+} from '../../../common/shared-schema';
 import { NativeAuthStrategyError } from '../../../common/error/errors';
 import { RequestContext } from '../../../common/request-context';
 import { Logger } from '../../../config';
@@ -36,8 +40,7 @@ export class AdminAuthController extends BaseAuthController {
         @Body() args: MutationLoginArgs,
     ) {
         this.requireNativeAuthStrategy();
-        const result = await super.baseLogin(args, ctx, req, res);
-        res.send(result);
+        return super.baseLogin(args, ctx, req, res);
     }
 
     @Transaction()
@@ -50,7 +53,7 @@ export class AdminAuthController extends BaseAuthController {
         @Response() res: ExpressResponse,
     ) {
         const result = await this.authenticateAndCreateSession(ctx, args, req, res);
-        res.send(result);
+        res.send({ login: result } satisfies AttemptLoginMutation);
     }
 
     @Transaction()

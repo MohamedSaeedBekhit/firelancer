@@ -1,9 +1,9 @@
-import { ID, PaginatedList } from '@firelancer/common';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
 import { Injectable } from '@nestjs/common';
 import { IsNull, Not } from 'typeorm';
-import { CreateBalanceEntryInput } from '../../api';
 import { RelationPaths } from '../../api/decorators/relations.decorator';
 import { ListQueryOptions, RequestContext } from '../../common';
+import { CreateBalanceEntryInput, ID } from '../../common/shared-schema';
 import { TransactionalConnection } from '../../connection';
 import { Customer } from '../../entity';
 import { BalanceEntry } from '../../entity/balance-entry/balance-entry.entity';

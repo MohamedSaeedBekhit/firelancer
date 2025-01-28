@@ -1,7 +1,8 @@
-import { ID, normalizeString, notNullOrUndefined, PaginatedList } from '@firelancer/common';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
+import { normalizeString, notNullOrUndefined } from '@firelancer/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
-import { ConfigurableOperation } from '../../../api';
 import { RequestContext, Translated } from '../../../common';
+import { ConfigurableOperation, ID } from '../../../common/shared-schema';
 import { ConfigService, Logger } from '../../../config';
 import { TransactionalConnection } from '../../../connection';
 import { User } from '../../../entity';

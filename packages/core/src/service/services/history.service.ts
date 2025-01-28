@@ -1,6 +1,5 @@
-import { HistoryEntryType, ID } from '@firelancer/common';
+import { HistoryEntryType, ID, UpdateCustomerInput } from '../../common/shared-schema';
 import { Injectable } from '@nestjs/common';
-import { UpdateCustomerInput } from '../../api';
 import { RequestContext } from '../../common';
 import { TransactionalConnection } from '../../connection';
 import { Administrator, CustomerHistoryEntry } from '../../entity';

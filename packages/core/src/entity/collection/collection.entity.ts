@@ -1,4 +1,4 @@
-import { DeepPartial, ID } from '@firelancer/common';
+import { DeepPartial } from '@firelancer/common/lib/shared-types';
 import {
     Column,
     Entity,
@@ -11,12 +11,12 @@ import {
     TreeChildren,
     TreeParent,
 } from 'typeorm';
-import { ConfigurableOperation } from '../../api';
 import { LocaleString, Orderable, Translatable, Translation } from '../../common';
+import { ConfigurableOperation, ID } from '../../common/shared-schema';
+import { Asset } from '../asset/asset.entity';
 import { FirelancerEntity } from '../base/base.entity';
 import { EntityId } from '../entity-id.decorator';
 import { JobPost } from '../job-post/job-post.entity';
-import { Asset } from '../asset/asset.entity';
 import { CollectionAsset } from './collection-asset.entity';
 import { CollectionTranslation } from './collection-translation.entity';
 

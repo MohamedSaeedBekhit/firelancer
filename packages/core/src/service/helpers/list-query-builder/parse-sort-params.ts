@@ -1,4 +1,5 @@
-import { Type, unique } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
+import { unique } from '@firelancer/common/lib/shared-utils';
 import { OrderByCondition } from 'typeorm';
 import { DataSource } from 'typeorm/data-source/DataSource';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';

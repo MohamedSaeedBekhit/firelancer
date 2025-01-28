@@ -1,4 +1,5 @@
-import { AssetType, getAssetType, ID, idsAreEqual, notNullOrUndefined, PaginatedList, Type } from '@firelancer/common';
+import { PaginatedList, Type } from '@firelancer/common/lib/shared-types';
+import { getAssetType, idsAreEqual, notNullOrUndefined } from '@firelancer/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { ReadStream as FSReadStream } from 'fs';
 import { ReadStream } from 'fs-extra';
@@ -9,8 +10,9 @@ import path from 'path';
 import { Readable, Stream } from 'stream';
 import { FindOneOptions, In, IsNull } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils';
-import { CreateAssetInput, RelationPaths, UpdateAssetInput } from '../../api';
+import { RelationPaths } from '../../api';
 import { InternalServerError, ListQueryOptions, RequestContext } from '../../common';
+import { AssetType, CreateAssetInput, ID, UpdateAssetInput } from '../../common/shared-schema';
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Asset, FirelancerEntity, JobPost, OrderableAsset } from '../../entity';

@@ -5,9 +5,9 @@ import {
     NumberOperators,
     StringOperators,
     Type,
-} from '@firelancer/common';
-import { FirelancerEntity } from '../entity';
+} from '@firelancer/common/lib/shared-types';
 import { Request, Response } from 'express';
+import { FirelancerEntity } from '../entity';
 
 export type MiddlewareHandler = Type<unknown> | ((req: Request, res: Response, next: () => void) => void);
 

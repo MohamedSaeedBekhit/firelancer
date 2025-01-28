@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigurableOperation } from '../../../api';
-import { UserInputError } from '../../../common';
 import { ConfigurableOperationDef } from '../../../common/configurable-operation';
+import { UserInputError } from '../../../common/error/errors';
+import { ConfigurableOperation } from '../../../common/shared-schema';
 import { ConfigService } from '../../../config';
 import { CollectionFilter } from '../../../config/strategies/catalog/collection-filter';
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { alphabet, generateRandomString } from '@firelancer/common';
+import { alphabet, generateRandomString } from '@firelancer/common/lib/shared-utils';
 
 import { ConfigService } from '../../../config/config.service';
 /* eslint-disable-next-line @typescript-eslint/no-require-imports */

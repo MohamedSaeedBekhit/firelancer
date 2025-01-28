@@ -15,7 +15,7 @@ import { TRANSACTION_MANAGER_KEY } from '../common/constants';
 import { EntityNotFoundError } from '../common/error/errors';
 import { RequestContext } from '../common/request-context';
 import { SoftDeletable } from '../common/shared-types';
-import { ID } from '@firelancer/common';
+import { ID } from '../common/shared-schema';
 import { FirelancerEntity } from '../entity';
 import { TransactionWrapper } from './transaction-wrapper';
 

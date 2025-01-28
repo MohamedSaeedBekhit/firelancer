@@ -1,5 +1,5 @@
-import { LanguageCode } from '@firelancer/common';
 import { CrudPermissionDefinition, PermissionDefinition, PermissionMetadata } from './permission-definition';
+import { LanguageCode } from './shared-schema';
 
 /**
  * This value should be rarely used - only in those contexts where we have no access to the

@@ -1,6 +1,5 @@
-import { ID } from '@firelancer/common';
-import { CreateAssetInput, UpdateAssetInput } from '../../api/schema';
 import { RequestContext } from '../../common';
+import { CreateAssetInput, ID, UpdateAssetInput } from '../../common/shared-schema';
 import { Asset } from '../../entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

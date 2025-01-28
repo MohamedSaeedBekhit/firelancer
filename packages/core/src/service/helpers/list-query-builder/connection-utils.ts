@@ -1,4 +1,4 @@
-import { Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { DataSource } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { Translation } from '../../../common';

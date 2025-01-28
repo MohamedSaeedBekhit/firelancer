@@ -1,5 +1,5 @@
 import { CreateDateColumn, DeepPartial, UpdateDateColumn } from 'typeorm';
-import { ID } from '@firelancer/common';
+import { ID } from '../../common/shared-schema';
 import { PrimaryGeneratedId } from '../entity-id.decorator';
 
 /**

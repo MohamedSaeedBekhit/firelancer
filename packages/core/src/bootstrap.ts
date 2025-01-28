@@ -1,4 +1,4 @@
-import { DEFAULT_COOKIE_NAME } from '@firelancer/common';
+import { DEFAULT_COOKIE_NAME } from '@firelancer/common/lib/shared-constants';
 import { INestApplication, INestApplicationContext, NestApplicationOptions, Type } from '@nestjs/common';
 import { NestApplicationContextOptions } from '@nestjs/common/interfaces/nest-application-context-options.interface';
 import { NestFactory } from '@nestjs/core';

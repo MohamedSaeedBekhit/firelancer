@@ -1,4 +1,4 @@
-import { LanguageCode } from '@firelancer/common';
+import { LanguageCode } from '../../../common/shared-schema';
 import {
     DEFAULT_LANGUAGE_CODE,
     InternalServerError,

@@ -1,5 +1,5 @@
-import { LanguageCode } from '@firelancer/common';
 import { ConfigArgDef } from '../../../../common/configurable-operation';
+import { LanguageCode } from '../../../../common/shared-schema';
 import { JobPost } from '../../../../entity';
 import { CollectionFilter } from '../collection-filter';
 

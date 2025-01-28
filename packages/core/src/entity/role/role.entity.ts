@@ -1,4 +1,4 @@
-import { Permission } from '@firelancer/common';
+import { Permission } from '../../common/shared-schema';
 import { Column, DeepPartial, Entity } from 'typeorm';
 import { FirelancerEntity } from '../base/base.entity';
 

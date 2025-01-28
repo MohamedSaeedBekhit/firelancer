@@ -1,5 +1,5 @@
 import { cancel, isCancel, log, select, spinner, text } from '@clack/prompts';
-import { unique } from '@firelancer/common/lib/unique';
+import { unique } from '@firelancer/common/lib/shared-utils';
 import { FirelancerConfig, generateMigration } from '@firelancer/core';
 import path from 'path';
 import { CliCommand, CliCommandReturnVal } from '../../../shared/cli-command';

@@ -1,11 +1,10 @@
 import {
-    CurrencyCode,
     DEFAULT_AUTH_TOKEN_HEADER_KEY,
-    LanguageCode,
     SUPER_ADMIN_USER_IDENTIFIER,
     SUPER_ADMIN_USER_PASSWORD,
-} from '@firelancer/common';
+} from '@firelancer/common/lib/shared-constants';
 import { randomBytes } from 'crypto';
+import { CurrencyCode, LanguageCode } from '../common/shared-schema';
 import { InMemoryJobBufferStorageStrategy } from '../job-queue';
 import { InMemoryJobQueueStrategy } from '../job-queue/in-memory-job-queue-strategy';
 import { RuntimeFirelancerConfig } from './firelancer-config';

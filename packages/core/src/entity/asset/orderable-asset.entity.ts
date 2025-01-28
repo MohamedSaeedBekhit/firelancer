@@ -1,4 +1,4 @@
-import { ID } from '@firelancer/common';
+import { ID } from '../../common/shared-schema';
 import { Column, DeepPartial, Index, ManyToOne } from 'typeorm';
 import { Orderable } from '../../common';
 import { Asset } from '../asset/asset.entity';

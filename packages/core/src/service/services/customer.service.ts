@@ -1,15 +1,8 @@
-import {
-    assertFound,
-    CustomerType,
-    HistoryEntryType,
-    ID,
-    normalizeEmailAddress,
-    PaginatedList,
-} from '@firelancer/common';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
+import { assertFound, normalizeEmailAddress } from '@firelancer/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
-import { CreateCustomerInput, RegisterCustomerInput, UpdateCustomerInput } from '../../api/schema';
 import { ListQueryOptions } from '../../common';
 import {
     EmailAddressConflictError,
@@ -19,6 +12,14 @@ import {
     UnauthorizedError,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
+import {
+    CreateCustomerInput,
+    CustomerType,
+    HistoryEntryType,
+    ID,
+    RegisterCustomerInput,
+    UpdateCustomerInput,
+} from '../../common/shared-schema';
 import { ConfigService } from '../../config/config.service';
 import { NATIVE_AUTH_STRATEGY_NAME } from '../../config/strategies/authentication/default/native-authentication-strategy';
 import { TransactionalConnection } from '../../connection/transactional-connection';

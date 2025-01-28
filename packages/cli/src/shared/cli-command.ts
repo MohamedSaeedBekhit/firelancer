@@ -14,7 +14,7 @@ export interface BaseCliCommandOptions {
     plugin?: FirelancerPluginRef;
 }
 
-export type CliCommandReturnVal<T extends Record<string, any> = Record<string, any>> = {
+export type CliCommandReturnVal<T extends Record<string, unknown> = Record<string, unknown>> = {
     project: Project;
     modifiedSourceFiles: SourceFile[];
 } & T;
@@ -26,7 +26,7 @@ export interface CliCommandOptions<T extends BaseCliCommandOptions, R extends Cl
     run: (options?: Partial<T>) => Promise<R>;
 }
 
-export class CliCommand<T extends Record<string, any>, R extends CliCommandReturnVal = CliCommandReturnVal> {
+export class CliCommand<T extends Record<string, unknown>, R extends CliCommandReturnVal = CliCommandReturnVal> {
     constructor(private options: CliCommandOptions<T, R>) {}
 
     get id() {

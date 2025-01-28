@@ -1,4 +1,5 @@
-import { pick, Type } from '@firelancer/common';
+import { pick } from '@firelancer/common/lib/shared-utils';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { Module, Type as NestType, Provider } from '@nestjs/common';
 import { MODULE_METADATA } from '@nestjs/common/constants';
 import { ModuleMetadata } from '@nestjs/common/interfaces';

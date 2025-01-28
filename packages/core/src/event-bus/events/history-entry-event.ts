@@ -1,5 +1,5 @@
-import { HistoryEntryType, ID } from '@firelancer/common';
 import { RequestContext } from '../../common/request-context';
+import { HistoryEntryType, ID } from '../../common/shared-schema';
 import { HistoryEntry } from '../../entity/history-entry/history-entry.entity';
 import { FirelancerEntityEvent } from '../firelancer-entity-event';
 

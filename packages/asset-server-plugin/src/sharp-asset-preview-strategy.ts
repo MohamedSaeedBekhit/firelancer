@@ -1,4 +1,5 @@
-import { AssetType, getAssetType } from '@firelancer/common';
+import { AssetType } from '@firelancer/common/lib/shared-schema';
+import { getAssetType } from '@firelancer/common/lib/shared-utils';
 import { AssetPreviewStrategy, Logger, RequestContext } from '@firelancer/core';
 import path from 'path';
 import sharp from 'sharp';

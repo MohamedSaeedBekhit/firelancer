@@ -1,4 +1,4 @@
-import { ID } from '@firelancer/common';
+import { ID } from '../../common/shared-schema';
 import { LogLevel } from '../../config';
 import { coreEntitiesMap } from '../../entity';
 import { I18nError } from '../../i18n';

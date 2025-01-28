@@ -1,4 +1,4 @@
-import { Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { EntityRelationPaths } from '../../common';
 import { FirelancerEntity } from '../../entity';
 

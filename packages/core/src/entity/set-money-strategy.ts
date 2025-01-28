@@ -1,4 +1,4 @@
-import { Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { Column } from 'typeorm';
 import { MoneyStrategy } from '../config';
 import { getMoneyColumnsFor } from './money.decorator';

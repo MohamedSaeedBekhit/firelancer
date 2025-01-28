@@ -1,4 +1,4 @@
-import { CustomerType, ID, isEmailAddressLike, normalizeEmailAddress } from '@firelancer/common';
+import { isEmailAddressLike, normalizeEmailAddress } from '@firelancer/common/lib/shared-utils';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import {
@@ -16,6 +16,7 @@ import {
     VerificationTokenInvalidError,
 } from '../../common/error/errors';
 import { RequestContext } from '../../common/request-context';
+import { CustomerType, ID } from '../../common/shared-schema';
 import { ConfigService } from '../../config/config.service';
 import { TransactionalConnection } from '../../connection/transactional-connection';
 import { NativeAuthenticationMethod, Role, User } from '../../entity/index';

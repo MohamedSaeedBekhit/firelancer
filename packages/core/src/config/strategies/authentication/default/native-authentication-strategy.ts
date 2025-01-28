@@ -1,4 +1,4 @@
-import { ID } from '@firelancer/common';
+import { ID } from '../../../../common/shared-schema';
 import { Injector } from '../../../../common/injector';
 import { RequestContext } from '../../../../common/request-context';
 import { TransactionalConnection } from '../../../../connection/transactional-connection';

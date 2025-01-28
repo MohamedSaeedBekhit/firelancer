@@ -1,15 +1,15 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { DateUtils } from 'typeorm/util/DateUtils';
 import { InternalServerError, UserInputError } from '../../../common/error/errors';
+import { assertNever } from '@firelancer/common/lib/shared-utils';
 import {
-    assertNever,
     BooleanOperators,
     DateOperators,
     LogicalOperator,
     NumberOperators,
     StringOperators,
     Type,
-} from '@firelancer/common';
+} from '@firelancer/common/lib/shared-types';
 import { FilterParameter, ListOperators, NullOptionals } from '../../../common';
 import { FirelancerEntity } from '../../../entity';
 import { getCalculatedColumns } from './get-calculated-columns';

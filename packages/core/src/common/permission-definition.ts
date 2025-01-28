@@ -1,4 +1,4 @@
-import { Permission } from '@firelancer/common';
+import { Permission } from './shared-schema';
 
 /**
  * @description

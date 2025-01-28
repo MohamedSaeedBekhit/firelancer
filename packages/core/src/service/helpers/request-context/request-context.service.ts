@@ -1,12 +1,13 @@
-import { CurrencyCode, LanguageCode, Permission, intersect } from '@firelancer/common';
+import { intersect } from '@firelancer/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
+import { UserInputError } from '../../../common';
 import { ApiType, getApiType } from '../../../common/get-api-type';
 import { RequestContext } from '../../../common/request-context';
+import { CurrencyCode, LanguageCode, Permission } from '../../../common/shared-schema';
 import { ConfigService } from '../../../config/config.service';
 import { CachedSession, CachedSessionUser } from '../../../config/strategies/session-cache/session-cache-strategy';
 import { User } from '../../../entity';
-import { UserInputError } from '../../../common';
 const ms = require('ms'); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**

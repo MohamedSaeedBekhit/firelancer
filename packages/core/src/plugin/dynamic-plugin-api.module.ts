@@ -1,4 +1,5 @@
-import { notNullOrUndefined, Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
+import { notNullOrUndefined } from '@firelancer/common/lib/shared-utils';
 import { DynamicModule } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { getConfig } from '../config/config-helpers';

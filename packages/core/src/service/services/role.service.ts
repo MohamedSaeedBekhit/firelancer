@@ -1,18 +1,14 @@
 import {
     BUYER_ROLE_CODE,
     BUYER_ROLE_DESCRIPTION,
-    ID,
-    PaginatedList,
-    Permission,
     SELLER_ROLE_CODE,
     SELLER_ROLE_DESCRIPTION,
     SUPER_ADMIN_ROLE_CODE,
     SUPER_ADMIN_ROLE_DESCRIPTION,
-    assertFound,
-    unique,
-} from '@firelancer/common';
+} from '@firelancer/common/lib/shared-constants';
+import { assertFound, unique } from '@firelancer/common/lib/shared-utils';
 import { Injectable } from '@nestjs/common';
-import { CreateRoleInput, RelationPaths, UpdateRoleInput } from '../../api';
+import { RelationPaths } from '../../api';
 import { RequestContextCacheService } from '../../cache';
 import {
     EntityNotFoundError,
@@ -22,6 +18,7 @@ import {
     UserInputError,
 } from '../../common';
 import { getAllPermissionsMetadata } from '../../common/constants';
+import { CreateRoleInput, ID, Permission, UpdateRoleInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { Role, User } from '../../entity';
@@ -29,6 +26,7 @@ import { EventBus, RoleEvent } from '../../event-bus';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
 import { getPermissions, getUserPermissions } from '../helpers/utils/get-user-permissions';
 import { patchEntity } from '../helpers/utils/patch-entity';
+import { PaginatedList } from '@firelancer/common/lib/shared-types';
 
 /**
  * @description

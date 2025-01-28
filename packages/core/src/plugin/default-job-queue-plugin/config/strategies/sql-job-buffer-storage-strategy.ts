@@ -1,4 +1,4 @@
-import { JsonCompatible } from '@firelancer/common';
+import { JsonCompatible } from '@firelancer/common/lib/shared-types';
 import { Injector } from '../../../../common/injector';
 import { TransactionalConnection } from '../../../../connection/transactional-connection';
 import { Job } from '../../../../job-queue/job';

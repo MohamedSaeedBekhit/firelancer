@@ -1,4 +1,4 @@
-import { ID } from '@firelancer/common';
+import { ID } from '../../common/shared-schema';
 import { RequestContext } from '../../common/request-context';
 import { Administrator } from '../../entity/administrator/administrator.entity';
 import { FirelancerEvent } from '../firelancer-event';

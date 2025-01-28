@@ -14,4 +14,12 @@ export * from './job-queue/index';
 export * from './worker/index';
 export * from './process-context/index';
 export * from './i18n/index';
-export * from '@firelancer/common';
+export * from '@firelancer/common/lib/shared-types';
+export {
+    Permission,
+    LanguageCode,
+    CurrencyCode,
+    AssetType,
+    BalanceEntryType,
+    BalanceEntryStatus,
+} from '@firelancer/common/lib/shared-schema';

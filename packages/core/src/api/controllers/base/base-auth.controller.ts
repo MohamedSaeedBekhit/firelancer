@@ -1,5 +1,12 @@
 import { Request, Response } from 'express';
-import { CurrentUser, MutationAuthenticateArgs, MutationLoginArgs } from '../../../api/schema';
+import {
+    AttemptLoginMutation,
+    CurrentUser,
+    GetCurrentUserQuery,
+    LogOutMutation,
+    MutationAuthenticateArgs,
+    MutationLoginArgs,
+} from '../../../common/shared-schema';
 import { ForbiddenError, InvalidCredentialsError } from '../../../common/error/errors';
 import { extractSessionToken } from '../../../common/extract-session-token';
 import { ApiType } from '../../../common/get-api-type';
@@ -26,8 +33,8 @@ export class BaseAuthController {
      * Attempts a login given the username and password of a user. If successful, returns
      * the user data and returns the token either in a cookie or in the response body.
      */
-    async baseLogin(args: MutationLoginArgs, ctx: RequestContext, req: Request, res: Response): Promise<CurrentUser> {
-        return this.authenticateAndCreateSession(
+    async baseLogin(args: MutationLoginArgs, ctx: RequestContext, req: Request, res: Response) {
+        const result = await this.authenticateAndCreateSession(
             ctx,
             {
                 input: { [NATIVE_AUTH_STRATEGY_NAME]: args },
@@ -36,16 +43,19 @@ export class BaseAuthController {
             req,
             res,
         );
+
+        return res.send({ login: result } satisfies AttemptLoginMutation);
     }
 
     async logout(ctx: RequestContext, req: Request, res: Response) {
         const authOptions = this.configService.authOptions;
         const token = extractSessionToken(req, authOptions.tokenMethod);
         if (!token) {
-            return res.send({ success: false });
+            return res.send({ logout: { success: false } } satisfies LogOutMutation);
         }
 
         await this.authService.destroyAuthenticatedSession(ctx, token);
+
         setSessionToken({
             req,
             res,
@@ -53,13 +63,14 @@ export class BaseAuthController {
             rememberMe: false,
             sessionToken: '',
         });
-        return res.send({ success: true });
+
+        return res.send({ logout: { success: true } } satisfies LogOutMutation);
     }
 
     /**
      * Returns information about the current authenticated user.
      */
-    async me(ctx: RequestContext, apiType: ApiType): Promise<CurrentUser | null> {
+    async me(ctx: RequestContext, apiType: ApiType): Promise<GetCurrentUserQuery> {
         const userId = ctx.activeUserId;
         if (!userId) {
             throw new ForbiddenError(LogLevel.Verbose);
@@ -71,7 +82,7 @@ export class BaseAuthController {
             }
         }
         const user = userId && (await this.userService.getUserById(ctx, userId));
-        return user ? this.publiclyAccessibleUser(user) : null;
+        return { me: user ? this.publiclyAccessibleUser(user) : null };
     }
 
     /**

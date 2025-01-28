@@ -1,11 +1,11 @@
 import { ObjectLiteral, ObjectType, SelectQueryBuilder } from 'typeorm';
-import { ConfigArg } from '../../../api';
 import {
     ConfigArgs,
     ConfigArgValues,
     ConfigurableOperationDef,
     ConfigurableOperationDefOptions,
 } from '../../../common/configurable-operation';
+import { ConfigArg } from '../../../common/shared-schema';
 
 export type ApplyCollectionFilterFn<T extends ConfigArgs, Entity extends ObjectLiteral = ObjectLiteral> = (
     qb: SelectQueryBuilder<ObjectType<Entity>>,

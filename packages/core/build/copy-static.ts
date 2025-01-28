@@ -1,4 +1,3 @@
- 
 import chokidar from 'chokidar';
 import fs from 'fs-extra';
 import { globSync } from 'glob';

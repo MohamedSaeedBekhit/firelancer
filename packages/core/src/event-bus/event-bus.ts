@@ -1,4 +1,4 @@
-import { notNullOrUndefined } from '@firelancer/common';
+import { notNullOrUndefined } from '@firelancer/common/lib/shared-utils';
 import { Injectable, OnModuleDestroy, Type } from '@nestjs/common';
 import { filter, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
 import { EntityManager } from 'typeorm';

@@ -1,4 +1,4 @@
-import { Type } from '@firelancer/common';
+import { Type } from '@firelancer/common/lib/shared-types';
 import { FirelancerEntity } from './base/base.entity';
 
 interface MoneyColumnOptions {

@@ -1,4 +1,5 @@
-import { LogicalOperator, Type, unique } from '@firelancer/common';
+import { unique } from '@firelancer/common/lib/shared-utils';
+import { LogicalOperator, Type } from '@firelancer/common/lib/shared-types';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import {
     Brackets,
