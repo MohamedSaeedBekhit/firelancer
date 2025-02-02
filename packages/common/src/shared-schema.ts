@@ -99,6 +99,13 @@ export enum JobState {
     RUNNING = 'RUNNING',
 }
 
+export enum DeletionResult {
+    /** The entity was successfully deleted */
+    DELETED = 'DELETED',
+    /** Deletion did not take place, reason given in message */
+    NOT_DELETED = 'NOT_DELETED',
+}
+
 /**
  * @description
  * Certain entities (those which implement ConfigurableOperationDef) allow arbitrary
@@ -762,7 +769,7 @@ export class AuthenticationMethod {
     strategy?: string;
     updatedAt: Date;
     // TODO
-    user: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    user: any;
 }
 
 export class Role {
@@ -793,7 +800,6 @@ export class Customer {
     phoneNumber: string | null;
     emailAddress: string;
     user?: User;
-    jobPosts: JobPost[];
 }
 
 export class JobPost {
@@ -805,10 +811,103 @@ export class JobPost {
     description: string;
     enabled: boolean;
     private: boolean;
+    assets: Array<Asset>;
+    facetValues: Array<FacetValue>;
+    collections: Array<Collection>;
+}
+
+export class CollectionBreadcrumb {
+    id: ID;
+    name: string;
+    slug: string;
+}
+
+export class Collection {
+    assets: Array<Asset>;
+    breadcrumbs: Array<CollectionBreadcrumb>;
+    children?: Array<Collection>;
+    createdAt: Date;
+    description: string;
+    featuredAsset?: Asset;
+    filters: Array<ConfigurableOperation>;
+    id: ID;
+    inheritFilters: boolean;
+    isPrivate: boolean;
+    languageCode?: LanguageCode;
+    name: string;
+    parent?: Collection;
+    parentId: ID;
+    position: number;
+    slug: string;
+    translations: Array<CollectionTranslation>;
+    updatedAt: Date;
     // TODO
-    assets: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
-    facetValues: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
-    collections: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+    // jobPosts: JobPostList;
+}
+
+export class CollectionTranslation {
+    createdAt: Date;
+    description: string;
+    id: ID;
+    languageCode: LanguageCode;
+    name: string;
+    slug: string;
+    updatedAt: Date;
+}
+
+export class Asset {
+    createdAt: Date;
+    fileSize: number;
+    focalPoint?: Coordinate;
+    height: number;
+    id: ID;
+    mimeType: string;
+    name: string;
+    preview: string;
+    source: string;
+    type: AssetType;
+    updatedAt: Date;
+    width: number;
+}
+
+export class Facet {
+    code: string;
+    createdAt: Date;
+    id: ID;
+    isPrivate: boolean;
+    languageCode: LanguageCode;
+    name: string;
+    translations: Array<FacetTranslation>;
+    updatedAt: Date;
+    values: Array<FacetValue>;
+}
+
+export class FacetTranslation {
+    id: ID;
+    languageCode: LanguageCode;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export class FacetValue {
+    id: ID;
+    code: string;
+    facet: Facet;
+    facetId: ID;
+    languageCode: LanguageCode;
+    name: string;
+    translations: Array<FacetValueTranslation>;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export class FacetValueTranslation {
+    id: ID;
+    languageCode: LanguageCode;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export class CreateAdministratorInput {
@@ -851,6 +950,8 @@ export class CurrentUser {
     id: ID;
 
     identifier: string;
+
+    permissions: Array<Permission>;
 }
 
 export class MutationLoginArgs {
@@ -1001,6 +1102,10 @@ export class MutationDeleteAdministratorArgs {
     id: ID;
 }
 
+export class MutationDeleteAdministratorsArgs {
+    ids: Array<ID>;
+}
+
 export class QueryAdministratorArgs {
     id: ID;
 }
@@ -1135,11 +1240,13 @@ export class CreateBalanceEntryInput {
 
 export class ConfigArg {
     name: string;
+
     value: string;
 }
 
 export class ConfigurableOperation {
     code: string;
+
     args: Array<ConfigArg>;
 }
 
@@ -1187,12 +1294,19 @@ export class UpdateCollectionTranslationInput {
 
 export class UpdateCollectionInput {
     id: ID;
+
     translations?: Array<UpdateCollectionTranslationInput>;
+
     featuredAssetId?: ID;
+
     assetIds?: Array<ID>;
+
     filters?: Array<ConfigurableOperation>;
+
     inheritFilters?: boolean;
+
     isPrivate?: boolean;
+
     parentId?: ID;
 }
 
@@ -1202,7 +1316,9 @@ export class MutationUpdateCollectionArgs {
 
 export class MoveCollectionInput {
     collectionId: ID;
+
     index: number;
+
     parentId: ID;
 }
 
@@ -1224,4 +1340,204 @@ export class AttemptLoginMutation {
 
 export class LogOutMutation {
     logout: Success;
+}
+
+export class Coordinate {
+    x: number;
+    y: number;
+}
+
+export class AssetFragment {
+    id: string;
+    createdAt: any;
+    updatedAt: any;
+    name: string;
+    fileSize: number;
+    mimeType: string;
+    type: AssetType;
+    preview: string;
+    source: string;
+    width: number;
+    height: number;
+    focalPoint?: Coordinate | null;
+}
+
+export class GetActiveAdministratorQuery {
+    activeAdministrator: {
+        id: string;
+        emailAddress: string;
+        firstName: string;
+        lastName: string;
+        createdAt: any;
+        updatedAt: any;
+        user: {
+            id: string;
+            identifier: string;
+            lastLogin?: any | null;
+            roles: Array<{
+                id: string;
+                createdAt: any;
+                updatedAt: any;
+                code: string;
+                description: string;
+                permissions: Array<Permission>;
+            }>;
+        };
+    } | null;
+}
+
+export class CreateAdministratorMutation {
+    createAdministrator: {
+        id: string;
+        createdAt: any;
+        updatedAt: any;
+        firstName: string;
+        lastName: string;
+        emailAddress: string;
+        user: {
+            id: string;
+            identifier: string;
+            lastLogin?: any | null;
+            roles: Array<{
+                id: string;
+                createdAt: any;
+                updatedAt: any;
+                code: string;
+                description: string;
+                permissions: Array<Permission>;
+            }>;
+        };
+    };
+}
+
+export class UpdateAdministratorMutation {
+    updateAdministrator: {
+        id: string;
+        createdAt: any;
+        updatedAt: any;
+        firstName: string;
+        lastName: string;
+        emailAddress: string;
+        user: {
+            id: string;
+            identifier: string;
+            lastLogin?: any | null;
+            roles: Array<{
+                id: string;
+                createdAt: any;
+                updatedAt: any;
+                code: string;
+                description: string;
+                permissions: Array<Permission>;
+            }>;
+        };
+    };
+}
+
+export class UpdateActiveAdministratorMutation {
+    updateActiveAdministrator: {
+        id: string;
+        createdAt: any;
+        updatedAt: any;
+        firstName: string;
+        lastName: string;
+        emailAddress: string;
+        user: {
+            id: string;
+            identifier: string;
+            lastLogin?: any | null;
+            roles: Array<{
+                id: string;
+                createdAt: any;
+                updatedAt: any;
+                code: string;
+                description: string;
+                permissions: Array<Permission>;
+            }>;
+        };
+    } | null;
+}
+
+export class DeleteAdministratorMutation {
+    deleteAdministrator: {
+        result: DeletionResult;
+        message?: string | null;
+    };
+}
+
+export class DeleteAdministratorsMutation {
+    deleteAdministrators: Array<{
+        result: DeletionResult;
+        message?: string | null;
+    }>;
+}
+
+export class QueryRoleArgs {
+    id: ID;
+}
+
+export class MutationCreateRoleArgs {
+    input: CreateRoleInput;
+}
+
+export class MutationUpdateRoleArgs {
+    input: UpdateRoleInput;
+}
+
+export class MutationDeleteRoleArgs {
+    id: ID;
+}
+
+export class MutationDeleteRolesArgs {
+    ids: Array<ID>;
+}
+
+export class GetRolesQuery {
+    roles: {
+        totalItems: number;
+        items: Array<{
+            id: string;
+            createdAt: any;
+            updatedAt: any;
+            code: string;
+            description: string;
+            permissions: Array<Permission>;
+        }>;
+    };
+}
+
+export class CreateRoleMutation {
+    createRole: {
+        id: string;
+        createdAt: any;
+        updatedAt: any;
+        code: string;
+        description: string;
+        permissions: Array<Permission>;
+    };
+}
+
+export class UpdateRoleMutation {
+    updateRole: {
+        id: string;
+        createdAt: any;
+        updatedAt: any;
+        code: string;
+        description: string;
+        permissions: Array<Permission>;
+    };
+}
+
+export class DeleteRoleMutation {
+    deleteRole: {
+        result: DeletionResult;
+        message?: string | null;
+    };
+}
+
+export class DeleteRolesMutation {
+    deleteRoles: Array<{
+        result: DeletionResult;
+        message?: string | null;
+    }>;
 }

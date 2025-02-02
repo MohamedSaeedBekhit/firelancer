@@ -14,6 +14,7 @@ import { ShopAuthController } from './controllers/shop/auth.controller';
 import { ShopJobPostController } from './controllers/shop/job-post.controller';
 import { AuthGuard } from './middlewares/auth.guard';
 import { ExceptionHandlerFilter } from './middlewares/exception-handler.filter';
+import { RoleController } from './controllers/admin/roles.controller';
 
 const { apiOptions } = getConfig();
 
@@ -30,7 +31,7 @@ export class ApiSharedModule {}
 
 @Module({
     imports: [ApiSharedModule, RouterModule.register([{ path: apiOptions.adminApiPath, module: AdminModule }])],
-    controllers: [AdminAuthController, AdministratorController],
+    controllers: [AdminAuthController, AdministratorController, RoleController],
 })
 export class AdminModule {}
 

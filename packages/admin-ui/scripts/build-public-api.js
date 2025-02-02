@@ -10,7 +10,7 @@ const SOURCES_DIR = path.join(__dirname, '/../src/modules');
 const APP_SOURCE_FILE_PATTERN = /\.tsx?$/;
 const EXCLUDED_PATTERNS = [/(public_api|spec|mock)\.ts$/];
 
-const MODULES = ['core'];
+const MODULES = ['core', 'login'];
 
 for (const moduleDir of MODULES) {
     const modulePath = path.join(SOURCES_DIR, moduleDir, 'src');

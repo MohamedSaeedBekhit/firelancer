@@ -1,13 +1,19 @@
-import { assertFound, normalizeEmailAddress } from '@firelancer/common/lib/shared-utils';
+import { assertFound, idsAreEqual, normalizeEmailAddress } from '@firelancer/common/lib/shared-utils';
 import { PaginatedList } from '@firelancer/common/lib/shared-types';
 import { Injectable } from '@nestjs/common';
-import { IsNull } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import { RelationPaths } from '../../api';
-import { EntityNotFoundError, ListQueryOptions, RequestContext } from '../../common';
-import { CreateAdministratorInput, ID, UpdateAdministratorInput } from '../../common/shared-schema';
+import {
+    EntityNotFoundError,
+    InternalServerError,
+    ListQueryOptions,
+    RequestContext,
+    UserInputError,
+} from '../../common';
+import { CreateAdministratorInput, DeletionResult, ID, UpdateAdministratorInput } from '../../common/shared-schema';
 import { ConfigService } from '../../config';
 import { TransactionalConnection } from '../../connection';
-import { Administrator, NativeAuthenticationMethod, User } from '../../entity';
+import { Administrator, NativeAuthenticationMethod, Role, User } from '../../entity';
 import { AdministratorEvent, EventBus, RoleChangeEvent } from '../../event-bus';
 import { ProcessContext } from '../../process-context';
 import { ListQueryBuilder } from '../helpers/list-query-builder/list-query-builder';
@@ -16,6 +22,7 @@ import { RequestContextService } from '../helpers/request-context/request-contex
 import { patchEntity } from '../helpers/utils/patch-entity';
 import { RoleService } from './role.service';
 import { UserService } from './user.service';
+import { getPermissions } from '../helpers/utils/get-user-permissions';
 
 /**
  * @description
@@ -65,15 +72,15 @@ export class AdministratorService {
      * @description
      * Get an Administrator by id.
      */
-    async findOne(ctx: RequestContext, administratorId: ID): Promise<Administrator | undefined> {
+    async findOne(
+        ctx: RequestContext,
+        administratorId: ID,
+        relations?: RelationPaths<Administrator>,
+    ): Promise<Administrator | undefined> {
         return this.connection
             .getRepository(ctx, Administrator)
             .findOne({
-                relations: {
-                    user: {
-                        roles: true,
-                    },
-                },
+                relations: relations ?? ['user', 'user.roles'],
                 where: {
                     id: administratorId,
                     deletedAt: IsNull(),
@@ -86,15 +93,18 @@ export class AdministratorService {
      * @description
      * Get an Administrator based on the User id.
      */
-    async findOneByUserId(ctx: RequestContext, userId: ID): Promise<Administrator | undefined> {
+    async findOneByUserId(
+        ctx: RequestContext,
+        userId: ID,
+        relations?: RelationPaths<Administrator>,
+    ): Promise<Administrator | undefined> {
         return this.connection
             .getRepository(ctx, Administrator)
             .findOne({
+                relations,
                 where: {
-                    user: {
-                        id: userId,
-                        deletedAt: IsNull(),
-                    },
+                    user: { id: userId },
+                    deletedAt: IsNull(),
                 },
             })
             .then((result) => result ?? undefined);
@@ -124,6 +134,9 @@ export class AdministratorService {
         const administrator = await this.findOne(ctx, input.id);
         if (!administrator) {
             throw new EntityNotFoundError('Administrator', input.id);
+        }
+        if (input.roleIds) {
+            await this.checkActiveUserCanGrantRoles(ctx, input.roleIds);
         }
         let updatedAdministrator = patchEntity(administrator, input);
         await this.connection.getRepository(ctx, Administrator).save(administrator, { reload: false });
@@ -163,6 +176,22 @@ export class AdministratorService {
 
     /**
      * @description
+     * Checks that the active user is allowed to grant the specified Roles when creating or
+     * updating an Administrator.
+     */
+    private async checkActiveUserCanGrantRoles(ctx: RequestContext, roleIds: ID[]) {
+        const roles = await this.connection.getRepository(ctx, Role).find({
+            where: { id: In(roleIds) },
+        });
+        const permissionsRequired = getPermissions(roles);
+        const activeUserHasRequiredPermissions = await this.roleService.userHasAllPermissions(ctx, permissionsRequired);
+        if (!activeUserHasRequiredPermissions) {
+            throw new UserInputError('error.active-user-does-not-have-sufficient-permissions');
+        }
+    }
+
+    /**
+     * @description
      * Assigns a Role to the Administrator's User entity.
      */
     async assignRole(ctx: RequestContext, administratorId: ID, roleId: ID): Promise<Administrator> {
@@ -183,14 +212,36 @@ export class AdministratorService {
      * @description
      * Soft deletes an Administrator (sets the `deletedAt` field).
      */
-    async softDelete(ctx: RequestContext, id: ID): Promise<void> {
+    async softDelete(ctx: RequestContext, id: ID) {
         const administrator = await this.connection.getEntityOrThrow(ctx, Administrator, id, {
             relations: ['user'],
         });
+        const isSoleSuperadmin = await this.isSoleSuperadmin(ctx, id);
+        if (isSoleSuperadmin) {
+            throw new InternalServerError('error.cannot-delete-sole-superadmin');
+        }
         await this.connection.getRepository(ctx, Administrator).update({ id }, { deletedAt: new Date() });
-
         await this.userService.softDelete(ctx, administrator.user.id);
         await this.eventBus.publish(new AdministratorEvent(ctx, administrator, 'deleted', id));
+        return { result: DeletionResult.DELETED };
+    }
+
+    /**
+     * @description
+     * Resolves to `true` if the administrator ID belongs to the only Administrator
+     * with SuperAdmin permissions.
+     */
+    private async isSoleSuperadmin(ctx: RequestContext, id: ID) {
+        const superAdminRole = await this.roleService.getSuperAdminRole(ctx);
+        const allAdmins = await this.connection.getRepository(ctx, Administrator).find({
+            relations: ['user', 'user.roles'],
+        });
+        const superAdmins = allAdmins.filter((admin) => !!admin.user.roles.find((r) => r.id === superAdminRole.id));
+        if (1 < superAdmins.length) {
+            return false;
+        } else {
+            return idsAreEqual(superAdmins[0].id, id);
+        }
     }
 
     /**

@@ -1,7 +1,12 @@
 import { AttemptLoginMutation, GetCurrentUserQuery, LogOutMutation } from '@firelancer/common/lib/shared-schema';
-import { BaseDataService } from './base-data.service';
+import { inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { ADMIN_API_BASE_URL } from '../data.module';
 
-export class AuthDataService extends BaseDataService {
+export class AuthDataService {
+    private readonly http = inject(HttpClient);
+    private readonly baseUrl = inject(ADMIN_API_BASE_URL);
+
     currentUser() {
         return this.http.get<GetCurrentUserQuery>(`${this.baseUrl}/auth/me`);
     }

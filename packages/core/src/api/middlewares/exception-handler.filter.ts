@@ -19,7 +19,7 @@ export class ExceptionHandlerFilter implements ExceptionFilter {
         }
 
         const { req, res } = parseContext(host);
-        let message = '';
+        let message = 'The server encountered an internal error and was unable to complete your request';
         let errorCode = 'INTERNAL_SERVER_ERROR';
         let statusCode = 500;
 

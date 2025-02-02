@@ -5,5 +5,7 @@
     "tokenMethod": "bearer",
     "authTokenHeaderKey": "firelancer-auth-token",
     "brand": "",
-    "hideVersion": false
+    "hideVersion": false,
+    "defaultLanguage": "en",
+    "defaultLocale": "US"
 }

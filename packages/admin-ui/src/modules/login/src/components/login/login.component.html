@@ -1,0 +1,38 @@
+<div class="flex items-center justify-center h-screen">
+    <p-card header="Login">
+        <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="onSubmit()">
+            <div class="flex flex-col space-y-2">
+                <div class="flex flex-row space-x-2">
+                    <div class="flex flex-col space-y-2">
+                        <input id="username" formControlName="username" type="text" pInputText placeholder="Username" />
+                        @if (submitted && f['username'].errors && f['username'].errors['required']) {
+                            <small>Username is required.</small>
+                        }
+                    </div>
+
+                    <div class="flex flex-col space-y-2">
+                        <input
+                            id="password"
+                            formControlName="password"
+                            type="password"
+                            pInputText
+                            placeholder="Password"
+                        />
+                        @if (submitted && f['password'].errors && f['password'].errors['required']) {
+                            <small>Password is required.</small>
+                        }
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <p-checkbox binary="true" formControlName="rememberMe" inputId="remember-me" />
+                    <label for="remember-me" class="ml-2">Remember me</label>
+                </div>
+            </div>
+        </form>
+        <ng-template #footer>
+            <div class="flex gap-4 mt-1">
+                <button pButton type="submit" form="loginForm" label="Submit" [loading]="loading"></button>
+            </div>
+        </ng-template>
+    </p-card>
+</div>

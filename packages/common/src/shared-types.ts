@@ -264,6 +264,23 @@ export interface AdminUiConfig {
      * @default false
      */
     hideVersion?: boolean;
+    /**
+     * @description
+     * The default language for the Admin UI. Must be one of the
+     * items specified in the `availableLanguages` property.
+     *
+     * @default LanguageCode.en
+     */
+    defaultLanguage: LanguageCode;
+    /**
+     * @description
+     * The default locale for the Admin UI. The locale affects the formatting of
+     * currencies & dates. Must be one of the items specified
+     * in the `availableLocales` property.
+     *
+     * If not set, the browser default locale will be used.
+     */
+    defaultLocale?: string;
 }
 
 /**

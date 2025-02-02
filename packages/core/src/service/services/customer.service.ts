@@ -490,7 +490,6 @@ export class CustomerService {
         await this.eventBus.publish(new CustomerEvent(ctx, customer, 'deleted', customerId));
     }
 
-    // TODO: fix error types
     async getUserCustomerFromRequest(ctx: RequestContext) {
         const userId = ctx.session?.user?.id;
         if (!userId) {
@@ -498,7 +497,6 @@ export class CustomerService {
         }
         const customer = await this.findOneByUserId(ctx, userId);
         if (!customer) {
-            // TODO: fix error
             throw new EntityNotFoundError('Customer', userId);
         }
         return customer;

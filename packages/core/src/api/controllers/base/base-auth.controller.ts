@@ -20,6 +20,7 @@ import { User } from '../../../entity';
 import { AdministratorService } from '../../../service/services/administrator.service';
 import { AuthService } from '../../../service/services/auth.service';
 import { UserService } from '../../../service/services/user.service';
+import { getUserPermissions } from '../../../service/helpers/utils/get-user-permissions';
 
 export class BaseAuthController {
     constructor(
@@ -76,7 +77,7 @@ export class BaseAuthController {
             throw new ForbiddenError(LogLevel.Verbose);
         }
         if (apiType === 'admin') {
-            const administrator = await this.administratorService.findOneByUserId(ctx, userId);
+            const administrator = await this.administratorService.findOneByUserId(ctx, userId, ['user.roles']);
             if (!administrator) {
                 throw new ForbiddenError(LogLevel.Verbose);
             }
@@ -136,6 +137,7 @@ export class BaseAuthController {
         return {
             id: user.id,
             identifier: user.identifier,
+            permissions: getUserPermissions(user),
         };
     }
 }

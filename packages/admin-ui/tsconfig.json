@@ -21,16 +21,8 @@
         "lib": ["es2019", "dom", "esnext.asynciterable"],
         "paths": {
             "@firelancer/admin-ui": ["./src/modules/public_api"],
-            "@firelancer/admin-ui/catalog": ["./src/modules/catalog/src/public_api"],
             "@firelancer/admin-ui/core": ["./src/modules/core/src/public_api"],
-            "@firelancer/admin-ui/customer": ["./src/modules/customer/src/public_api"],
-            "@firelancer/admin-ui/dashboard": ["./src/modules/dashboard/src/public_api"],
-            "@firelancer/admin-ui/login": ["./src/modules/login/src/public_api"],
-            "@firelancer/admin-ui/marketing": ["./src/modules/marketing/src/public_api"],
-            "@firelancer/admin-ui/order": ["./src/modules/order/src/public_api"],
-            "@firelancer/admin-ui/react": ["./src/modules/react/src/public_api"],
-            "@firelancer/admin-ui/settings": ["./src/modules/settings/src/public_api"],
-            "@firelancer/admin-ui/system": ["./src/modules/system/src/public_api"]
+            "@firelancer/admin-ui/login": ["./src/modules/login/src/public_api"]
         },
         "useDefineForClassFields": false
     }

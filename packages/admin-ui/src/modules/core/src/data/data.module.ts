@@ -1,6 +1,7 @@
 import { InjectionToken, NgModule } from '@angular/core';
 import { DataService } from './providers/data.service';
-import { BaseDataService } from './providers/base-data.service';
+import { getAppConfig } from '../app.config';
+import { getServerLocation } from '../common/get-server-location';
 
 export const ADMIN_API_BASE_URL: InjectionToken<string> = new InjectionToken<string>('baseURL');
 
@@ -12,12 +13,15 @@ export const ADMIN_API_BASE_URL: InjectionToken<string> = new InjectionToken<str
     exports: [],
     declarations: [],
     providers: [
+        DataService,
         {
             provide: ADMIN_API_BASE_URL,
-            useValue: 'localhost:3001/admin-api',
+            useFactory: () => {
+                const { adminApiPath } = getAppConfig();
+                const serverLocation = getServerLocation();
+                return `${serverLocation}/${adminApiPath}`;
+            },
         },
-        BaseDataService,
-        DataService,
     ],
 })
 export class DataModule {}

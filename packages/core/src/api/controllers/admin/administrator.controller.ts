@@ -6,6 +6,7 @@ import {
     MutationAssignRoleToAdministratorArgs,
     MutationCreateAdministratorArgs,
     MutationDeleteAdministratorArgs,
+    MutationDeleteAdministratorsArgs,
     MutationUpdateActiveAdministratorArgs,
     MutationUpdateAdministratorArgs,
     Permission,
@@ -27,57 +28,56 @@ export class AdministratorController {
 
     @Get('active')
     @Allow(Permission.Owner)
-    async activeAdministrator(@Ctx() ctx: RequestContext): Promise<Administrator | undefined> {
+    async activeAdministrator(@Ctx() ctx: RequestContext) {
         if (ctx.activeUserId) {
-            return this.administratorService.findOneByUserId(ctx, ctx.activeUserId);
+            const activeAdministrator = await this.administratorService.findOneByUserId(ctx, ctx.activeUserId, [
+                'user',
+                'user.roles',
+            ]);
+            return { activeAdministrator };
         }
+
+        return { activeAdministrator: null };
     }
 
     @Get(':id')
     @Allow(Permission.ReadAdministrator)
-    async administrator(
-        @Ctx() ctx: RequestContext,
-        @Param() params: QueryAdministratorArgs,
-    ): Promise<Administrator | undefined> {
+    async administrator(@Ctx() ctx: RequestContext, @Param() params: QueryAdministratorArgs) {
         return this.administratorService.findOne(ctx, params.id);
     }
 
     @Transaction()
     @Post('create')
     @Allow(Permission.CreateAdministrator)
-    async createAdministrator(
-        @Ctx() ctx: RequestContext,
-        @Body() args: MutationCreateAdministratorArgs,
-    ): Promise<Administrator> {
-        const { input } = args;
-        return this.administratorService.create(ctx, input);
+    async createAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationCreateAdministratorArgs) {
+        const createAdministrator = await this.administratorService.create(ctx, args.input);
+        return { createAdministrator };
     }
 
     @Transaction()
     @Put()
     @Allow(Permission.UpdateAdministrator)
-    async updateAdministrator(
-        @Ctx() ctx: RequestContext,
-        @Body() args: MutationUpdateAdministratorArgs,
-    ): Promise<Administrator> {
-        const { input } = args;
-        return this.administratorService.update(ctx, input);
+    async updateAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateAdministratorArgs) {
+        const updateAdministrator = await this.administratorService.update(ctx, args.input);
+        return { updateAdministrator };
     }
 
     @Transaction()
     @Put('active')
     @Allow(Permission.Owner)
-    async updateActiveAdministrator(
-        @Ctx() ctx: RequestContext,
-        @Body() args: MutationUpdateActiveAdministratorArgs,
-    ): Promise<Administrator | undefined> {
+    async updateActiveAdministrator(@Ctx() ctx: RequestContext, @Body() args: MutationUpdateActiveAdministratorArgs) {
         if (ctx.activeUserId) {
-            const { input } = args;
             const administrator = await this.administratorService.findOneByUserId(ctx, ctx.activeUserId);
             if (administrator) {
-                return this.administratorService.update(ctx, { ...input, id: administrator.id });
+                const updateActiveAdministrator = await this.administratorService.update(ctx, {
+                    ...args.input,
+                    id: administrator.id,
+                });
+
+                return { updateActiveAdministrator };
             }
         }
+        return { updateActiveAdministrator: null };
     }
 
     @Transaction()
@@ -93,11 +93,15 @@ export class AdministratorController {
     @Transaction()
     @Delete(':id')
     @Allow(Permission.DeleteAdministrator)
-    async deleteAdministrator(
-        @Ctx() ctx: RequestContext,
-        @Param() params: MutationDeleteAdministratorArgs,
-    ): Promise<void> {
-        const { id } = params;
-        return this.administratorService.softDelete(ctx, id);
+    async deleteAdministrator(@Ctx() ctx: RequestContext, @Param() params: MutationDeleteAdministratorArgs) {
+        const deleteAdministrator = await this.administratorService.softDelete(ctx, params.id);
+        return { deleteAdministrator };
+    }
+
+    @Transaction()
+    @Delete()
+    @Allow(Permission.DeleteAdministrator)
+    deleteAdministrators(@Ctx() ctx: RequestContext, @Body() args: MutationDeleteAdministratorsArgs) {
+        return Promise.all(args.ids.map((id) => this.administratorService.softDelete(ctx, id)));
     }
 }

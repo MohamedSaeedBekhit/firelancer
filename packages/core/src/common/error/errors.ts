@@ -29,7 +29,7 @@ export class UserInputError extends I18nError {
  */
 export class IllegalOperationError extends I18nError {
     constructor(message: string, variables: { [key: string]: string | number } = {}) {
-        super(400, message, variables, 'ILLEGAL_OPERATION_ERROR', LogLevel.Warn);
+        super(403, message, variables, 'ILLEGAL_OPERATION_ERROR', LogLevel.Warn);
     }
 }
 
@@ -39,7 +39,7 @@ export class IllegalOperationError extends I18nError {
  */
 export class UnauthorizedError extends I18nError {
     constructor() {
-        super(400, 'error.unauthorized', {}, 'UNAUTHORIZED_ERROR', LogLevel.Info);
+        super(401, 'error.unauthorized', {}, 'UNAUTHORIZED_ERROR', LogLevel.Info);
     }
 }
 
@@ -50,7 +50,7 @@ export class UnauthorizedError extends I18nError {
  */
 export class ForbiddenError extends I18nError {
     constructor(logLevel: LogLevel = LogLevel.Warn) {
-        super(400, 'error.forbidden', {}, 'FORBIDDEN_ERROR', logLevel);
+        super(403, 'error.forbidden', {}, 'FORBIDDEN_ERROR', logLevel);
     }
 }
 
@@ -58,18 +58,17 @@ export class ForbiddenError extends I18nError {
  * @description
  * This error should be thrown when an entity cannot be found in the database, i.e. no entity of
  * the given entityName (Product, User etc.) exists with the provided id.
-
  */
 export class EntityNotFoundError extends I18nError {
     constructor(entityName: keyof typeof coreEntitiesMap | string, id: ID) {
-        super(400, 'error.entity-with-id-not-found', { entityName, id }, 'ENTITY_NOT_FOUND_ERROR', LogLevel.Warn);
+        super(404, 'error.entity-with-id-not-found', { entityName, id }, 'ENTITY_NOT_FOUND_ERROR', LogLevel.Warn);
     }
 }
 
 export class InvalidCredentialsError extends I18nError {
     readonly authenticationError: string;
     constructor(input: { authenticationError: string }) {
-        super(400, 'error.invalid-credentials', {}, 'INVALID_CREDENTIALS_ERROR');
+        super(401, 'error.invalid-credentials', {}, 'INVALID_CREDENTIALS_ERROR');
         this.authenticationError = input.authenticationError;
     }
 }
@@ -77,7 +76,7 @@ export class InvalidCredentialsError extends I18nError {
 export class NotVerifiedError extends I18nError {
     readonly refundId: ID;
     constructor() {
-        super(400, 'error.not-verified', {}, 'NOT_VERIFIED_ERROR');
+        super(403, 'error.not-verified', {}, 'NOT_VERIFIED_ERROR');
     }
 }
 
@@ -97,7 +96,7 @@ export class NativeAuthStrategyError extends I18nError {
 
 export class EmailAddressConflictError extends I18nError {
     constructor() {
-        super(400, 'error.email-address-conlict', {}, 'EMAIL_ADDRESS_CONFLICT_ERROR');
+        super(409, 'error.email-address-conlict', {}, 'EMAIL_ADDRESS_CONFLICT_ERROR');
     }
 }
 
@@ -115,7 +114,7 @@ export class PasswordAlreadySetError extends I18nError {
 
 export class VerificationTokenExpiredError extends I18nError {
     constructor() {
-        super(400, 'error.verification-token-expired', {}, 'VERIFICATION_TOKEN_EXPIRED_ERROR');
+        super(410, 'error.verification-token-expired', {}, 'VERIFICATION_TOKEN_EXPIRED_ERROR');
     }
 }
 
@@ -133,7 +132,7 @@ export class PasswordResetTokenInvalidError extends I18nError {
 
 export class PasswordResetTokenExpiredError extends I18nError {
     constructor() {
-        super(400, 'error.password-reset-token-expired', {}, 'PASSWORD_RESET_TOKEN_EXPIRED_ERROR');
+        super(410, 'error.password-reset-token-expired', {}, 'PASSWORD_RESET_TOKEN_EXPIRED_ERROR');
     }
 }
 
@@ -145,6 +144,6 @@ export class IdentifierChangeTokenInvalidError extends I18nError {
 
 export class IdentifierChangeTokenExpiredError extends I18nError {
     constructor() {
-        super(400, 'error.identifier-change-token-expired', {}, 'IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR');
+        super(410, 'error.identifier-change-token-expired', {}, 'IDENTIFIER_CHANGE_TOKEN_EXPIRED_ERROR');
     }
 }
