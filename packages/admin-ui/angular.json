@@ -4,9 +4,9 @@
     "newProjectRoot": "projects",
     "projects": {
         "firelancer-admin": {
+            "projectType": "application",
             "root": "",
             "sourceRoot": "src",
-            "projectType": "application",
             "prefix": "flr",
             "schematics": {
                 "@schematics/angular:component": {
@@ -35,13 +35,8 @@
                             "includePaths": ["./src/modules/static/styles", "./src/modules/static/fonts"]
                         },
                         "allowedCommonJsDependencies": [
-                            "graphql-tag",
-                            "zen-observable",
                             "lodash",
                             "dayjs",
-                            "apollo-upload-client",
-                            "@clr/icons",
-                            "@clr/icons/shapes/all-shapes",
                             "@firelancer/common/lib/generated-types",
                             "@firelancer/common/lib/simple-deep-clone",
                             "@firelancer/common/lib/shared-constants",
@@ -49,8 +44,7 @@
                             "@firelancer/common/lib/normalize-string",
                             "@firelancer/common/lib/unique",
                             "@firelancer/common/lib/omit",
-                            "@firelancer/common/lib/pick",
-                            "@messageformat/core"
+                            "@firelancer/common/lib/pick"
                         ],
                         "vendorChunk": true,
                         "extractLicenses": false,
