@@ -3,7 +3,7 @@ import { PaginatedList, Type } from '@firelancer/common/lib/shared-types';
 import { assertFound, idsAreEqual, pick } from '@firelancer/common/lib/shared-utils';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { debounceTime, merge } from 'rxjs';
-import { In, ObjectLiteral, ObjectType, SelectQueryBuilder } from 'typeorm';
+import { In } from 'typeorm';
 import { camelCase } from 'typeorm/util/StringUtils.js';
 import { RelationPaths } from '../../api';
 import {
@@ -25,7 +25,7 @@ import {
 import { ConfigService, Logger } from '../../config';
 import { TransactionalConnection } from '../../connection';
 import { collectableEntities, Collection, CollectionTranslation, FirelancerEntity } from '../../entity';
-import { CollectionEvent, CollectionModificationEvent, EventBus, FirelancerEntityEvent } from '../../event-bus';
+import { CollectionEvent, CollectionModificationEvent, EventBus } from '../../event-bus';
 import { JobQueue, JobQueueService } from '../../job-queue';
 import { ListQueryBuilder, SlugValidator, TranslatableSaver, TranslatorService } from '../../service';
 import { ConfigArgService } from '../helpers/config-arg/config-arg.service';
@@ -62,8 +62,8 @@ export class CollectionService implements OnModuleInit {
     ) {}
 
     async onModuleInit() {
-        for (const { EntityType, EntityEvent } of collectableEntities) {
-            merge(this.eventBus.ofType(EntityEvent))
+        for (const { entityType, entityEvent } of collectableEntities) {
+            merge(this.eventBus.ofType(entityEvent))
                 .pipe(debounceTime(50))
                 .subscribe(async (event) => {
                     const collections = await this.connection.rawConnection
@@ -71,12 +71,12 @@ export class CollectionService implements OnModuleInit {
                         .find({ select: { id: true } });
                     await this.applyFiltersQueue.add(
                         {
-                            ctx: (event as FirelancerEntityEvent<unknown, unknown>).ctx.serialize(),
+                            ctx: event.ctx.serialize(),
                             collectionIds: collections.map((c) => c.id),
                             applyToChangedEntitiesOnly: true,
-                            entityName: EntityType.name,
+                            entityName: entityType.name,
                         },
-                        { ctx: (event as FirelancerEntityEvent<unknown, unknown>).ctx },
+                        { ctx: event.ctx },
                     );
                 });
         }
@@ -103,22 +103,22 @@ export class CollectionService implements OnModuleInit {
                     completed++;
                     if (collection !== undefined) {
                         let affectedCollectableIds: ID[] = [];
-                        const entity = collectableEntities.find((e) => e.EntityType.name === job.data.entityName);
+                        const entity = collectableEntities.find((e) => e.entityType.name === job.data.entityName);
                         if (!entity) throw new Error(`Entity "${job.data.entityName}" not found`);
 
                         try {
                             affectedCollectableIds = await this.applyCollectionFiltersInternal(
                                 collection,
-                                entity.EntityType,
+                                entity.entityType,
                                 job.data.applyToChangedEntitiesOnly,
                             );
-                        } catch (e: unknown) {
+                        } catch (err) {
                             const translatedCollection = this.translator.translate(collection, ctx);
                             Logger.error(
                                 `An error occurred when processing the filters for the collection "${translatedCollection.name}" (id: ${collection.id})`,
                             );
-                            if (e instanceof Error) {
-                                Logger.error(e.message);
+                            if (err instanceof Error) {
+                                Logger.error(err.message);
                             }
                         }
                         job.setProgress(Math.ceil((completed / job.data.collectionIds.length) * 100));
@@ -127,7 +127,7 @@ export class CollectionService implements OnModuleInit {
                             // we first split the affected job-post ids into chunks
                             this.chunkArray(affectedCollectableIds, 50000).map((chunk) =>
                                 this.eventBus.publish(
-                                    new CollectionModificationEvent(ctx, collection, entity.EntityType, chunk),
+                                    new CollectionModificationEvent(ctx, collection, entity.entityType, chunk),
                                 ),
                             );
                         }
@@ -356,12 +356,12 @@ export class CollectionService implements OnModuleInit {
         });
         await this.assetService.updateEntityAssets(ctx, collection, input);
 
-        for (const { EntityType } of collectableEntities) {
+        for (const { entityType } of collectableEntities) {
             await this.applyFiltersQueue.add(
                 {
                     ctx: ctx.serialize(),
                     collectionIds: [collection.id],
-                    entityName: EntityType.name,
+                    entityName: entityType.name,
                 },
                 { ctx },
             );
@@ -387,21 +387,21 @@ export class CollectionService implements OnModuleInit {
             },
         });
 
-        for (const { EntityType } of collectableEntities) {
+        for (const { entityType } of collectableEntities) {
             if (input.filters) {
                 await this.applyFiltersQueue.add(
                     {
                         ctx: ctx.serialize(),
                         collectionIds: [collection.id],
-                        entityName: EntityType.name,
+                        entityName: entityType.name,
                         applyToChangedEntitiesOnly: false,
                     },
                     { ctx },
                 );
             } else {
-                const affectedCollectableIds = await this.getCollectionCollectableIds(collection, EntityType);
+                const affectedCollectableIds = await this.getCollectionCollectableIds(collection, entityType);
                 await this.eventBus.publish(
-                    new CollectionModificationEvent(ctx, collection, EntityType, affectedCollectableIds),
+                    new CollectionModificationEvent(ctx, collection, entityType, affectedCollectableIds),
                 );
             }
         }
@@ -416,21 +416,21 @@ export class CollectionService implements OnModuleInit {
         const deletedCollection = new Collection(collection);
         for (const coll of [...descendants.reverse(), collection]) {
             const deletedColl = new Collection(coll);
-            for (const { EntityType } of collectableEntities) {
-                const affectedCollectableIds = await this.getCollectionCollectableIds(coll, EntityType);
+            for (const { entityType } of collectableEntities) {
+                const affectedCollectableIds = await this.getCollectionCollectableIds(coll, entityType);
                 // To avoid performance issues on huge collections, we first delete the links
                 // between the collectable entity and the collection by chunks
                 const chunkedDeleteIds = this.chunkArray(affectedCollectableIds, 500);
                 for (const chunkedDeleteId of chunkedDeleteIds) {
                     await this.connection.rawConnection
                         .createQueryBuilder()
-                        .relation(Collection, this.getRelationName(EntityType))
+                        .relation(Collection, this.getRelationName(entityType))
                         .of(collection)
                         .remove(chunkedDeleteId);
                 }
                 await this.connection.getRepository(ctx, Collection).remove(coll);
                 await this.eventBus.publish(
-                    new CollectionModificationEvent(ctx, deletedColl, EntityType, affectedCollectableIds),
+                    new CollectionModificationEvent(ctx, deletedColl, entityType, affectedCollectableIds),
                 );
             }
         }
@@ -463,12 +463,12 @@ export class CollectionService implements OnModuleInit {
         siblings = moveToIndex(input.index, target, siblings);
 
         await this.connection.getRepository(ctx, Collection).save(siblings);
-        for (const { EntityType } of collectableEntities) {
+        for (const { entityType } of collectableEntities) {
             await this.applyFiltersQueue.add(
                 {
                     ctx: ctx.serialize(),
                     collectionIds: [target.id],
-                    entityName: EntityType.name,
+                    entityName: entityType.name,
                 },
                 { ctx },
             );
@@ -525,10 +525,7 @@ export class CollectionService implements OnModuleInit {
                 const filtersOfType = filters.filter((f) => f.code === filterType.code);
                 if (filtersOfType.length) {
                     for (const filter of filtersOfType) {
-                        filteredQb = filterType.apply(
-                            filteredQb as SelectQueryBuilder<ObjectType<ObjectLiteral>>,
-                            filter.args,
-                        );
+                        filteredQb = filterType.apply(filteredQb, filter.args);
                     }
                 }
             }

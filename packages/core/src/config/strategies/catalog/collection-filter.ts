@@ -1,4 +1,4 @@
-import { ObjectLiteral, ObjectType, SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import {
     ConfigArgs,
     ConfigArgValues,
@@ -6,15 +6,18 @@ import {
     ConfigurableOperationDefOptions,
 } from '../../../common/configurable-operation';
 import { ConfigArg } from '../../../common/shared-schema';
+import { CollectableEntity } from '../../../entity';
 
-export type ApplyCollectionFilterFn<T extends ConfigArgs, Entity extends ObjectLiteral = ObjectLiteral> = (
-    qb: SelectQueryBuilder<ObjectType<Entity>>,
+type Entity = CollectableEntity['entityType'];
+
+export type ApplyCollectionFilterFn<T extends ConfigArgs> = (
+    qb: SelectQueryBuilder<ObjectLiteral>,
     args: ConfigArgValues<T>,
-) => SelectQueryBuilder<ObjectType<Entity>>;
+) => SelectQueryBuilder<ObjectLiteral>;
 
-export interface CollectionFilterConfig<T extends ConfigArgs, Entity extends ObjectLiteral = ObjectLiteral>
-    extends ConfigurableOperationDefOptions<T> {
-    apply: ApplyCollectionFilterFn<T, Entity>;
+export interface CollectionFilterConfig<T extends ConfigArgs> extends ConfigurableOperationDefOptions<T> {
+    entityType: Entity;
+    apply: ApplyCollectionFilterFn<T>;
 }
 /**
  * @description
@@ -22,20 +25,17 @@ export interface CollectionFilterConfig<T extends ConfigArgs, Entity extends Obj
  * The filtering is done by defining the `apply()` function, which receives a TypeORM
  * [`QueryBuilder`](https://typeorm.io/#/select-query-builder) object to which clauses may be added.
  */
-export class CollectionFilter<
-    T extends ConfigArgs = ConfigArgs,
-    Entity extends ObjectLiteral = ObjectLiteral,
-> extends ConfigurableOperationDef<T> {
-    public readonly entityType: ObjectType<Entity>;
-    private readonly applyFn: ApplyCollectionFilterFn<T, Entity>;
+export class CollectionFilter<T extends ConfigArgs = ConfigArgs> extends ConfigurableOperationDef<T> {
+    public readonly entityType: Entity;
+    private readonly applyFn: ApplyCollectionFilterFn<T>;
 
-    constructor(config: CollectionFilterConfig<T, Entity> & { entityType: ObjectType<Entity> }) {
+    constructor(config: CollectionFilterConfig<T>) {
         super(config);
         this.entityType = config.entityType;
         this.applyFn = config.apply;
     }
 
-    apply(qb: SelectQueryBuilder<ObjectType<Entity>>, args: ConfigArg[]): SelectQueryBuilder<ObjectType<Entity>> {
+    apply(qb: SelectQueryBuilder<ObjectLiteral>, args: ConfigArg[]): SelectQueryBuilder<ObjectLiteral> {
         return this.applyFn(qb, this.argsArrayToHash(args));
     }
 }
