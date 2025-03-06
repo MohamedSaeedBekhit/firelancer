@@ -34,9 +34,8 @@ export class AdministratorController {
                 'user',
                 'user.roles',
             ]);
-            return { activeAdministrator };
+            return { activeAdministrator: activeAdministrator ?? null };
         }
-
         return { activeAdministrator: null };
     }
 

@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { AttemptLoginMutation } from '@firelancer/common/lib/shared-schema';
 import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+
 import { DataService } from '../../data/providers/data.service';
 import { PermissionsService } from '../permissions/permissions.service';
 
@@ -19,8 +20,8 @@ export class AuthService {
      */
     logIn(username: string, password: string, rememberMe: boolean): Observable<AttemptLoginMutation> {
         return this.dataService.auth.attemptLogin(username, password, rememberMe).pipe(
-            switchMap((response) => {
-                this.permissionsService.setCurrentUserPermissions(response.login.permissions);
+            switchMap((data) => {
+                this.permissionsService.setCurrentUserPermissions(data.login.permissions);
                 return this.dataService.administrator.getActiveAdministrator().pipe(
                     switchMap(({ activeAdministrator }) => {
                         if (activeAdministrator) {
@@ -28,11 +29,11 @@ export class AuthService {
                                 .loginSuccess(
                                     activeAdministrator.id,
                                     `${activeAdministrator.firstName} ${activeAdministrator.lastName}`,
-                                    response.login.permissions,
+                                    data.login.permissions,
                                 )
-                                .pipe(map(() => response));
+                                .pipe(map(() => data));
                         } else {
-                            return of(response);
+                            return of(data);
                         }
                     }),
                 );
@@ -46,15 +47,12 @@ export class AuthService {
     logOut(): Observable<boolean> {
         return this.dataService.client.userStatus().pipe(
             switchMap((status) => {
-                if (status?.isLoggedIn) {
-                    this.dataService.client.logOut();
-                    return this.dataService.auth.logOut();
+                if (status.isLoggedIn) {
+                    console.log('this.dataService.auth.logOut()', { status });
+                    return this.dataService.auth.logOut().pipe(mergeMap(() => this.dataService.client.logOut()));
                 } else {
                     return [];
                 }
-            }),
-            tap(() => {
-                // TODO: alerts
             }),
             map(() => true),
         );

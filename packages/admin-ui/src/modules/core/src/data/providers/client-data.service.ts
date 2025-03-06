@@ -5,20 +5,20 @@ import { Permission } from '@firelancer/common/lib/shared-schema';
 export class ClientDataService {
     private clientState = inject(ClientState);
 
+    userStatus() {
+        return this.clientState.userStatus;
+    }
+
+    uiState() {
+        return this.clientState.uiState;
+    }
+
     loginSuccess(administratorId: string, username: string, permissions: Permission[]) {
         return this.clientState.setAsLoggedIn({ administratorId, username, permissions });
     }
 
     logOut() {
         return this.clientState.setAsLoggedOut();
-    }
-
-    userStatus() {
-        return this.clientState.userStatus$;
-    }
-
-    uiState() {
-        return this.clientState.uiState$;
     }
 
     setUiLanguage(languageCode: string, locale?: string) {

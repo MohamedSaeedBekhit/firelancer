@@ -281,6 +281,16 @@ export interface AdminUiConfig {
      * If not set, the browser default locale will be used.
      */
     defaultLocale?: string;
+    /**
+     * @description
+     * An array of languages for which translations exist for the Admin UI.
+     */
+    availableLanguages: LanguageCode[];
+    /**
+     * @description
+     * An array of locales to be used on Admin UI.
+     */
+    availableLocales: string[];
 }
 
 /**

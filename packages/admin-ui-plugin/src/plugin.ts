@@ -14,7 +14,14 @@ import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import fs from 'fs-extra';
 import path from 'path';
-import { DEFAULT_APP_PATH, defaultLanguage, defaultLocale, loggerCtx } from './constants';
+import {
+    DEFAULT_APP_PATH,
+    defaultAvailableLanguages,
+    defaultAvailableLocales,
+    defaultLanguage,
+    defaultLocale,
+    loggerCtx,
+} from './constants';
 
 /**
  * @description
@@ -241,6 +248,8 @@ export class AdminUiPlugin implements NestModule {
             hideVersion: propOrDefault('hideVersion', options.adminUiConfig?.hideVersion || false),
             defaultLanguage: propOrDefault('defaultLanguage', defaultLanguage),
             defaultLocale: propOrDefault('defaultLocale', defaultLocale),
+            availableLanguages: propOrDefault('availableLanguages', defaultAvailableLanguages, true),
+            availableLocales: propOrDefault('availableLocales', defaultAvailableLocales, true),
         };
     }
 

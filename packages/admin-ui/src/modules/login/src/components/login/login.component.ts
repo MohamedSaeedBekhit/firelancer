@@ -1,73 +1,69 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@firelancer/admin-ui/core';
-
-export const AUTH_REDIRECT_PARAM = 'redirectTo';
+import { catchError, EMPTY, finalize } from 'rxjs';
+import { AUTH_REDIRECT_PARAM } from '@firelancer/admin-ui/core';
 
 @Component({
     selector: 'flr-login',
     templateUrl: 'login.component.html',
     standalone: false,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
     private authService = inject(AuthService);
     private router = inject(Router);
     private formBuilder = inject(FormBuilder);
 
-    loginForm: FormGroup;
+    form: FormGroup;
     loading = false;
-    errorMessage: string | undefined;
-    returnUrl: string;
-    submitted: boolean;
+    errorMessage?: string;
 
-    get f() {
-        return this.loginForm.controls;
+    get username() {
+        return this.form.get('username');
+    }
+
+    get password() {
+        return this.form.get('password');
+    }
+
+    get rememberMe() {
+        return this.form.get('rememberMe');
     }
 
     ngOnInit(): void {
-        this.loginForm = this.formBuilder.group({
+        this.form = this.formBuilder.group({
             username: ['', Validators.required],
             password: ['', Validators.required],
             rememberMe: [false],
         });
     }
 
-    onSubmit() {
-        this.submitted = true;
-        this.errorMessage = undefined;
-
-        if (this.loginForm.invalid) {
-            return;
-        }
-
+    onSubmit(): void {
         this.loading = true;
-
+        this.errorMessage = undefined;
         this.authService
-            .logIn(this.f['username'].value, this.f['password'].value, this.f['rememberMe'].value)
-            .subscribe(() => {
-                const redirect = this.getRedirectRoute();
-                this.router.navigateByUrl(redirect ? redirect : '/');
-            });
-
-        this.loading = false;
+            .logIn(this.username?.value, this.password?.value, this.rememberMe?.value)
+            .pipe(
+                catchError((err) => {
+                    this.errorMessage = err.error?.message ?? 'Login failed. Please try again.';
+                    return EMPTY;
+                }),
+                finalize(() => (this.loading = false)),
+            )
+            .subscribe(() => this.router.navigateByUrl(this.getRedirectRoute() || '/'));
     }
 
     /**
-     * Attempts to read a redirect param from the current url and parse it into a
-     * route from which the user was redirected after a 401 error.
+     * Extracts the `redirectTo` query param from the URL and decodes it.
      */
     private getRedirectRoute(): string | undefined {
-        let redirectTo: string | undefined;
-        const re = new RegExp(`${AUTH_REDIRECT_PARAM}=(.*)`);
         try {
-            const redirectToParam = window.location.search.match(re);
-            if (redirectToParam && 1 < redirectToParam.length) {
-                redirectTo = atob(decodeURIComponent(redirectToParam[1]));
-            }
+            const params = new URLSearchParams(window.location.search);
+            const encodedRedirect = params.get(AUTH_REDIRECT_PARAM);
+            return encodedRedirect ? atob(decodeURIComponent(encodedRedirect)) : undefined;
         } catch {
-            // ignore
+            return undefined;
         }
-        return redirectTo;
     }
 }

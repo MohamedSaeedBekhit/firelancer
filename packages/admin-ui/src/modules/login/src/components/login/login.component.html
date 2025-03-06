@@ -1,38 +1,61 @@
 <div class="flex items-center justify-center h-screen">
-    <p-card header="Login">
-        <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="onSubmit()">
-            <div class="flex flex-col space-y-2">
-                <div class="flex flex-row space-x-2">
-                    <div class="flex flex-col space-y-2">
-                        <input id="username" formControlName="username" type="text" pInputText placeholder="Username" />
-                        @if (submitted && f['username'].errors && f['username'].errors['required']) {
-                            <small>Username is required.</small>
-                        }
-                    </div>
-
-                    <div class="flex flex-col space-y-2">
-                        <input
-                            id="password"
-                            formControlName="password"
-                            type="password"
-                            pInputText
-                            placeholder="Password"
-                        />
-                        @if (submitted && f['password'].errors && f['password'].errors['required']) {
-                            <small>Password is required.</small>
-                        }
-                    </div>
+    <p-card class="w-[350px]" header="{{ 'common.login-title' | translate: { brand: 'Firelancer' } }}">
+        <form [formGroup]="form" id="loginForm" (ngSubmit)="onSubmit()">
+            <div class="flex flex-col space-y-4">
+                <!-- Username Field -->
+                <div class="flex flex-col space-y-2">
+                    <input
+                        pInputText
+                        type="text"
+                        id="username"
+                        formControlName="username"
+                        [placeholder]="'common.username' | translate"
+                        [class.ng-dirty]="username?.dirty"
+                        [class.ng-invalid]="username?.invalid"
+                    />
+                    @if (username?.invalid && (username?.dirty || username?.touched)) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ 'common.username-required' | translate }}
+                        </p-message>
+                    }
                 </div>
+
+                <!-- Password Field -->
+                <div class="flex flex-col space-y-2">
+                    <input
+                        pInputText
+                        type="password"
+                        id="password"
+                        formControlName="password"
+                        [placeholder]="'common.password' | translate"
+                        [class.ng-dirty]="password?.dirty"
+                        [class.ng-invalid]="password?.invalid"
+                    />
+                    @if (password?.invalid && (password?.dirty || password?.touched)) {
+                        <p-message severity="error" variant="simple" size="small">
+                            {{ 'common.password-required' | translate }}
+                        </p-message>
+                    }
+                </div>
+
+                <!-- Remember Me -->
                 <div class="flex items-center">
-                    <p-checkbox binary="true" formControlName="rememberMe" inputId="remember-me" />
-                    <label for="remember-me" class="ml-2">Remember me</label>
+                    <p-checkbox binary="true" formControlName="rememberMe" inputId="remember-me"></p-checkbox>
+                    <label for="remember-me" class="ms-2">{{ 'common.remember-me' | translate }}</label>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4 mt-4">
+                    <button
+                        pButton
+                        type="submit"
+                        form="loginForm"
+                        [disabled]="form.invalid"
+                        [loading]="loading"
+                        label="{{ 'common.login' | translate }}"
+                    ></button>
                 </div>
             </div>
         </form>
-        <ng-template #footer>
-            <div class="flex gap-4 mt-1">
-                <button pButton type="submit" form="loginForm" label="Submit" [loading]="loading"></button>
-            </div>
-        </ng-template>
     </p-card>
 </div>

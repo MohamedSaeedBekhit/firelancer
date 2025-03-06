@@ -1,1 +1,8 @@
+<p-toast key="response-error">
+    <ng-template let-message #message>
+        <section class="flex flex-col p-4 gap-4 w-full bg-primary/70 rounded-xl">
+            <span>{{ message.summary | translate: message.data?.vars }}</span>
+        </section>
+    </ng-template>
+</p-toast>
 <router-outlet></router-outlet>

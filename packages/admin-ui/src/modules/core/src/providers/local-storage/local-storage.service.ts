@@ -31,7 +31,7 @@ const ADMIN_SPECIFIC_KEYS: Array<keyof LocalStorageTypeMap> = [
     'dataTableConfig',
 ];
 
-const PREFIX = 'vnd_';
+const PREFIX = 'flr_';
 
 /**
  * Wrapper around the browser's LocalStorage / SessionStorage object, for persisting data to the browser.

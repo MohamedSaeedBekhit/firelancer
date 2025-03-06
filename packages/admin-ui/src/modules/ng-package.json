@@ -9,9 +9,11 @@
         "./static/firelancer-ui-config.json",
         "./static/styles/**/*.css",
         "./static/fonts/*.woff2",
-        "./static/fonts/*.scss"
+        "./static/fonts/*.scss",
+        "./static/i18n-messages/*.json"
     ],
     "lib": {
+        "styleIncludePaths": ["./static/styles"],
         "entryFile": "./public_api.ts"
     }
 }

@@ -1,57 +1,60 @@
 import { inject, Injectable } from '@angular/core';
 import { Permission } from '@firelancer/common/lib/shared-schema';
-import { BehaviorSubject, map } from 'rxjs';
+import { map, of } from 'rxjs';
 import { LocalStorageService } from '../../providers/local-storage/local-storage.service';
 import { getClientDefaults } from './client-defaults';
 import { UiState, UserStatus } from './client-types';
 
 @Injectable({ providedIn: 'root' })
 export class ClientState {
-    localStorageService = inject(LocalStorageService);
-    defaults = getClientDefaults(this.localStorageService);
+    private localStorageService = inject(LocalStorageService);
+    private defaults = getClientDefaults(this.localStorageService);
 
-    private userStatusSubject = new BehaviorSubject<UserStatus>(this.defaults.userStatus);
-    userStatus$ = this.userStatusSubject.asObservable();
+    private _userStatus: UserStatus = this.defaults.userStatus;
+    private _uiState: UiState = this.defaults.uiState;
 
-    private uiStateSubject = new BehaviorSubject<UiState>(this.defaults.uiState);
-    uiState$ = this.uiStateSubject.asObservable();
+    get userStatus() {
+        return of(this._userStatus);
+    }
+
+    get uiState() {
+        return of(this._uiState);
+    }
 
     setAsLoggedIn(input: { administratorId: string; username: string; permissions: Permission[] }) {
-        const data = {
+        this._userStatus = {
             administratorId: input.administratorId,
             username: input.username,
             permissions: input.permissions,
             loginTime: new Date(),
             isLoggedIn: true,
         };
-        this.userStatusSubject.next(data);
-        return this.userStatus$;
+        return of(this._userStatus);
     }
 
     setAsLoggedOut() {
-        const data = {
+        this._userStatus = {
             administratorId: null,
             username: null,
             permissions: [],
             loginTime: null,
             isLoggedIn: false,
         };
-        this.userStatusSubject.next(data);
-        return this.userStatus$;
+        return of(this._userStatus);
     }
 
     setUiLanguage(languageCode: string, locale?: string) {
-        this.uiStateSubject.next({ ...this.uiStateSubject.value, language: languageCode, locale });
-        return this.uiState$.pipe(map(({ language, locale }) => ({ language, locale })));
+        this._uiState = { ...this._uiState, language: languageCode, locale };
+        return of(this._uiState).pipe(map(({ language, locale }) => ({ language, locale })));
     }
 
     setUiTheme(theme: string) {
-        this.uiStateSubject.next({ ...this.uiStateSubject.value, theme });
-        return this.uiState$.pipe(map(({ theme }) => ({ theme })));
+        this._uiState = { ...this._uiState, theme };
+        return of(this._uiState).pipe(map(({ theme }) => ({ theme })));
     }
 
     setMainNavExpanded(expanded: boolean) {
-        this.uiStateSubject.next({ ...this.uiStateSubject.value, mainNavExpanded: expanded });
-        return this.uiState$.pipe(map(({ mainNavExpanded }) => ({ mainNavExpanded })));
+        this._uiState = { ...this._uiState, mainNavExpanded: expanded };
+        return of(this._uiState).pipe(map(({ mainNavExpanded }) => ({ mainNavExpanded })));
     }
 }

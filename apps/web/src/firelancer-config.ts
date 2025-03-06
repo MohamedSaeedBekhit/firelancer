@@ -6,7 +6,7 @@ import { Base64IdStrategy, DefaultJobQueuePlugin, FirelancerConfig, Logger } fro
 import { NextFunction, Request, Response } from 'express';
 import { HelloWorldPlugin } from './plugins/hello-world/plugin';
 
-const serverPort = Number(process.env.PORT) || 3001;
+const serverPort = Number(process.env.PORT) || 3000;
 const serverHost = process.env.HOST || 'localhost';
 
 export const config: FirelancerConfig = {
